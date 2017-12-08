@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title><![CDATA[使用Hexo + Github Pages搭建个人独立博客]]></title>
+    <url>%2F2017%2F12%2F08%2F%E4%BD%BF%E7%94%A8Hexo-Github-Pages%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E7%8B%AC%E7%AB%8B%E5%8D%9A%E5%AE%A2%2F</url>
+    <content type="text"><![CDATA[系统环境配置要使用Hexo，需要在你的系统中支持Nodejs以及Git 安装Hexo1234567$ cd d:/hexo$ npm install hexo-cli -g$ hexo init blog$ cd blog$ npm install$ hexo g # 或者hexo generate$ hexo s # 或者hexo server，可以在http://localhost:4000/ 查看 这里有必要提下Hexo常用的几个命令：12$ hexo new &quot;postName&quot; #新建文章$ hexo new page &quot;pageName&quot; #新建页面 常用简写1234$ hexo n == hexo new$ hexo g == hexo generate$ hexo s == hexo server$ hexo d == hexo deploy 123hexo generate (hexo g) 生成静态文件，会在当前目录下生成一个新的叫做public的文件夹hexo server (hexo s) 启动本地web服务，用于博客的预览hexo deploy (hexo d) 部署播客到远端（比如github, heroku等平台） 常用组合12$ hexo d -g #生成部署$ hexo s -g #生成预览 Hexo主题设置 Github Pages设置 什么是Github Pages GitHub Pages 本用于介绍托管在GitHub的项目，不过，由于他的空间免费稳定，用来做搭建一个博客再好不过了。 每个帐号只能有一个仓库来存放个人主页，而且仓库的名字必须是username/username.github.io，这是特殊的命名约定。你可以通过http://username.github.io 来访问你的个人主页。 这里特别提醒一下，需要注意的个人主页的网站内容是在master分支下的。 部署Hexo到Github Pages 首先需要明白所谓部署到github的原理。 之前步骤中在Github上创建的那个特别的repo（jiji262.github.io）一个最大的特点就是其master中的html静态文件，可以通过链接http://jiji262.github.io来直接访问。 Hexo -g 会生成一个静态网站（第一次会生成一个public目录），这个静态文件可以直接访问。需要将hexo生成的静态网站，提交(git commit)到github上。明白了原理，怎么做自然就清晰了. 使用hexo deploy部署hexo deploy可以部署到很多平台，具体可以参考这个链接. 如果部署到github，需要在配置文件_config.xml中作如下修改： 1234deploy: type: git repo: git@github.com:jiji262/jiji262.github.io.git branch: master 然后在命令行中执行 1hexo d 即可完成部署。 踩坑提醒 注意需要提前安装一个扩展： 1$ npm install hexo-deployer-git --save Hexo 主题配置]]></content>
+      <tags>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Hello World]]></title>
+    <url>%2F2017%2F12%2F08%2Fhello-world%2F</url>
+    <content type="text"><![CDATA[Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick StartCreate a new post1$ hexo new "My New Post" More info: Writing Run server1$ hexo server More info: Server Generate static files1$ hexo generate More info: Generating Deploy to remote sites1$ hexo deploy More info: Deployment]]></content>
+  </entry>
+</search>
