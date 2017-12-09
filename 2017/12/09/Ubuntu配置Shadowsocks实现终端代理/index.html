@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Shadowsocks," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="背景场景一：   这几天想配置PHP Laravel框架，Laravel框架需要Composer安装。结果安装Composer的时候遭遇到了GFW，光在浏览器上穿墙还不够，还要在终端上穿墙。使用Shadowsocks在浏览器上穿墙很简单，但是在终端穿墙以前没接触过，这次花了5个小时搞定了。 利用linode翻墙安装相关配置时，哪速度，真是让人怀念。所以在局域网的一台机器上面开始动手了。 场景二：">
+<meta name="keywords" content="Shadowsocks">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ubuntu配置Shadowsocks实现终端代理">
+<meta property="og:url" content="http://code.meirenji.info/2017/12/09/Ubuntu配置Shadowsocks实现终端代理/index.html">
+<meta property="og:site_name" content="奶爸的天空">
+<meta property="og:description" content="背景场景一：   这几天想配置PHP Laravel框架，Laravel框架需要Composer安装。结果安装Composer的时候遭遇到了GFW，光在浏览器上穿墙还不够，还要在终端上穿墙。使用Shadowsocks在浏览器上穿墙很简单，但是在终端穿墙以前没接触过，这次花了5个小时搞定了。 利用linode翻墙安装相关配置时，哪速度，真是让人怀念。所以在局域网的一台机器上面开始动手了。 场景二：">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://aitanlu.com/wp-content/uploads/2016/04/sslocal.png">
+<meta property="og:image" content="https://aitanlu.com/wp-content/uploads/2016/04/sslocal-1.png">
+<meta property="og:image" content="http://img.it610.com/image/info5/289d3213401740d5930425a0add59df1.jpg">
+<meta property="og:image" content="http://img.it610.com/image/info5/7b307b5c688c4ff78157906e7002336d.jpg">
+<meta property="og:image" content="http://xuhehuan.com/wp-content/uploads/2015/06/firefox_pan_proxy.jpg">
+<meta property="og:updated_time" content="2017-12-09T10:07:52.558Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Ubuntu配置Shadowsocks实现终端代理">
+<meta name="twitter:description" content="背景场景一：   这几天想配置PHP Laravel框架，Laravel框架需要Composer安装。结果安装Composer的时候遭遇到了GFW，光在浏览器上穿墙还不够，还要在终端上穿墙。使用Shadowsocks在浏览器上穿墙很简单，但是在终端穿墙以前没接触过，这次花了5个小时搞定了。 利用linode翻墙安装相关配置时，哪速度，真是让人怀念。所以在局域网的一台机器上面开始动手了。 场景二：">
+<meta name="twitter:image" content="https://aitanlu.com/wp-content/uploads/2016/04/sslocal.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://code.meirenji.info/2017/12/09/Ubuntu配置Shadowsocks实现终端代理/"/>
+
+
+
+
+
+  <title>Ubuntu配置Shadowsocks实现终端代理 | 奶爸的天空</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">奶爸的天空</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://code.meirenji.info/2017/12/09/Ubuntu配置Shadowsocks实现终端代理/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ben wong">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="奶爸的天空">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Ubuntu配置Shadowsocks实现终端代理</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-09T18:04:26+09:00">
+                2017-12-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/科学上网/" itemprop="url" rel="index">
+                    <span itemprop="name">科学上网</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/12/09/Ubuntu配置Shadowsocks实现终端代理/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/12/09/Ubuntu配置Shadowsocks实现终端代理/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>场景一：  </p>
+<p>这几天想配置PHP Laravel框架，Laravel框架需要Composer安装。结果安装Composer的时候遭遇到了GFW，光在浏览器上穿墙还不够，还要在终端上穿墙。<br>使用Shadowsocks在浏览器上穿墙很简单，但是在终端穿墙以前没接触过，这次花了5个小时搞定了。</p>
+<p>利用linode翻墙安装相关配置时，哪速度，真是让人怀念。所以在局域网的一台机器上面开始动手了。</p>
+<p>场景二：  </p>
+<p>做开发的同学，应该都会经常接触终端，有些时候我们在终端会做一些网络操作，比如下载gradle包等，由于一些你懂我也懂的原因，某些网络操作不是那么理想，这时候我们就需要设置代理来自由地访问网络。</p>
+<p>Shadowsocks是我们常用的代理工具，它使用socks5协议，而终端很多工具目前只支持http和https等协议，对socks5协议支持不够好，所以我们为终端设置shadowsocks的思路就是将socks协议转换成http协议，然后为终端设置即可。仔细想想也算是适配器模式的一种现实应用吧。</p>
+<p>想要进行转换，需要借助工具，这里我们采用比较知名的polipo来实现。</p>
+<blockquote>
+<p>polipo是一个轻量级的缓存web代理程序。</p>
+</blockquote>
+<p>前题是，已经在服务器端安装好了相关应用。</p>
+<blockquote>
+<p>Shadowsocks 是一个开源安全的 Socks5 代理，中文名称“影梭“，类似于 SSH 代理。与一度非常流行的基于 GAE 的科学上网方式相比，Shadowsocks 部署简单，使用灵活；同时与全局代理的 VPN 不同，Shadowsocks 可以仅针对浏览器代理，轻巧方便，如果说 VPN 是一把 ==屠龙宝刀==，那么 Shadowsocks 就是一把 ==瑞士军刀==，虽小巧但功能强大。</p>
+</blockquote>
+<h2 id="1-ubuntu安装shadowsocks"><a href="#1-ubuntu安装shadowsocks" class="headerlink" title="1.ubuntu安装shadowsocks"></a>1.ubuntu安装shadowsocks</h2><p>运行环境安装<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install python-pip</span><br><span class="line">sudo apt-get install python-setuptools m2crypto</span><br></pre></td></tr></table></figure></p>
+<p>接着安装shadowsocks</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install shadowsocks</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>如果是ubuntu16.04 直接 (16.04 里可以直接用apt 而不用 apt-get 这是一项改进）</p>
+</blockquote>
+<hr>
+<a id="more"></a>
+<h2 id="2-启动shadowsocks"><a href="#2-启动shadowsocks" class="headerlink" title="2.启动shadowsocks"></a>2.启动shadowsocks</h2><p>安装好后，在本地我们要用到sslocal ，终端输入sslocal –help 可以查看帮助，像这样</p>
+<p><img src="https://aitanlu.com/wp-content/uploads/2016/04/sslocal.png" alt="image"></p>
+<p>通过帮助提示我们知道各个参数怎么配置，比如 sslocal -c 后面加上我们的json配置文件，或者像下面这样直接命令参数写上运行。</p>
+<p>比如 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sslocal -s 11.22.33.44 -p 50003 -k &quot;123456&quot; -l 1080 -t 600 -m aes-256-cfb</span><br></pre></td></tr></table></figure>
+<p>-s表示服务IP, -p指的是服务端的端口，-l是本地端口默认是1080, -k 是密码（要加””）, -t超时默认300,-m是加密方法默认aes-256-cfb，</p>
+<p>为了方便我推荐直接用sslcoal -c 配置文件路径 这样的方式，简单好用。</p>
+<p>我们可以在/home/mudao/ 下新建个文件shadowsocks.json  (mudao是我在我电脑上的用户名，这里路径你自己看你的)。内容是这样：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">&quot;server&quot;:&quot;11.22.33.44&quot;,</span><br><span class="line">&quot;server_port&quot;:50003,</span><br><span class="line">&quot;local_port&quot;:1080,</span><br><span class="line">&quot;password&quot;:&quot;123456&quot;,</span><br><span class="line">&quot;timeout&quot;:600,</span><br><span class="line">&quot;method&quot;:&quot;aes-256-cfb&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>确定上面的配置文件没有问题，然后我们就可以在终端输入</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sslocal -c /etc/shadowsocks.json</span><br></pre></td></tr></table></figure>
+<p>回车运行。如果没有问题的话，下面会是这样…</p>
+<p><img src="https://aitanlu.com/wp-content/uploads/2016/04/sslocal-1.png" alt="image"></p>
+<hr>
+<h2 id="3-开机后台自动运行ss"><a href="#3-开机后台自动运行ss" class="headerlink" title="3.开机后台自动运行ss"></a>3.开机后台自动运行ss</h2><p>如果你上面可以代理上网了可以进行这一步，之前我让你不要关掉终端，因为关掉终端的时候代理就随着关闭了，之后你每次开机或者关掉终端之后，下次你再想用代理就要重新在终端输入这样的命令 sslocal  -c /home/mudao/shadowsocks.json ，挺麻烦是不？</p>
+<p>我们现在可以在你的ubuntu上安装一个叫做supervisor的程序来管理你的sslocal启动。关于supervisor在前面介绍安装mod-ss-panel时，有介绍！</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install supervisor</span><br></pre></td></tr></table></figure>
+<p>安装好后我们可以在/etc/supervisor/目录下找到supervisor.conf配置文件，我们可以用以下命令来编辑</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo gedit /etc/supervisor/supervisor.conf</span><br></pre></td></tr></table></figure>
+<p>在这个文件的最后加上以下内容</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[program:shadowsocks]</span><br><span class="line">command=sslocal -c /home/mudao/shadowsocks.json</span><br><span class="line">autostart=true</span><br><span class="line">autorestart=true</span><br><span class="line">user=root</span><br><span class="line">log_stderr=true</span><br><span class="line">logfile=/var/log/shadowsocks.log</span><br></pre></td></tr></table></figure>
+<p>现在关掉你之前运行sslocal命令的终端，再打开终端输入</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo service supervisor restart</span><br></pre></td></tr></table></figure>
+<p>然后去打开浏览器看看可不可以继续代理上网。你也可以用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps -ef|grep sslocal</span><br></pre></td></tr></table></figure>
+<p>命令查看sslocal是否在运行。</p>
+<p>这个时候我们需要在/etc下编辑一个叫rc.local的文件 ，让supervisor开机启动。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo gedit /etc/rc.local</span><br></pre></td></tr></table></figure>
+<p>在这个配置文件的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">exit 0</span><br></pre></td></tr></table></figure>
+<p>前面一行加上 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service supervisor start</span><br></pre></td></tr></table></figure>
+<p>保存。</p>
+<p>看你是否配置成功你可以在现在关机重启之后直接打开浏览器看是否代理成功。</p>
+<h2 id="以上原文引自这里"><a href="#以上原文引自这里" class="headerlink" title="以上原文引自这里"></a><a href="https://aitanlu.com/ubuntu-shadowsocks-ke-hu-duan-pei-zhi.html" target="_blank" rel="noopener">以上原文引自这里</a></h2><h2 id="4-终端穿墙"><a href="#4-终端穿墙" class="headerlink" title="4. 终端穿墙"></a>4. 终端穿墙</h2><p>浏览器能穿墙就已经能满足绝大多数需求了，但是有的时候终端也必须穿墙，就比如Composer。关于终端穿墙，本人尝试了很多种方案，比如Privoxy、Proxychains和Polipo，最后选择了Privoxy。</p>
+<p>为什么终端需要单独穿墙呢？难道Shadowsock不能“全局”代理么？这个问题当时困惑了我很久，最后一句话点醒了我。</p>
+<blockquote>
+<p>Shadowsocks是一个使用SOCKS5（或者SOCK4之类）协议的代理，它只接受SOCKS5协议的流量，不接受HTTP或者HTTPS的流量。所以当你在Chrome上能穿墙的时候，是Proxy SwitchyOmega插件把HTTP和HTTPS流量转换成了SOCKS协议的流量，才实现了Shadowsocks的代理。而终端是没有这样的协议转换的，所以没法直接使用Shadowsock进行代理。</p>
+</blockquote>
+<p>这时候就需要一个协议转换器，这里我用了Privoxy(我用privoxy没有成功！但是用polipo成功了)。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">~$ sudo apt-get install privoxy</span><br></pre></td></tr></table></figure>
+<p>安装好后进行配置，Privoxy的配置文件在/etc/privoxy/config，这个配置文件中注释很多。</p>
+<p>找到</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">listen-address</span><br></pre></td></tr></table></figure>
+<p>这一节，确认监听的端口号(这个端口号要跟1080区分开来，之前没有成功。估计就是因为把这个端口号改了)。</p>
+<p><img src="http://img.it610.com/image/info5/289d3213401740d5930425a0add59df1.jpg" alt="image"></p>
+<p>找到5.2. forward-socks4, forward-socks4a, forward-socks5 and forward-socks5t这一节，加上如下配置，注意最后的点号。</p>
+<p><img src="http://img.it610.com/image/info5/7b307b5c688c4ff78157906e7002336d.jpg" alt="image"></p>
+<p>有关Privoxy的配置就结束了，重启一下Privoxy。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">~$ sudo /etc/init.d/privoxy restart</span><br></pre></td></tr></table></figure>
+<p>接着配置一下终端的环境，需要如下两句。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">~$ export http_proxy=&quot;127.0.0.1:8118&quot;</span><br><span class="line">~$ export https_proxy=&quot;127.0.0.1:8118&quot;</span><br></pre></td></tr></table></figure>
+<p>为了方便还是在/etc/rc.local中添加如下命令，注意在exit 0之前。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo /etc/init.d/privoxy start</span><br></pre></td></tr></table></figure>
+<p>在/etc/profile的末尾添加如下两句。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export http_proxy=&quot;127.0.0.1:8118&quot;</span><br><span class="line">export https_proxy=&quot;127.0.0.1:8118&quot;</span><br></pre></td></tr></table></figure>
+<p><a href="http://www.linuxdiyf.com/linux/17144.html" target="_blank" rel="noopener">安装privoxy的参考原文在这里</a></p>
+<hr>
+<h2 id="5-Shadowsocks-转换-HTTP-代理-使用Polipo"><a href="#5-Shadowsocks-转换-HTTP-代理-使用Polipo" class="headerlink" title="5.Shadowsocks 转换 HTTP 代理(使用Polipo)"></a>5.Shadowsocks 转换 HTTP 代理(使用Polipo)</h2><p>Shadowsocks 默认是用 Socks5 协议的，对于 ==Terminal== 的 get,wget 等走 Http 协议的地方是无能为力的，所以需要转换成 Http 代理，加强通用性，这里使用的转换方法是基于 Polipo 的。</p>
+<p>输入命令安装 Polipo：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install polipo</span><br></pre></td></tr></table></figure>
+<p>修改配置文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo gedit /etc/polipo/config</span><br></pre></td></tr></table></figure>
+<p>将下面的内容整个替换到文件中并保存：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"># This file only needs to list configuration variables that deviate</span><br><span class="line"># from the default values.  See /usr/share/doc/polipo/examples/config.sample</span><br><span class="line"># and &quot;polipo -v&quot; for variables you can tweak and further information.</span><br><span class="line">logSyslog = false</span><br><span class="line">logFile = &quot;/var/log/polipo/polipo.log&quot;</span><br><span class="line"> </span><br><span class="line">socksParentProxy = &quot;127.0.0.1:1080&quot;</span><br><span class="line">socksProxyType = socks5</span><br><span class="line"> </span><br><span class="line">chunkHighMark = 50331648</span><br><span class="line">objectHighMark = 16384</span><br><span class="line"> </span><br><span class="line">serverMaxSlots = 64</span><br><span class="line">serverSlots = 16</span><br><span class="line">serverSlots1 = 32</span><br><span class="line"> </span><br><span class="line">proxyAddress = &quot;0.0.0.0&quot;</span><br><span class="line">proxyPort = 8123</span><br></pre></td></tr></table></figure>
+<p>重启 Polipo：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/etc/init.d/polipo restart</span><br></pre></td></tr></table></figure>
+<p><strong>验证代理是否正常工作：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export http_proxy=&quot;http://127.0.0.1:8123/&quot;</span><br><span class="line">curl www.google.com</span><br></pre></td></tr></table></figure>
+<p>如果正常，就会返回抓取到的 Google 网页内容。</p>
+<p>第二种验证代理是否正常工作的方法：</p>
+<p>安装完成就需要进行验证是否work。这里展示一个最简单的验证方法，打开终端，如下执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">07:56:24-androidyue/var/log$ curl ip.gs</span><br><span class="line">当前 IP：125.39.112.15 来自：中国天津天津 联通</span><br><span class="line">08:09:23-androidyue/var/log$ http_proxy=http://localhost:8123 curl ip.gs</span><br><span class="line">当前 IP：210.140.193.128 来自：日本日本</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>如上所示，为某个命令设置代理，前面加上http_proxy=<a href="http://localhost:8123" target="_blank" rel="noopener">http://localhost:8123</a> 后接命令即可。<br>注：8123是polipo的默认端口，如有需要，可以修改成其他有效端口。</p>
+</blockquote>
+<h4 id="当前会话全局设置"><a href="#当前会话全局设置" class="headerlink" title="当前会话全局设置"></a>当前会话全局设置</h4><p>如果嫌每次为每一个命令设置代理比较麻烦，可以为当前会话设置全局的代理。</p>
+<p>即使用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export http_proxy=http://localhost:8123</span><br></pre></td></tr></table></figure>
+<p>即可。 </p>
+<p><strong>如果想撤销当前会话的http_proxy代理，使用</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">unset http_proxy</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">21:29:49-androidyue~$ curl ip.gs</span><br><span class="line">当前 IP：125.39.112.14 来自：中国天津天津 联通</span><br><span class="line">21:29:52-androidyue~$ export http_proxy=http://localhost:8123</span><br><span class="line">21:30:07-androidyue~$ curl ip.gs</span><br><span class="line">当前 IP：210.140.193.128 来自：日本日本 </span><br><span class="line">21:30:12-androidyue~$ unset http_proxy</span><br><span class="line">21:30:37-androidyue~$ curl ip.gs</span><br><span class="line">当前 IP：125.39.112.14 来自：中国天津天津 联通</span><br></pre></td></tr></table></figure>
+<p><strong>如果想要更长久的设置代理，可以将</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export http_proxy=http://localhost:8123</span><br><span class="line">export https_proxy=http://localhost:8123</span><br></pre></td></tr></table></figure>
+<p>加入.bashrc或者.bash_profile文件</p>
+<p>另外，在浏览器中输入</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://127.0.0.1:8123/</span><br></pre></td></tr></table></figure>
+<p>便可以进入到 Polipo 的使用说明和配置界面。</p>
+<p>设置浏览器和开机启动</p>
+<p>最后就是将转换后的 Http 代理设置到浏览器中，地址是 127.0.0.1，端口 8123，代理类型当然是选择 Http 啦。对于 FireFor 用户来说，插件可以选择 AutoProxy 或 FoxyProxy</p>
+<p><img src="http://xuhehuan.com/wp-content/uploads/2015/06/firefox_pan_proxy.jpg" alt="image"></p>
+<p><a href="http://xuhehuan.com/2119.html" target="_blank" rel="noopener">配置polipo在原文在这里</a></p>
+<hr>
+<p>引申：</p>
+<h2 id="6-设置Git代理（接上面的polipo）"><a href="#6-设置Git代理（接上面的polipo）" class="headerlink" title="6.设置Git代理（接上面的polipo）"></a>6.设置Git代理（接上面的polipo）</h2><p>复杂一些的设置Git代理</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">git clone https://android.googlesource.com/tools/repo --config http.proxy=localhost:8123</span><br><span class="line"></span><br><span class="line">Cloning into &apos;repo&apos;...</span><br><span class="line">remote: Counting objects: 135, done</span><br><span class="line">remote: Finding sources: 100% (135/135)</span><br><span class="line">remote: Total 3483 (delta 1956), reused 3483 (delta 1956)</span><br><span class="line">Receiving objects: 100% (3483/3483), 2.63 MiB | 492 KiB/s, done.</span><br><span class="line">Resolving deltas: 100% (1956/1956), done.</span><br></pre></td></tr></table></figure>
+<p>其实这样还是比较复杂，因为需要记忆的东西比较多，</p>
+<p>下面是一个更简单的实现</p>
+<p>首先，在.bashrc或者.bash_profile文件加入这一句。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gp=&quot; --config http.proxy=localhost:8123&quot;</span><br></pre></td></tr></table></figure>
+<p>然后  </p>
+<p>执行source操作，更新当前bash配置。</p>
+<p>更简单的使用git的方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">git clone  https://android.googlesource.com/tools/repo $gp</span><br><span class="line"></span><br><span class="line">Cloning into &apos;repo&apos;...</span><br><span class="line">remote: Counting objects: 135, done</span><br><span class="line">remote: Finding sources: 100% (135/135)</span><br><span class="line">remote: Total 3483 (delta 1956), reused 3483 (delta 1956)</span><br><span class="line">Receiving objects: 100% (3483/3483), 2.63 MiB | 483 KiB/s, done.</span><br><span class="line">Resolving deltas: 100% (1956/1956), done.</span><br></pre></td></tr></table></figure>
+<p>[在git终端mac终端加入代理原文引自这里]<a href="http://droidyue.com/blog/2016/04/04/set-shadowsocks-proxy-for-terminal/" target="_blank" rel="noopener">http://droidyue.com/blog/2016/04/04/set-shadowsocks-proxy-for-terminal/</a>)</p>
+<hr>
+<h2 id="7-apt-get怎么使用代理服务器"><a href="#7-apt-get怎么使用代理服务器" class="headerlink" title="7.apt-get怎么使用代理服务器"></a>7.apt-get怎么使用代理服务器</h2><p>升级到Ubuntu10.04后，发现apt-get的代理设置有改变了，在9.10以前使用“http_proxy”环境变量就可以令apt-get使用代理.</p>
+<p>然后在Ubuntu10.04下就无效了，看来apt-get已经被改成不使用这个环境变量了。</p>
+<p>一阵郁闷后，最后我发现在“首选项”-&gt;“网络代理”那里，多了个“System-wide”按钮（我用的是英文环境，不知道中文被翻译成怎样，关闭窗口时也会提示你），在这里设置后，apt-get确实可以使用代理了。</p>
+<p>但是我依然鄙视这种改进，因为我通常就是偶尔使用代理，更新几个被墙掉的仓库而已（如dropbox和tor），根本不想使用全局代理，本来用终端就能搞定的事，现在切换代理要点N次鼠标，真烦。</p>
+<p>所以我研究了一下，发现那个代理设置修改了两个文件，一个是“/etc/environment”，这个是系统的环境变量，里面定义了“http_proxy”等代理环境变量。另一个是“/etc/apt/apt.conf”，这个就是apt的配置，内容如下</p>
+<p>在/etc/apt/apt.conf中追加</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Acquire::http::proxy &quot;http://127.0.0.1:8123/&quot;;</span><br><span class="line">Acquire::ftp::proxy &quot;ftp://127.0.0.1:8123/&quot;;</span><br><span class="line">Acquire::https::proxy &quot;https://127.0.0.1:8123/&quot;;</span><br></pre></td></tr></table></figure>
+<p>很明显的代理设置代码，我看了下apt-get的手册，发现可以用“-c”选项来指定使用配置文件，也就是复制一份为“~/apt_proxy.conf”，然后“网络代理”那里重置回直接连接，以后使用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get -c ~/apt_proxy.conf update</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get -c ~/apt_proxy.conf install mongodb</span><br></pre></td></tr></table></figure>
+<p><a href="http://blog.sina.com.cn/s/blog_414c2a9a01016uvl.html" target="_blank" rel="noopener">apt-get 使用代理在的原文在这里</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Shadowsocks/" rel="tag"># Shadowsocks</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/08/使用Hexo-Github-Pages搭建个人独立博客/" rel="next" title="使用Hexo + Github Pages搭建个人独立博客">
+                <i class="fa fa-chevron-left"></i> 使用Hexo + Github Pages搭建个人独立博客
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="ben wong" />
+            
+              <p class="site-author-name" itemprop="name">ben wong</p>
+              <p class="site-description motion-element" itemprop="description">要么忙着活，要么忙着死</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://imgur.com" title="图床" target="_blank">图床</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text"><a href="#&#x80CC;&#x666F;" class="headerlink" title="&#x80CC;&#x666F;"></a>&#x80CC;&#x666F;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-ubuntu安装shadowsocks"><span class="nav-number">2.</span> <span class="nav-text"><a href="#1-ubuntu&#x5B89;&#x88C5;shadowsocks" class="headerlink" title="1.ubuntu&#x5B89;&#x88C5;shadowsocks"></a>1.ubuntu&#x5B89;&#x88C5;shadowsocks</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-启动shadowsocks"><span class="nav-number">3.</span> <span class="nav-text"><a href="#2-&#x542F;&#x52A8;shadowsocks" class="headerlink" title="2.&#x542F;&#x52A8;shadowsocks"></a>2.&#x542F;&#x52A8;shadowsocks</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-开机后台自动运行ss"><span class="nav-number">4.</span> <span class="nav-text"><a href="#3-&#x5F00;&#x673A;&#x540E;&#x53F0;&#x81EA;&#x52A8;&#x8FD0;&#x884C;ss" class="headerlink" title="3.&#x5F00;&#x673A;&#x540E;&#x53F0;&#x81EA;&#x52A8;&#x8FD0;&#x884C;ss"></a>3.&#x5F00;&#x673A;&#x540E;&#x53F0;&#x81EA;&#x52A8;&#x8FD0;&#x884C;ss</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#以上原文引自这里"><span class="nav-number">5.</span> <span class="nav-text"><a href="#&#x4EE5;&#x4E0A;&#x539F;&#x6587;&#x5F15;&#x81EA;&#x8FD9;&#x91CC;" class="headerlink" title="&#x4EE5;&#x4E0A;&#x539F;&#x6587;&#x5F15;&#x81EA;&#x8FD9;&#x91CC;"></a><a href="https://aitanlu.com/ubuntu-shadowsocks-ke-hu-duan-pei-zhi.html" target="_blank" rel="noopener">&#x4EE5;&#x4E0A;&#x539F;&#x6587;&#x5F15;&#x81EA;&#x8FD9;&#x91CC;</a></span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-终端穿墙"><span class="nav-number">6.</span> <span class="nav-text"><a href="#4-&#x7EC8;&#x7AEF;&#x7A7F;&#x5899;" class="headerlink" title="4. &#x7EC8;&#x7AEF;&#x7A7F;&#x5899;"></a>4. &#x7EC8;&#x7AEF;&#x7A7F;&#x5899;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-Shadowsocks-转换-HTTP-代理-使用Polipo"><span class="nav-number">7.</span> <span class="nav-text"><a href="#5-Shadowsocks-&#x8F6C;&#x6362;-HTTP-&#x4EE3;&#x7406;-&#x4F7F;&#x7528;Polipo" class="headerlink" title="5.Shadowsocks &#x8F6C;&#x6362; HTTP &#x4EE3;&#x7406;(&#x4F7F;&#x7528;Polipo)"></a>5.Shadowsocks &#x8F6C;&#x6362; HTTP &#x4EE3;&#x7406;(&#x4F7F;&#x7528;Polipo)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#当前会话全局设置"><span class="nav-number">7.0.1.</span> <span class="nav-text"><a href="#&#x5F53;&#x524D;&#x4F1A;&#x8BDD;&#x5168;&#x5C40;&#x8BBE;&#x7F6E;" class="headerlink" title="&#x5F53;&#x524D;&#x4F1A;&#x8BDD;&#x5168;&#x5C40;&#x8BBE;&#x7F6E;"></a>&#x5F53;&#x524D;&#x4F1A;&#x8BDD;&#x5168;&#x5C40;&#x8BBE;&#x7F6E;</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-设置Git代理（接上面的polipo）"><span class="nav-number">8.</span> <span class="nav-text"><a href="#6-&#x8BBE;&#x7F6E;Git&#x4EE3;&#x7406;&#xFF08;&#x63A5;&#x4E0A;&#x9762;&#x7684;polipo&#xFF09;" class="headerlink" title="6.&#x8BBE;&#x7F6E;Git&#x4EE3;&#x7406;&#xFF08;&#x63A5;&#x4E0A;&#x9762;&#x7684;polipo&#xFF09;"></a>6.&#x8BBE;&#x7F6E;Git&#x4EE3;&#x7406;&#xFF08;&#x63A5;&#x4E0A;&#x9762;&#x7684;polipo&#xFF09;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-apt-get怎么使用代理服务器"><span class="nav-number">9.</span> <span class="nav-text"><a href="#7-apt-get&#x600E;&#x4E48;&#x4F7F;&#x7528;&#x4EE3;&#x7406;&#x670D;&#x52A1;&#x5668;" class="headerlink" title="7.apt-get&#x600E;&#x4E48;&#x4F7F;&#x7528;&#x4EE3;&#x7406;&#x670D;&#x52A1;&#x5668;"></a>7.apt-get&#x600E;&#x4E48;&#x4F7F;&#x7528;&#x4EE3;&#x7406;&#x670D;&#x52A1;&#x5668;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ben wong</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://louis90.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://code.meirenji.info/2017/12/09/Ubuntu配置Shadowsocks实现终端代理/';
+          this.page.identifier = '2017/12/09/Ubuntu配置Shadowsocks实现终端代理/';
+          this.page.title = 'Ubuntu配置Shadowsocks实现终端代理';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://louis90.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
