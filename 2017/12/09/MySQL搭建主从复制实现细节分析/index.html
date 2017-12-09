@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="mysql," />
 
 
 
@@ -79,16 +79,22 @@
 
 
 
-<meta name="description" content="要么忙着活，要么忙着死">
-<meta property="og:type" content="website">
-<meta property="og:title" content="奶爸的天空">
-<meta property="og:url" content="http://code.meirenji.info/index.html">
+<meta name="description" content="概念 主从复制可以使MySQL数据库主服务器的主数据库，复制到一个或多个MySQL从服务器从数据库，默认情况下，复制异步; 根据配置，可以复制数据库中的所有数据库，选定的数据库或甚至选定的表。    MySQL中主从复制的优点横向扩展解决方案在多个从库之间扩展负载以提高性能。在这种环境中，所有写入和更新在主库上进行。但是，读取可能发生在一个或多个从库上。该模型可以提高写入的性能（由于主库专用于更新">
+<meta name="keywords" content="mysql">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL搭建主从复制实现细节分析">
+<meta property="og:url" content="http://code.meirenji.info/2017/12/09/MySQL搭建主从复制实现细节分析/index.html">
 <meta property="og:site_name" content="奶爸的天空">
-<meta property="og:description" content="要么忙着活，要么忙着死">
+<meta property="og:description" content="概念 主从复制可以使MySQL数据库主服务器的主数据库，复制到一个或多个MySQL从服务器从数据库，默认情况下，复制异步; 根据配置，可以复制数据库中的所有数据库，选定的数据库或甚至选定的表。    MySQL中主从复制的优点横向扩展解决方案在多个从库之间扩展负载以提高性能。在这种环境中，所有写入和更新在主库上进行。但是，读取可能发生在一个或多个从库上。该模型可以提高写入的性能（由于主库专用于更新">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://i.imgur.com/Vxcgv6S.jpg">
+<meta property="og:image" content="https://i.imgur.com/cuDZr0Y.jpg">
+<meta property="og:image" content="https://i.imgur.com/AGVg7ga.jpg">
+<meta property="og:updated_time" content="2017-12-09T11:20:31.116Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="奶爸的天空">
-<meta name="twitter:description" content="要么忙着活，要么忙着死">
+<meta name="twitter:title" content="MySQL搭建主从复制实现细节分析">
+<meta name="twitter:description" content="概念 主从复制可以使MySQL数据库主服务器的主数据库，复制到一个或多个MySQL从服务器从数据库，默认情况下，复制异步; 根据配置，可以复制数据库中的所有数据库，选定的数据库或甚至选定的表。    MySQL中主从复制的优点横向扩展解决方案在多个从库之间扩展负载以提高性能。在这种环境中，所有写入和更新在主库上进行。但是，读取可能发生在一个或多个从库上。该模型可以提高写入的性能（由于主库专用于更新">
+<meta name="twitter:image" content="https://i.imgur.com/Vxcgv6S.jpg">
 
 
 
@@ -118,13 +124,13 @@
 
 
 
-  <link rel="canonical" href="http://code.meirenji.info/"/>
+  <link rel="canonical" href="http://code.meirenji.info/2017/12/09/MySQL搭建主从复制实现细节分析/"/>
 
 
 
 
 
-  <title>奶爸的天空</title>
+  <title>MySQL搭建主从复制实现细节分析 | 奶爸的天空</title>
   
 
 
@@ -143,8 +149,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-  page-home">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -271,9 +276,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -303,9 +308,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/12/09/MySQL搭建主从复制实现细节分析/" itemprop="url">MySQL搭建主从复制实现细节分析</a></h1>
+          <h1 class="post-title" itemprop="name headline">MySQL搭建主从复制实现细节分析</h1>
         
 
         <div class="post-meta">
@@ -388,8 +391,7 @@
       
 
       
-        
-          <h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><ul>
+        <h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><ul>
 <li>主从复制可以使MySQL数据库主服务器的主数据库，复制到一个或多个MySQL从服务器从数据库，默认情况下，复制异步;</li>
 <li>根据配置，可以复制数据库中的所有数据库，选定的数据库或甚至选定的表。</li>
 </ul>
@@ -399,192 +401,85 @@
 <h5 id="数据安全性"><a href="#数据安全性" class="headerlink" title="数据安全性"></a>数据安全性</h5><p>由于主库数据被复制到从库，从库可以暂停复制过程，可以在从库上运行备份服务，而不会破坏对应的主库数据。</p>
 <h5 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h5><p>可以在主库上创建实时数据，而信息分析可以在从库上进行，而不会影响主服务器的性能。</p>
 <h5 id="长距离数据分发"><a href="#长距离数据分发" class="headerlink" title="长距离数据分发"></a>长距离数据分发</h5><p>可以使用复制创建远程站点使用的数据的本地副本，而无需永久访问主库。</p>
-<h2 id=""><a href="#" class="headerlink" title=""></a>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/12/09/MySQL搭建主从复制实现细节分析/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://code.meirenji.info/2017/12/09/Ubuntu配置Shadowsocks实现终端代理/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="ben wong">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="奶爸的天空">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/12/09/Ubuntu配置Shadowsocks实现终端代理/" itemprop="url">Ubuntu配置Shadowsocks实现终端代理</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-09T18:04:26+09:00">
-                2017-12-09
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/科学上网/" itemprop="url" rel="index">
-                    <span itemprop="name">科学上网</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2017/12/09/Ubuntu配置Shadowsocks实现终端代理/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="2017/12/09/Ubuntu配置Shadowsocks实现终端代理/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>场景一：  </p>
-<p>这几天想配置PHP Laravel框架，Laravel框架需要Composer安装。结果安装Composer的时候遭遇到了GFW，光在浏览器上穿墙还不够，还要在终端上穿墙。<br>使用Shadowsocks在浏览器上穿墙很简单，但是在终端穿墙以前没接触过，这次花了5个小时搞定了。</p>
-<p>利用linode翻墙安装相关配置时，哪速度，真是让人怀念。所以在局域网的一台机器上面开始动手了。</p>
-<p>场景二：  </p>
-<p>做开发的同学，应该都会经常接触终端，有些时候我们在终端会做一些网络操作，比如下载gradle包等，由于一些你懂我也懂的原因，某些网络操作不是那么理想，这时候我们就需要设置代理来自由地访问网络。</p>
-<p>Shadowsocks是我们常用的代理工具，它使用socks5协议，而终端很多工具目前只支持http和https等协议，对socks5协议支持不够好，所以我们为终端设置shadowsocks的思路就是将socks协议转换成http协议，然后为终端设置即可。仔细想想也算是适配器模式的一种现实应用吧。</p>
-<p>想要进行转换，需要借助工具，这里我们采用比较知名的polipo来实现。</p>
-<blockquote>
-<p>polipo是一个轻量级的缓存web代理程序。</p>
-</blockquote>
-<p>前题是，已经在服务器端安装好了相关应用。</p>
-<blockquote>
-<p>Shadowsocks 是一个开源安全的 Socks5 代理，中文名称“影梭“，类似于 SSH 代理。与一度非常流行的基于 GAE 的科学上网方式相比，Shadowsocks 部署简单，使用灵活；同时与全局代理的 VPN 不同，Shadowsocks 可以仅针对浏览器代理，轻巧方便，如果说 VPN 是一把 ==屠龙宝刀==，那么 Shadowsocks 就是一把 ==瑞士军刀==，虽小巧但功能强大。</p>
-</blockquote>
-<h2 id="1-ubuntu安装shadowsocks"><a href="#1-ubuntu安装shadowsocks" class="headerlink" title="1.ubuntu安装shadowsocks"></a>1.ubuntu安装shadowsocks</h2><p>运行环境安装<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install python-pip</span><br><span class="line">sudo apt-get install python-setuptools m2crypto</span><br></pre></td></tr></table></figure></p>
-<p>接着安装shadowsocks</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install shadowsocks</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>如果是ubuntu16.04 直接 (16.04 里可以直接用apt 而不用 apt-get 这是一项改进）</p>
-</blockquote>
+<h2 id=""><a href="#" class="headerlink" title=""></a><a id="more"></a></h2><h2 id="1-准备工作"><a href="#1-准备工作" class="headerlink" title="1.准备工作"></a>1.准备工作</h2><p>Mysql版本：MySQL 5.7.11<br>Master-Server : 192.168.252.123<br>Slave-Server : 192.168.252.124</p>
+<ul>
+<li>关闭防火墙</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl stop firewalld.service</span><br></pre></td></tr></table></figure>
+<ul>
+<li>安装 MySQL</li>
+</ul>
+<p>首先在两台机器上装上，保证正常启动，可以使用</p>
+<h2 id="Master-Server-配置"><a href="#Master-Server-配置" class="headerlink" title="Master-Server 配置"></a>Master-Server 配置</h2><p>修改 my.cnf</p>
+<p>配置 Master 以使用<strong>基于二进制日志文件位置</strong>的复制，必须启用二进制日志记录并建立唯一的服务器ID,否则则无法进行主从复制。</p>
+<p>停止MySQL服务。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service mysql.server stop</span><br></pre></td></tr></table></figure>
+<p>开启binlog ，每台设置不同的 server-id</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ cat /etc/my.cnf</span><br><span class="line">[mysqld]</span><br><span class="line">log-bin=mysql-bin</span><br><span class="line">server-id=1</span><br></pre></td></tr></table></figure>
+<p>启动MySQL服务</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service mysql.server start</span><br></pre></td></tr></table></figure>
+<p>登录MySQL</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/local/mysql/bin/mysql -uroot -p</span><br></pre></td></tr></table></figure>
 <hr>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/12/09/Ubuntu配置Shadowsocks实现终端代理/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
+<h2 id="创建用户"><a href="#创建用户" class="headerlink" title="创建用户"></a>创建用户</h2><p>每个从库使用MySQL用户名和密码连接到主库，因此主库上必须有用户帐户，从库可以连接。任何帐户都可以用于此操作，只要它已被授予 REPLICATION SLAVE权限。可以选择为每个从库创建不同的帐户，或者每个从库使用相同帐户连接到主库</p>
+<p>虽然不必专门为复制创建帐户，但应注意，复制用到的用户名和密码会以纯文本格式存储在主信息存储库文件或表中 。因此，需要创建一个单独的帐户，该帐户只具有复制过程的权限，以尽可能减少对其他帐户的危害。</p>
+<p>登录MySQL</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/local/mysql/bin/mysql -uroot -p</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; CREATE USER &apos;replication&apos;@&apos;192.168.252.124&apos; IDENTIFIED BY &apos;mima&apos;;</span><br><span class="line">mysql&gt; GRANT REPLICATION SLAVE ON *.* TO &apos;replication&apos;@&apos;192.168.252.124&apos;;</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="Slave-Server-配置"><a href="#Slave-Server-配置" class="headerlink" title="Slave-Server 配置"></a>Slave-Server 配置</h2><p>修改 my.cnf</p>
+<p>停止MySQL服务。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service mysql.server stop</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ cat /etc/my.cnf</span><br><span class="line">[mysqld]</span><br><span class="line">server-id=2</span><br></pre></td></tr></table></figure>
+<p>如果要设置多个从库，则每个从库的server-id与主库和其他从库设置不同的唯一值。</p>
+<p>启动MySQL服务</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service mysql.server start</span><br></pre></td></tr></table></figure>
+<p>登录MySQL</p>
+<p>配置主库通信</p>
+<p>查看 Master-Server ， binlog File 文件名称和 Position值位置 并且记下来</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt;  show master status;</span><br></pre></td></tr></table></figure>
+<p>要设置从库与主库进行通信，进行复制，使用必要的连接信息配置从库在从库上执行以下语句<br>将选项值替换为与系统相关的实际值</p>
+<p>参数格式，请勿执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; CHANGE MASTER TO</span><br><span class="line">    -&gt;     MASTER_HOST=&apos;master_host_name&apos;,</span><br><span class="line">    -&gt;     MASTER_USER=&apos;replication_user_name&apos;,</span><br><span class="line">    -&gt;     MASTER_PASSWORD=&apos;replication_password&apos;,</span><br><span class="line">    -&gt;     MASTER_LOG_FILE=&apos;recorded_log_file_name&apos;,</span><br><span class="line">    -&gt;     MASTER_LOG_POS=recorded_log_position;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; CHANGE MASTER TO</span><br><span class="line">    -&gt; MASTER_HOST=&apos;192.168.252.123&apos;,</span><br><span class="line">    -&gt; MASTER_USER=&apos;replication&apos;,</span><br><span class="line">    -&gt; MASTER_PASSWORD=&apos;mima&apos;,</span><br><span class="line">    -&gt; MASTER_LOG_FILE=&apos;mysql-bin.000001&apos;,</span><br><span class="line">    -&gt; MASTER_LOG_POS=629;</span><br><span class="line">Query OK, 0 rows affected, 2 warnings (0.02 sec)</span><br></pre></td></tr></table></figure>
+<p>MASTER_LOG_POS=0 写成0 也是可以的</p>
+<p>放在一行执行方便</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CHANGE MASTER TO MASTER_HOST=&apos;192.168.252.123&apos;, MASTER_USER=&apos;replication&apos;, MASTER_PASSWORD=&apos;mima&apos;, MASTER_LOG_FILE=&apos;mysql-bin.000001&apos;, MASTER_LOG_POS=629;</span><br></pre></td></tr></table></figure>
+<p>启动从服务器复制线程</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; START SLAVE;</span><br><span class="line">Query OK, 0 rows affected (0.00 sec)</span><br></pre></td></tr></table></figure>
+<p>查看复制状态</p>
+<p>检查主从复制通信状态</p>
+<p>Slave_IO_State #从站的当前状态<br>Slave_IO_Running： Yes #读取主程序二进制日志的I/O线程是否正在运行<br>Slave_SQL_Running： Yes #执行读取主服务器中二进制日志事件的SQL线程是否正在运行。与I/O线程一样<br>Seconds_Behind_Master #是否为0，0就是已经同步了</p>
+<p>必须都是 Yes</p>
+<p>在mysql5.0以后的版本，mysql主从已经相当的成熟了，可以只监控Slave_IO_Running，Slave_SQL_Running，Seconds_Behind_Master状态就可以了，这里不再做说明。</p>
+<p><img src="https://i.imgur.com/AGVg7ga.jpg" alt="image"></p>
+<hr>
+<h2 id="测试主从复制"><a href="#测试主从复制" class="headerlink" title="测试主从复制"></a>测试主从复制</h2><ul>
+<li>启动MySQL服务</li>
+<li>登录MySQL</li>
+</ul>
+<p>在 Master-Server 创建测试库</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; CREATE DATABASE `replication_wwww.ymq.io`;</span><br><span class="line">mysql&gt; use `replication_wwww.ymq.io`;</span><br><span class="line">mysql&gt; CREATE TABLE `sync_test` (`id` int(11) NOT NULL AUTO_INCREMENT, `name` varchar(255) NOT NULL, PRIMARY KEY (`id`) ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;</span><br></pre></td></tr></table></figure>
+<p>在 Slave-Server 查看是否同步过来</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show databases;</span><br><span class="line">mysql&gt; use replication_wwww.ymq.io</span><br><span class="line">mysql&gt; show tables;</span><br></pre></td></tr></table></figure>
+<hr>
+<p>一些坑</p>
+<p>Last_IO_Errno: 1045错误：</p>
+<p><a href="http://blog.csdn.net/mchdba/article/details/12994151" target="_blank" rel="noopener">解决方案</a></p>
+<p>Connecting and Last_IO_Errno: 2003 错误</p>
+<p><a href="http://blog.csdn.net/mchdba/article/details/8771325" target="_blank" rel="noopener">解决方案2</a></p>
+<p>Last_Errno: 1008<br><a href="http://blog.51cto.com/guoxh/1922691" target="_blank" rel="noopener">解决方案3</a></p>
+<p>MySQL错误处理–1146错误</p>
+<p><a href="http://blog.csdn.net/geekcoder/article/details/9717333" target="_blank" rel="noopener">解决方案</a></p>
+<p>Last_SQL_Errno：1062</p>
+<p><a href="http://blog.csdn.net/billfanggs/article/details/8910509" target="_blank" rel="noopener">解决方案</a></p>
+<hr>
+<p><a href="https://segmentfault.com/a/1190000010867488#articleHeader9" target="_blank" rel="noopener">参考文档1</a></p>
+<p><a href="http://www.cnblogs.com/tangr206/p/3252315.html" target="_blank" rel="noopener">mysql主主和主主集群</a></p>
+<p><a href="http://blog.51cto.com/chenhao6/1325247" target="_blank" rel="noopener">双主同步，如果服务器意外挂机</a></p>
+<p><a href="http://blog.jobbole.com/110934/" target="_blank" rel="noopener">MySQL基于日志（binlog）主从复制搭建</a></p>
+<p><a href="http://blog.csdn.net/mycwq/article/details/17136001" target="_blank" rel="noopener">MySQL数据库设置主从同步</a></p>
+
       
     </div>
     
@@ -599,311 +494,36 @@
 
     <footer class="post-footer">
       
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://code.meirenji.info/2017/12/08/使用Hexo-Github-Pages搭建个人独立博客/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="ben wong">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="奶爸的天空">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/12/08/使用Hexo-Github-Pages搭建个人独立博客/" itemprop="url">使用Hexo + Github Pages搭建个人独立博客</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-08T16:48:45+09:00">
-                2017-12-08
-              </time>
-            
-
-            
-
-            
-          </span>
-
+        <div class="post-tags">
           
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/前端开发/" itemprop="url" rel="index">
-                    <span itemprop="name">前端开发</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
+            <a href="/tags/mysql/" rel="tag"># mysql</a>
           
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2017/12/08/使用Hexo-Github-Pages搭建个人独立博客/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="2017/12/08/使用Hexo-Github-Pages搭建个人独立博客/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
         </div>
-      </header>
-    
+      
 
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
+      
       
       
 
       
-        
-          <h2 id="系统环境配置"><a href="#系统环境配置" class="headerlink" title="系统环境配置"></a>系统环境配置</h2><p>要使用Hexo，需要在你的系统中支持Nodejs以及Git</p>
-<h2 id="安装Hexo"><a href="#安装Hexo" class="headerlink" title="安装Hexo"></a>安装Hexo</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ cd d:/hexo</span><br><span class="line">$ npm install hexo-cli -g</span><br><span class="line">$ hexo init blog</span><br><span class="line">$ cd blog</span><br><span class="line">$ npm install</span><br><span class="line">$ hexo g # 或者hexo generate</span><br><span class="line">$ hexo s # 或者hexo server，可以在http://localhost:4000/ 查看</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/12/08/使用Hexo-Github-Pages搭建个人独立博客/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/09/Ubuntu配置Shadowsocks实现终端代理/" rel="next" title="Ubuntu配置Shadowsocks实现终端代理">
+                <i class="fa fa-chevron-left"></i> Ubuntu配置Shadowsocks实现终端代理
+              </a>
+            
           </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
 
-    
+          <span class="post-nav-divider"></span>
 
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://code.meirenji.info/2017/12/08/hello-world/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="ben wong">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="奶爸的天空">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/12/08/hello-world/" itemprop="url">Hello World</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
+          <div class="post-nav-prev post-nav-item">
             
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-08T01:57:25+09:00">
-                2017-12-08
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2017/12/08/hello-world/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="2017/12/08/hello-world/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
+          </div>
         </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
-        
-          
-            <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </div>
@@ -913,10 +533,11 @@
   </article>
 
 
-    
-  </section>
 
-  
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -924,6 +545,20 @@
 
 
           
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
 
         </div>
         
@@ -944,8 +579,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -1025,6 +669,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概念"><span class="nav-number">1.</span> <span class="nav-text"><a href="#&#x6982;&#x5FF5;" class="headerlink" title="&#x6982;&#x5FF5;"></a>&#x6982;&#x5FF5;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL中主从复制的优点"><span class="nav-number">2.</span> <span class="nav-text"><a href="#MySQL&#x4E2D;&#x4E3B;&#x4ECE;&#x590D;&#x5236;&#x7684;&#x4F18;&#x70B9;" class="headerlink" title="MySQL&#x4E2D;&#x4E3B;&#x4ECE;&#x590D;&#x5236;&#x7684;&#x4F18;&#x70B9;"></a>MySQL&#x4E2D;&#x4E3B;&#x4ECE;&#x590D;&#x5236;&#x7684;&#x4F18;&#x70B9;</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#横向扩展解决方案"><span class="nav-number">2.0.0.1.</span> <span class="nav-text"><a href="#&#x6A2A;&#x5411;&#x6269;&#x5C55;&#x89E3;&#x51B3;&#x65B9;&#x6848;" class="headerlink" title="&#x6A2A;&#x5411;&#x6269;&#x5C55;&#x89E3;&#x51B3;&#x65B9;&#x6848;"></a>&#x6A2A;&#x5411;&#x6269;&#x5C55;&#x89E3;&#x51B3;&#x65B9;&#x6848;</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#数据安全性"><span class="nav-number">2.0.0.2.</span> <span class="nav-text"><a href="#&#x6570;&#x636E;&#x5B89;&#x5168;&#x6027;" class="headerlink" title="&#x6570;&#x636E;&#x5B89;&#x5168;&#x6027;"></a>&#x6570;&#x636E;&#x5B89;&#x5168;&#x6027;</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#分析"><span class="nav-number">2.0.0.3.</span> <span class="nav-text"><a href="#&#x5206;&#x6790;" class="headerlink" title="&#x5206;&#x6790;"></a>&#x5206;&#x6790;</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#长距离数据分发"><span class="nav-number">2.0.0.4.</span> <span class="nav-text"><a href="#&#x957F;&#x8DDD;&#x79BB;&#x6570;&#x636E;&#x5206;&#x53D1;" class="headerlink" title="&#x957F;&#x8DDD;&#x79BB;&#x6570;&#x636E;&#x5206;&#x53D1;"></a>&#x957F;&#x8DDD;&#x79BB;&#x6570;&#x636E;&#x5206;&#x53D1;</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#"><span class="nav-number">3.</span> <span class="nav-text"><a href="#" class="headerlink" title=""></a><a id="more"></a></span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-准备工作"><span class="nav-number">4.</span> <span class="nav-text"><a href="#1-&#x51C6;&#x5907;&#x5DE5;&#x4F5C;" class="headerlink" title="1.&#x51C6;&#x5907;&#x5DE5;&#x4F5C;"></a>1.&#x51C6;&#x5907;&#x5DE5;&#x4F5C;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Master-Server-配置"><span class="nav-number">5.</span> <span class="nav-text"><a href="#Master-Server-&#x914D;&#x7F6E;" class="headerlink" title="Master-Server &#x914D;&#x7F6E;"></a>Master-Server &#x914D;&#x7F6E;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建用户"><span class="nav-number">6.</span> <span class="nav-text"><a href="#&#x521B;&#x5EFA;&#x7528;&#x6237;" class="headerlink" title="&#x521B;&#x5EFA;&#x7528;&#x6237;"></a>&#x521B;&#x5EFA;&#x7528;&#x6237;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Slave-Server-配置"><span class="nav-number">7.</span> <span class="nav-text"><a href="#Slave-Server-&#x914D;&#x7F6E;" class="headerlink" title="Slave-Server &#x914D;&#x7F6E;"></a>Slave-Server &#x914D;&#x7F6E;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#测试主从复制"><span class="nav-number">8.</span> <span class="nav-text"><a href="#&#x6D4B;&#x8BD5;&#x4E3B;&#x4ECE;&#x590D;&#x5236;" class="headerlink" title="&#x6D4B;&#x8BD5;&#x4E3B;&#x4ECE;&#x590D;&#x5236;"></a>&#x6D4B;&#x8BD5;&#x4E3B;&#x4ECE;&#x590D;&#x5236;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -1165,6 +825,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
 
   
 
@@ -1182,6 +846,18 @@
       <script id="dsq-count-scr" src="https://louis90.disqus.com/count.js" async></script>
     
 
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://code.meirenji.info/2017/12/09/MySQL搭建主从复制实现细节分析/';
+          this.page.identifier = '2017/12/09/MySQL搭建主从复制实现细节分析/';
+          this.page.title = 'MySQL搭建主从复制实现细节分析';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://louis90.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
     
 
   
