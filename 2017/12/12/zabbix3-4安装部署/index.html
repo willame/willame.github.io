@@ -89,7 +89,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://i.imgur.com/F48S3Xx.png">
 <meta property="og:image" content="https://i.imgur.com/jLyAAlt.jpg">
-<meta property="og:updated_time" content="2017-12-11T17:26:03.220Z">
+<meta property="og:updated_time" content="2017-12-11T17:27:55.808Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="zabbix3.4安装部署">
 <meta name="twitter:description" content="运行环境：  12345nginx-1.12.1mysql-5.5.56php-7.1.7Ubuntu 16.04Linux localhost 4.9.50-x86_64 前言Linux下常用的系统监控软件有Nagios、Cacti、Zabbix、Monit等，这些开源的软件，可以帮助我们更好的管理机器，在第一时间内发现，并警告系统维护人员。 使用Zabbix的目的，是为了能够更好的监控mysq">
@@ -425,7 +425,9 @@
 <li>zabbix WEB环境搭建  </li>
 </ol>
 <p>zabbix的安装需要LAMP或者LNMP环境。</p>
-<p>2.zabbix 数据库设置  </p>
+<ol>
+<li>zabbix 数据库设置  </li>
+</ol>
 <p>zabbix数据库可以和zabbix服务器分离，采用用专门的mysql服务器存储数据，此时要给zabbix数据库受相应的权限。</p>
 <p>对于Zabbix server 和 proxy 守护进程以及Zabbix前端，都需要连接到一个数据库。Zabbix agent不需要数据库的支持。</p>
 <p>SQL 脚本 用于创建数据库架构（schema）并插入数据集（dataset）。 Zabbix proxy数据库只需要数据库架构（schema），而Zabbix server数据库在建立数据库架构（schema）后，还需要数据集（dataset）。</p>
