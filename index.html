@@ -389,7 +389,8 @@
 
       
         
-          <p>运行环境： </p>
+          
+            <p>运行环境： </p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">nginx-1.12.1</span><br><span class="line">mysql-5.5.56</span><br><span class="line">php-7.1.7</span><br><span class="line">Ubuntu 16.04</span><br><span class="line">Linux localhost 4.9.50-x86_64</span><br></pre></td></tr></table></figure>
 <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>Linux下常用的系统监控软件有Nagios、Cacti、Zabbix、Monit等，这些开源的软件，可以帮助我们更好的管理机器，在第一时间内发现，并警告系统维护人员。</p>
 <p>使用Zabbix的目的，是为了能够更好的监控mysql数据库服务器，并且能够生成图形报表，虽然Nagios也能够生成图形报表，但没有Zabbix这么强大。</p>
@@ -400,13 +401,131 @@
 <li>zabbix agent需要安装在被监视的目标服务器上，它主要完成对硬件信息或与操作系统有关的内存，CPU等信息的收集。  </li>
 </ul>
 <p><img src="https://i.imgur.com/F48S3Xx.png" alt="image"></p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/12/12/zabbix3-4安装部署/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
+<h2 id="zabbix的主要特点："><a href="#zabbix的主要特点：" class="headerlink" title="zabbix的主要特点："></a>zabbix的主要特点：</h2><ul>
+<li>安装与配置简单，学习成本低 </li>
+<li>支持多语言（包括中文）</li>
+<li>免费开源</li>
+<li>自动发现服务器与网络设备</li>
+<li>分布式监视以及WEB集中管理功能</li>
+<li>可以无agent监视</li>
+<li>用户安全认证和柔软的授权方式</li>
+<li>通过WEB界面设置或查看监视结果</li>
+<li>email等通知功能</li>
+</ul>
+<h2 id="Zabbix主要功能"><a href="#Zabbix主要功能" class="headerlink" title="Zabbix主要功能"></a>Zabbix主要功能</h2><ul>
+<li>CPU负荷</li>
+<li>内存使用</li>
+<li>磁盘使用</li>
+<li>网络状况</li>
+<li>端口监视</li>
+<li>日志监视</li>
+</ul>
+<hr>
+<h2 id="Zabbix安装"><a href="#Zabbix安装" class="headerlink" title="Zabbix安装"></a>Zabbix安装</h2><ol>
+<li>zabbix WEB环境搭建  </li>
+</ol>
+<p>zabbix的安装需要LAMP或者LNMP环境。</p>
+<p>2.zabbix 数据库设置  </p>
+<p>zabbix数据库可以和zabbix服务器分离，采用用专门的mysql服务器存储数据，此时要给zabbix数据库受相应的权限。</p>
+<p>对于Zabbix server 和 proxy 守护进程以及Zabbix前端，都需要连接到一个数据库。Zabbix agent不需要数据库的支持。</p>
+<p>SQL 脚本 用于创建数据库架构（schema）并插入数据集（dataset）。 Zabbix proxy数据库只需要数据库架构（schema），而Zabbix server数据库在建立数据库架构（schema）后，还需要数据集（dataset）。</p>
+<p>建立Zabbix数据库后，可以开始对Zabbix进行编译。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grant all privileges on zabbix.* to zabbix_user@&apos;ip&apos; identified by &apos;123456&apos;;</span><br></pre></td></tr></table></figure>
+<p>== 注：ip为zabbix服务器的IP地址。==</p>
+<p>关于数据库的安装，可以查看Mysql安装，我习惯使用二进制包。</p>
+<p>启动数据库</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/local/mysql/bin/mysqld_safe  --user=mysql &amp;</span><br></pre></td></tr></table></figure>
+<p>登录数据库，创建帐号和设置权限：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; use mysql;</span><br><span class="line">mysql&gt;create database zabbix character set utf8;</span><br><span class="line">mysql&gt;grant all privileges on zabbix.* to zabbix_user@&apos;localhost&apos; identified by &apos;123456&apos;;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>安装zabbix服务</li>
+</ol>
+<p>增加zabbix用户和组</p>
+<p>对于所有Zabbix的守护进程，需要一个无特权的用户。如果Zabbix守护进程以一个无特权的用户账户启动，那么它会使用该用户运行。  </p>
+<p>然而，如果一个守护进程以‘root’用户启动，它会切换为‘zabbix’用户账户，且这个用户必须存在。在Linux系统中，可以使用下面命令建立一个用户（该用户属于自己的用户组，“zabbix”）：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#groupadd zabbix</span><br><span class="line">#useradd -g zabbix -m zabbix</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>使用root，bin或其他特殊权限的账户运行Zabbix是一个安全风险。</p>
+<p>对于Zabbix前端的安装，不需要使用单独的用户账户。</p>
+<p>如果Zabbix server 和 agent 运行在同一台计算机上，建议使用不同的账户运行Server和Agent。否则，如果两个进程使用了同一个用户，Agent就可以访问Server的配置文件，并可轻易地读取Zabbix中任何管理员级别的用户，比如数据库密码。</p>
+</blockquote>
+<p>官网下载解压软件包。</p>
+<blockquote>
+<p>在 Ubuntu 14.04 LTS 上安装 Zabbix 3.4：</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget http://repo.zabbix.com/zabbix/3.4/ubuntu/pool/main/z/zabbix/zabbix_3.4.4.orig.tar.gz</span><br></pre></td></tr></table></figure>
+<p>导入数据库表</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">create user &apos;zabbix&apos;@&apos;localhost&apos; identified by &apos;PASSWORD&apos;;</span><br><span class="line">create database zabbix;</span><br><span class="line">grant all privileges on `zabbix`.* to &apos;zabbix&apos;@&apos;localhost&apos;;</span><br><span class="line">flush privileges;</span><br><span class="line">exit;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">#cd  zabbix-3.4/database/mysql</span><br><span class="line"></span><br><span class="line">mysql -u root -p </span><br><span class="line"></span><br><span class="line">mysql&gt; use zabbix;     #进入数据库，按照顺序进行导入，否则会出错。</span><br><span class="line">Database changed</span><br><span class="line">mysql&gt; source ~/zabbix-3.4.4/database/mysql/schema.sql</span><br><span class="line">...</span><br><span class="line">Query OK, 0 rows affected (0.05 sec)</span><br><span class="line">Records: 0  Duplicates: 0  Warnings: 0</span><br><span class="line"> </span><br><span class="line">mysql&gt; source ~/zabbix-3.4.4/database/mysql/images.sql</span><br><span class="line">...</span><br><span class="line"> </span><br><span class="line">Query OK, 1 row affected (0.01 sec)</span><br><span class="line"> </span><br><span class="line">mysql&gt; source ~/zabbix-3.4.4/database/mysql/data.sql</span><br></pre></td></tr></table></figure>
+<p>编译安装zabbix</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./configure --prefix=/usr/local/zabbix --with-mysql=/usr/local/mysql/bin/mysql_config --with-net-snmp --with-libcurl --enable-server --enable-agent --enable-proxy</span><br></pre></td></tr></table></figure>
+<p>添加服务端口</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/services</span><br><span class="line">zabbix-agent 10050/tcp # Zabbix Agent</span><br><span class="line">zabbix-agent 10050/udp # Zabbix Agent</span><br><span class="line">zabbix-trapper 10051/tcp # Zabbix Trapper</span><br><span class="line">zabbix-trapper 10051/udp # Zabbix Trapper</span><br></pre></td></tr></table></figure>
+<p>添加配置文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p /etc/zabbix</span><br><span class="line">cp -r zabbix-3.4/conf/* /etc/zabbix/</span><br><span class="line">chown -R zabbix:zabbix /etc/zabbix</span><br></pre></td></tr></table></figure>
+<p>修改server配置文件，添加zabbix数据库密码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/zabbix/zabbix_server.conf</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">LogFile=/tmp/zabbix_server.log</span><br><span class="line"></span><br><span class="line">PidFile=/tmp/zabbix_server.pid</span><br><span class="line"></span><br><span class="line">DBName=zabbix</span><br><span class="line"></span><br><span class="line">DBUser=zabbix_user</span><br><span class="line"></span><br><span class="line">DBPassword=123456     #指定zabbix数据库密码</span><br><span class="line"></span><br><span class="line">ListenIP=192.168.10.197    #服务器IP地址</span><br></pre></td></tr></table></figure>
+<p>修改Agentd配置文件，更改HOSTNAME为本机的hostname</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/zabbix/zabbix_agentd.conf</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">PidFile=/tmp/zabbix_agentd.pid #进程PID</span><br><span class="line"></span><br><span class="line">LogFile=/tmp/zabbix_agentd.log #日志保存位置</span><br><span class="line"></span><br><span class="line">EnableRemoteCommands=1 #允许执行远程命令</span><br><span class="line"></span><br><span class="line">Server=192.168.10.197 #agent端的ip</span><br><span class="line"></span><br><span class="line">Hostname=client1 #必须与zabbix创建的host name相同</span><br></pre></td></tr></table></figure>
+<p>添加web前段php文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd zabbix-3.4/frontends/</span><br><span class="line">cp -rf php /home/httpd/zabbix   #虚拟主机目录</span><br><span class="line">chown -R zabbix:zabbix zabbix</span><br></pre></td></tr></table></figure>
+<p>web前端安装配置</p>
+<p>修改PHP相关参数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim php.ini</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">max_execution_time = 300</span><br><span class="line">max_input_time = 300</span><br><span class="line">memory_limit = 128M</span><br><span class="line">post_max_size = 32M</span><br><span class="line">date.timezone = Asia/Shanghai</span><br><span class="line">mbstring.func_overload=2</span><br></pre></td></tr></table></figure>
+<p>PHP还必须支持一下模块，在php源码包直接编译安装。详细模块需要在安装是会提示:bcmath.so、gettext.so</p>
+<p>在客户端浏览器上面访问zabbix，开始WEB的前端配置，<a href="http://ZabbixIP/zabbix" target="_blank" rel="noopener">http://ZabbixIP/zabbix</a></p>
+<p>按提示点击下一步</p>
+<p>Step1：下一步。<br>Step2：如果全部OK的话才能进行下一步的安装，如果有错误请返回到server端检查相关的软件包是否安装。<br>Step3：需要输入mysql数据库帐号密码,如果数据库不在zabbix服务器上面，在Host里面添加数据库服务器的地址，并且要用grant命令给数据库授权。<br>Step4：输入服务器端 host name or host IP addres；</p>
+<p>最后会自动写入配置文件：zabbix.conf.php，配置完成后出现登陆界面，默认的用户名为：admin，密码为：zabbix。</p>
+<p>Now we’ll add a user for Zabbix to run as. We’ll configure scripts to control the zabbix server daemon.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=Zabbix Server</span><br><span class="line">After=syslog.target network.target mysqld.service</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=oneshot</span><br><span class="line">ExecStart=/usr/local/zabbix/sbin/zabbix_server -c /usr/local/zabbix/etc/zabbix_server.conf</span><br><span class="line">ExecReload=/usr/local/zabbix/sbin/zabbix_server -R config_cache_reload</span><br><span class="line">RemainAfterExit=yes</span><br><span class="line">PIDFile=/var/run/zabbix/zabbix_server.pid</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="启动zabbix服务"><a href="#启动zabbix服务" class="headerlink" title="启动zabbix服务"></a>启动zabbix服务</h2><p>在zabbix安装目录下面可以直接启动</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">#/usr/local/zabbix/sbin/zabbix_server start</span><br><span class="line"></span><br><span class="line">tcp        0      0 0.0.0.0:10050               0.0.0.0:*                   LISTEN      7140/zabbix_agentd</span><br></pre></td></tr></table></figure>
+<h2 id="设置开启自动启动"><a href="#设置开启自动启动" class="headerlink" title="设置开启自动启动"></a>设置开启自动启动</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/rc.d/rc.local</span><br></pre></td></tr></table></figure>
+<p>最后添加下面两行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/usr/local/zabbix/sbin/zabbix_server start</span><br><span class="line">/usr/local/zabbix/sbin/zabbix_agentd start</span><br></pre></td></tr></table></figure>
+<p>至此，zabbix server端的安装完毕，我们可以通过浏览器来访问!</p>
+<p><img src="https://i.imgur.com/jLyAAlt.jpg" alt="image"></p>
+<blockquote>
+<p>Zabbix主要的配置文件两个:“zabbix_server.conf”负责服务器端的设定；</p>
+<p>zabbix_agent.conf”用来设置客户端代理参数；“zabbix_proxy.conf”用来设定分布式的部署。</p>
+<p>Zabbix_server.conf参数除了保证服务正常运行外还涉及该服务器的性能，如果参数设定不合理可能会导致zabbix添加主机不正常、代理端数据无法正常收集或是zabbix服务器性能严重下降，经常报告CPU占用过高或是IO占用过高等问题。</p>
+</blockquote>
+<p>Zabbix前端已经就绪！默认的用户名是Admin，密码是zabbix。</p>
+<hr>
+<h2 id="跳坑"><a href="#跳坑" class="headerlink" title="跳坑"></a>跳坑</h2><ol>
+<li>从布署包安装 zabbix的时候，影响到了mysql.导导致mysql启动不起来！运行下面的命令之后，即可！</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/local/mysql/bin/mysqld_safe</span><br></pre></td></tr></table></figure>
+<p>还有就是布署包默认运行的是appace容器，但是我的服务器上面已经有nginx了。所以最后还是手动编译一下。</p>
+<ol>
+<li>apt-get install zabbix-server-mysql zabbix-frontend-php</li>
+</ol>
+<p>通过这种方式安装zabbix的时候，出现了一个问题就是重启lnmp 时，mysql不能正常启动</p>
+<p>3.configure: error: Invalid Net-SNMP directory - unable to find net-snmp-config </p>
+<p>解决方法<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt-get install libsnmp-dev</span><br></pre></td></tr></table></figure></p>
+<ol>
+<li>编译安装zabbix error: MySQL library not found</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">find / -name &quot;mysql_config*&quot;</span><br><span class="line"></span><br><span class="line">/usr/local/mysql/bin/mysql_config</span><br></pre></td></tr></table></figure>
+<p>我把–with-mysql改成</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">--with-mysql=/usr/local/mysql/bin/mysql_config</span><br></pre></td></tr></table></figure>
+<p>正常通过</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">5. PHP Parse error:  syntax error, unexpected &apos;[&apos; in /var/www/html/index.php on line 29</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PHP 5.4 is required</span><br></pre></td></tr></table></figure>
+<hr>
+<p><a href="http://blog.chinaunix.net/uid-25266990-id-3380929.html" target="_blank" rel="noopener">参考文档1</a></p>
+<p><a href="http://blog.51cto.com/ityunwei2017/1846630" target="_blank" rel="noopener">zabbix-3.0.4安装部署</a></p>
+<p><a href="https://www.zabbix.com/documentation/3.4/zh/manual/installation/install_from_packages" target="_blank" rel="noopener">官方从部署包安装zabbix</a></p>
+<p><a href="https://www.jc.me.uk/2016/06/19/installing-zabbix-3-0-on-ubuntu-16-04/" target="_blank" rel="noopener">Installing Zabbix 3.0 on Ubuntu 16.04</a></p>
+<p><a href="https://wiki.ubuntu.com.cn/Zabbix" target="_blank" rel="noopener">在Ubuntu 上安装 Zabbix</a></p>
+<p><a href="https://www.zabbix.com/documentation/3.4/zh/manual/quickstart/login" target="_blank" rel="noopener">Zabbix Documentation 3.4</a></p>
+
+          
         
       
     </div>
