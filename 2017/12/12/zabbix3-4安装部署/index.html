@@ -90,7 +90,7 @@
 <meta property="og:image" content="https://i.imgur.com/F48S3Xx.png">
 <meta property="og:image" content="https://i.imgur.com/jLyAAlt.jpg">
 <meta property="og:image" content="https://i.imgur.com/kOV5BX6.png">
-<meta property="og:updated_time" content="2017-12-11T17:59:23.181Z">
+<meta property="og:updated_time" content="2017-12-11T18:03:38.986Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="zabbix3.4安装部署">
 <meta name="twitter:description" content="运行环境：  12345nginx-1.12.1mysql-5.5.56php-7.1.7Ubuntu 16.04Linux localhost 4.9.50-x86_64 前言Linux下常用的系统监控软件有Nagios、Cacti、Zabbix、Monit等，这些开源的软件，可以帮助我们更好的管理机器，在第一时间内发现，并警告系统维护人员。 使用Zabbix的目的，是为了能够更好的监控mysq">
@@ -463,7 +463,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">#cd  zabbix-3.4/database/mysql</span><br><span class="line"></span><br><span class="line">mysql -u root -p </span><br><span class="line"></span><br><span class="line">mysql&gt; use zabbix;     #进入数据库，按照顺序进行导入，否则会出错。</span><br><span class="line">Database changed</span><br><span class="line">mysql&gt; source ~/zabbix-3.4.4/database/mysql/schema.sql</span><br><span class="line">...</span><br><span class="line">Query OK, 0 rows affected (0.05 sec)</span><br><span class="line">Records: 0  Duplicates: 0  Warnings: 0</span><br><span class="line"> </span><br><span class="line">mysql&gt; source ~/zabbix-3.4.4/database/mysql/images.sql</span><br><span class="line">...</span><br><span class="line"> </span><br><span class="line">Query OK, 1 row affected (0.01 sec)</span><br><span class="line"> </span><br><span class="line">mysql&gt; source ~/zabbix-3.4.4/database/mysql/data.sql</span><br></pre></td></tr></table></figure>
 <p>编译安装zabbix</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./configure --prefix=/usr/local/zabbix --with-mysql=/usr/local/mysql/bin/mysql_config --with-net-snmp --with-libcurl --enable-server --enable-agent --enable-proxy</span><br></pre></td></tr></table></figure>
-<p>添加服务端口</p>
+<p>添加服务端口 (可选步骤)</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/services</span><br><span class="line">zabbix-agent 10050/tcp # Zabbix Agent</span><br><span class="line">zabbix-agent 10050/udp # Zabbix Agent</span><br><span class="line">zabbix-trapper 10051/tcp # Zabbix Trapper</span><br><span class="line">zabbix-trapper 10051/udp # Zabbix Trapper</span><br></pre></td></tr></table></figure>
 <p>添加配置文件</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p /etc/zabbix</span><br><span class="line">cp -r zabbix-3.4/conf/* /etc/zabbix/</span><br><span class="line">chown -R zabbix:zabbix /etc/zabbix</span><br></pre></td></tr></table></figure>
@@ -529,6 +529,7 @@
 <p><a href="https://www.jc.me.uk/2016/06/19/installing-zabbix-3-0-on-ubuntu-16-04/" target="_blank" rel="noopener">Installing Zabbix 3.0 on Ubuntu 16.04</a></p>
 <p><a href="https://wiki.ubuntu.com.cn/Zabbix" target="_blank" rel="noopener">在Ubuntu 上安装 Zabbix</a></p>
 <p><a href="https://www.zabbix.com/documentation/3.4/zh/manual/quickstart/login" target="_blank" rel="noopener">Zabbix Documentation 3.4</a></p>
+<p><a href="https://tecadmin.net/install-zabbix-on-ubuntu/#" target="_blank" rel="noopener">How to Install Zabbix Server 3.0 on Ubuntu 16.04/14.04 LTS and Debian 8/7</a></p>
 
       
     </div>
