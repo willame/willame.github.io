@@ -88,9 +88,9 @@
 <meta property="og:description" content="运行环境：  12345nginx-1.12.1mysql-5.5.56php-7.1.7Ubuntu 16.04Linux localhost 4.9.50-x86_64 前言Linux下常用的系统监控软件有Nagios、Cacti、Zabbix、Monit等，这些开源的软件，可以帮助我们更好的管理机器，在第一时间内发现，并警告系统维护人员。 使用Zabbix的目的，是为了能够更好的监控mysq">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://i.imgur.com/F48S3Xx.png">
+<meta property="og:image" content="https://i.imgur.com/EB0w9Z6.jpg">
 <meta property="og:image" content="https://i.imgur.com/jLyAAlt.jpg">
-<meta property="og:image" content="https://i.imgur.com/kOV5BX6.png">
-<meta property="og:updated_time" content="2017-12-11T18:03:38.986Z">
+<meta property="og:updated_time" content="2017-12-12T18:51:32.420Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="zabbix3.4安装部署">
 <meta name="twitter:description" content="运行环境：  12345nginx-1.12.1mysql-5.5.56php-7.1.7Ubuntu 16.04Linux localhost 4.9.50-x86_64 前言Linux下常用的系统监控软件有Nagios、Cacti、Zabbix、Monit等，这些开源的软件，可以帮助我们更好的管理机器，在第一时间内发现，并警告系统维护人员。 使用Zabbix的目的，是为了能够更好的监控mysq">
@@ -427,9 +427,7 @@
 <li>zabbix WEB环境搭建  </li>
 </ol>
 <p>zabbix的安装需要LAMP或者LNMP环境。</p>
-<ol>
-<li>zabbix 数据库设置  </li>
-</ol>
+<p>2.zabbix 数据库设置  </p>
 <p>zabbix数据库可以和zabbix服务器分离，采用用专门的mysql服务器存储数据，此时要给zabbix数据库受相应的权限。</p>
 <p>对于Zabbix server 和 proxy 守护进程以及Zabbix前端，都需要连接到一个数据库。Zabbix agent不需要数据库的支持。</p>
 <p>SQL 脚本 用于创建数据库架构（schema）并插入数据集（dataset）。 Zabbix proxy数据库只需要数据库架构（schema），而Zabbix server数据库在建立数据库架构（schema）后，还需要数据集（dataset）。</p>
@@ -460,10 +458,10 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget http://repo.zabbix.com/zabbix/3.4/ubuntu/pool/main/z/zabbix/zabbix_3.4.4.orig.tar.gz</span><br></pre></td></tr></table></figure>
 <p>导入数据库表</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">create user &apos;zabbix&apos;@&apos;localhost&apos; identified by &apos;PASSWORD&apos;;</span><br><span class="line">create database zabbix;</span><br><span class="line">grant all privileges on `zabbix`.* to &apos;zabbix&apos;@&apos;localhost&apos;;</span><br><span class="line">flush privileges;</span><br><span class="line">exit;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">#cd  zabbix-3.4/database/mysql</span><br><span class="line"></span><br><span class="line">mysql -u root -p </span><br><span class="line"></span><br><span class="line">mysql&gt; use zabbix;     #进入数据库，按照顺序进行导入，否则会出错。</span><br><span class="line">Database changed</span><br><span class="line">mysql&gt; source ~/zabbix-3.4.4/database/mysql/schema.sql</span><br><span class="line">...</span><br><span class="line">Query OK, 0 rows affected (0.05 sec)</span><br><span class="line">Records: 0  Duplicates: 0  Warnings: 0</span><br><span class="line"> </span><br><span class="line">mysql&gt; source ~/zabbix-3.4.4/database/mysql/images.sql</span><br><span class="line">...</span><br><span class="line"> </span><br><span class="line">Query OK, 1 row affected (0.01 sec)</span><br><span class="line"> </span><br><span class="line">mysql&gt; source ~/zabbix-3.4.4/database/mysql/data.sql</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">#cd  zabbix-3.4/database/mysql</span><br><span class="line"></span><br><span class="line">mysql -u root -p </span><br><span class="line"></span><br><span class="line">mysql&gt; use zabbix;     #进入数据库，按照顺序进行导入，否则会出错。</span><br><span class="line">Database changed</span><br><span class="line">mysql&gt; source /root/zabbix-3.4.4/database/mysql/schema.sql</span><br><span class="line">...</span><br><span class="line">Query OK, 0 rows affected (0.05 sec)</span><br><span class="line">Records: 0  Duplicates: 0  Warnings: 0</span><br><span class="line"> </span><br><span class="line">mysql&gt; source /root/zabbix-3.4.4/database/mysql/images.sql</span><br><span class="line">...</span><br><span class="line"> </span><br><span class="line">Query OK, 1 row affected (0.01 sec)</span><br><span class="line"> </span><br><span class="line">mysql&gt; source /root/zabbix-3.4.4/database/mysql/data.sql</span><br></pre></td></tr></table></figure>
 <p>编译安装zabbix</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./configure --prefix=/usr/local/zabbix --with-mysql=/usr/local/mysql/bin/mysql_config --with-net-snmp --with-libcurl --enable-server --enable-agent --enable-proxy</span><br></pre></td></tr></table></figure>
-<p>添加服务端口 (可选步骤)</p>
+<p>添加服务端口</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/services</span><br><span class="line">zabbix-agent 10050/tcp # Zabbix Agent</span><br><span class="line">zabbix-agent 10050/udp # Zabbix Agent</span><br><span class="line">zabbix-trapper 10051/tcp # Zabbix Trapper</span><br><span class="line">zabbix-trapper 10051/udp # Zabbix Trapper</span><br></pre></td></tr></table></figure>
 <p>添加配置文件</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p /etc/zabbix</span><br><span class="line">cp -r zabbix-3.4/conf/* /etc/zabbix/</span><br><span class="line">chown -R zabbix:zabbix /etc/zabbix</span><br></pre></td></tr></table></figure>
@@ -485,8 +483,12 @@
 <p>Step1：下一步。<br>Step2：如果全部OK的话才能进行下一步的安装，如果有错误请返回到server端检查相关的软件包是否安装。<br>Step3：需要输入mysql数据库帐号密码,如果数据库不在zabbix服务器上面，在Host里面添加数据库服务器的地址，并且要用grant命令给数据库授权。<br>Step4：输入服务器端 host name or host IP addres；</p>
 <p>最后会自动写入配置文件：zabbix.conf.php，配置完成后出现登陆界面，默认的用户名为：admin，密码为：zabbix。</p>
 <p>Now we’ll add a user for Zabbix to run as. We’ll configure scripts to control the zabbix server daemon.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- Create the file /etc/systemd/system/multi-user.target.wants/zabbix-server.service</span><br></pre></td></tr></table></figure>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=Zabbix Server</span><br><span class="line">After=syslog.target network.target mysqld.service</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=oneshot</span><br><span class="line">ExecStart=/usr/local/zabbix/sbin/zabbix_server -c /usr/local/zabbix/etc/zabbix_server.conf</span><br><span class="line">ExecReload=/usr/local/zabbix/sbin/zabbix_server -R config_cache_reload</span><br><span class="line">RemainAfterExit=yes</span><br><span class="line">PIDFile=/var/run/zabbix/zabbix_server.pid</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=Zabbix Agentd</span><br><span class="line">After=syslog.target network.target mysqld.service</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=oneshot</span><br><span class="line">ExecStart=/usr/local/zabbix/sbin/zabbix_agentd -c /usr/local/zabbix/etc/zabbix_agentd.conf</span><br><span class="line">ExecReload=/usr/local/zabbix/sbin/zabbix_agentd -R config_cache_reload</span><br><span class="line">RemainAfterExit=yes</span><br><span class="line">PIDFile=/var/run/zabbix/zabbix_agentd.pid</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed -i &quot;s/zabbix-agentd/zabbix_agentd/g&quot; zabbix-agentd.service</span><br></pre></td></tr></table></figure>
 <hr>
+<p><img src="https://i.imgur.com/EB0w9Z6.jpg" alt="image"></p>
 <h2 id="启动zabbix服务"><a href="#启动zabbix服务" class="headerlink" title="启动zabbix服务"></a>启动zabbix服务</h2><p>在zabbix安装目录下面可以直接启动</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">#/usr/local/zabbix/sbin/zabbix_server start</span><br><span class="line"></span><br><span class="line">tcp        0      0 0.0.0.0:10050               0.0.0.0:*                   LISTEN      7140/zabbix_agentd</span><br></pre></td></tr></table></figure>
 <h2 id="设置开启自动启动"><a href="#设置开启自动启动" class="headerlink" title="设置开启自动启动"></a>设置开启自动启动</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/rc.d/rc.local</span><br></pre></td></tr></table></figure>
@@ -500,7 +502,6 @@
 <p>Zabbix_server.conf参数除了保证服务正常运行外还涉及该服务器的性能，如果参数设定不合理可能会导致zabbix添加主机不正常、代理端数据无法正常收集或是zabbix服务器性能严重下降，经常报告CPU占用过高或是IO占用过高等问题。</p>
 </blockquote>
 <p>Zabbix前端已经就绪！默认的用户名是Admin，密码是zabbix。</p>
-<p><img src="https://i.imgur.com/kOV5BX6.png" alt="image"></p>
 <hr>
 <h2 id="跳坑"><a href="#跳坑" class="headerlink" title="跳坑"></a>跳坑</h2><ol>
 <li>从布署包安装 zabbix的时候，影响到了mysql.导导致mysql启动不起来！运行下面的命令之后，即可！</li>
@@ -522,6 +523,19 @@
 <p>正常通过</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">5. PHP Parse error:  syntax error, unexpected &apos;[&apos; in /var/www/html/index.php on line 29</span><br></pre></td></tr></table></figure>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PHP 5.4 is required</span><br></pre></td></tr></table></figure>
+<ol>
+<li><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Get value from agent failed: cannot connect to [[127.0.0.1]:10050]: [111] Connection refused</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>解决方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">127.0.0.1 是我的zabbix server服务器，本身也有监控自己本身的agent功能。出现这种错误是因为忘记在zabbix服务器开户zabbix_agentd。</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">find / -name *agentd.log</span><br><span class="line"></span><br><span class="line">service zabbix-server restart</span><br></pre></td></tr></table></figure>
+<p>7.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Zabbix agent on Zabbix server is unreachable for 5 minutes</span><br></pre></td></tr></table></figure></p>
+<p>修改agent的配置文件，将ServerActive的地址改为zabbix-server的IP地址，重启zabbix_agent</p>
+<hr>
+<p>在troubleshouting查看服务日志的时候，可以将注意力集中在有显示“fail”或者“Error”这类失败的关键词上，这样可以快速排错，找到问题的原因，而不必通篇阅读所有的日志，极大的提高效率。</p>
+<p>作为运维工程师，脑袋储存的信息可能比较多、杂，时而出现忘记了某个服务、配置文件的绝对路径，如果记得文件或者目录的完整名，可以使用“locate+文件名”命令来定位文件的绝对路径，若是连文件名也记不大清了，没关系，还可以用Linux平台强大的搜索命令find，以全局查找的方式，通过星号来匹配到想要查找的文件的绝对路径，例如：find / -name *agentd.conf （从/目录开始，全局搜索以agentd结尾的.conf文件）。</p>
+<p>这些都是作为一名运维工程师应该具备的基本技能，而不必通过死记硬背的方式来记忆所有文件的绝对路径。</p>
 <hr>
 <p><a href="http://blog.chinaunix.net/uid-25266990-id-3380929.html" target="_blank" rel="noopener">参考文档1</a></p>
 <p><a href="http://blog.51cto.com/ityunwei2017/1846630" target="_blank" rel="noopener">zabbix-3.0.4安装部署</a></p>
@@ -529,7 +543,7 @@
 <p><a href="https://www.jc.me.uk/2016/06/19/installing-zabbix-3-0-on-ubuntu-16-04/" target="_blank" rel="noopener">Installing Zabbix 3.0 on Ubuntu 16.04</a></p>
 <p><a href="https://wiki.ubuntu.com.cn/Zabbix" target="_blank" rel="noopener">在Ubuntu 上安装 Zabbix</a></p>
 <p><a href="https://www.zabbix.com/documentation/3.4/zh/manual/quickstart/login" target="_blank" rel="noopener">Zabbix Documentation 3.4</a></p>
-<p><a href="https://tecadmin.net/install-zabbix-on-ubuntu/#" target="_blank" rel="noopener">How to Install Zabbix Server 3.0 on Ubuntu 16.04/14.04 LTS and Debian 8/7</a></p>
+<p><a href="http://www.jianshu.com/p/1fb78cdd5ea9" target="_blank" rel="noopener">Zabbix agent on Zabbix server is unreachable for 5 minutes</a></p>
 
       
     </div>
@@ -569,6 +583,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/12/13/三大文本处理工具grep与sed及awk简介-转/" rel="prev" title="三大文本处理工具grep与sed及awk简介(转)">
+                三大文本处理工具grep与sed及awk简介(转) <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -659,7 +677,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">7</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -670,7 +688,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-count">4</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -681,7 +699,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-count">6</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
