@@ -412,8 +412,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">perl -pi -e &apos;s|ABCD|Linux|g&apos; `find ./ -type f`</span><br></pre></td></tr></table></figure>
 <p>将调用perl执行一条替换命令，把find命令找到的所有文件内容中的ABCD替换为Linux</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find ./ -type f</span><br></pre></td></tr></table></figure>
-<p>此命令是显示当前目录下所有的文件,上面的“s|ABCD|Linux| g”是perl要执行的脚本，即把所有ABCD替换为Linux</p>
-<p>如果不写最后的那个g，“s|ABCD|Linux| ”将只替换每一行开头的ABCD </p>
+<p>此命令是显示当前目录下所有的文件,上面的“s|ABCD|Linux| g”是perl要执行的脚本，即把所有ABCD替换为Linux,如果不写最后的那个g，“s|ABCD|Linux| ”将只替换每一行开头的ABCD </p>
 
           
         

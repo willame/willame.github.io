@@ -3,7 +3,7 @@
   <entry>
     <title><![CDATA[shell脚本替换文件中某个字符串]]></title>
     <url>%2F2017%2F12%2F13%2Fshell%E8%84%9A%E6%9C%AC%E6%9B%BF%E6%8D%A2%E6%96%87%E4%BB%B6%E4%B8%AD%E6%9F%90%E4%B8%AA%E5%AD%97%E7%AC%A6%E4%B8%B2%2F</url>
-    <content type="text"><![CDATA[将当前目录下包含jack串的文件中，jack字符串替换为tom 1sed -i &quot;s/jack/tom/g&quot; `grep &quot;jack&quot; -rl ./` 将某个文件中的jack字符串替换为tom 1sed -i &quot;s/jack/tom/g&quot; test.txt linux sed 批量替换多个文件中的字符串 1sed -i &quot;s/oldstring/newstring/g&quot; `grep oldstring -rl yourdir` 例如：替换/home下所有文件中的www.bcak.com.cn为bcak.com.cn 1sed -i &quot;s/www.bcak.com.cn/bcak.com.cn/g&quot; `grep www.bcak.com.cn -rl /home` 下面这条命令： 1perl -pi -e &apos;s|ABCD|Linux|g&apos; `find ./ -type f` 将调用perl执行一条替换命令，把find命令找到的所有文件内容中的ABCD替换为Linux 1find ./ -type f 此命令是显示当前目录下所有的文件,上面的“s|ABCD|Linux| g”是perl要执行的脚本，即把所有ABCD替换为Linux 如果不写最后的那个g，“s|ABCD|Linux| ”将只替换每一行开头的ABCD]]></content>
+    <content type="text"><![CDATA[将当前目录下包含jack串的文件中，jack字符串替换为tom 1sed -i &quot;s/jack/tom/g&quot; `grep &quot;jack&quot; -rl ./` 将某个文件中的jack字符串替换为tom 1sed -i &quot;s/jack/tom/g&quot; test.txt linux sed 批量替换多个文件中的字符串 1sed -i &quot;s/oldstring/newstring/g&quot; `grep oldstring -rl yourdir` 例如：替换/home下所有文件中的www.bcak.com.cn为bcak.com.cn 1sed -i &quot;s/www.bcak.com.cn/bcak.com.cn/g&quot; `grep www.bcak.com.cn -rl /home` 下面这条命令： 1perl -pi -e &apos;s|ABCD|Linux|g&apos; `find ./ -type f` 将调用perl执行一条替换命令，把find命令找到的所有文件内容中的ABCD替换为Linux 1find ./ -type f 此命令是显示当前目录下所有的文件,上面的“s|ABCD|Linux| g”是perl要执行的脚本，即把所有ABCD替换为Linux,如果不写最后的那个g，“s|ABCD|Linux| ”将只替换每一行开头的ABCD]]></content>
       <categories>
         <category>善用佳软</category>
       </categories>
