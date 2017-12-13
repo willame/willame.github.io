@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="keepalived," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="什么是keepalived呢？keepalived是实现高可用的一种轻量级的技术手段，主要用来防止单点故障(单点故障是指一旦某一点出现故障就会导致整个系统架构的不可用)的发生。之所以说keepalived是轻量级的，是相对于corosync + ldirectord来说的。 keepalived也可以实现高可用集群，而且配置起来比corosync + ldirectord简单方便很多，keepal">
+<meta name="keywords" content="keepalived">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于keepalived(主从+双主) + LVS(DR模型) + DNS实现http高可用集群服务">
+<meta property="og:url" content="http://code.meirenji.info/2017/12/13/基于keepalived-主从-双主-LVS-DR模型-DNS实现http高可用集群服务/index.html">
+<meta property="og:site_name" content="奶爸的天空">
+<meta property="og:description" content="什么是keepalived呢？keepalived是实现高可用的一种轻量级的技术手段，主要用来防止单点故障(单点故障是指一旦某一点出现故障就会导致整个系统架构的不可用)的发生。之所以说keepalived是轻量级的，是相对于corosync + ldirectord来说的。 keepalived也可以实现高可用集群，而且配置起来比corosync + ldirectord简单方便很多，keepal">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://i.imgur.com/EGkiWQB.png">
+<meta property="og:image" content="https://i.imgur.com/vQZQvzG.png">
+<meta property="og:image" content="https://i.imgur.com/baup2eV.jpg">
+<meta property="og:image" content="https://i.imgur.com/qyFCHn9.jpg">
+<meta property="og:image" content="https://i.imgur.com/zvwxm6o.gif">
+<meta property="og:image" content="https://i.imgur.com/iaHqNob.jpg">
+<meta property="og:image" content="https://i.imgur.com/MgMcJnA.jpg">
+<meta property="og:image" content="https://i.imgur.com/wm9s8AV.jpg">
+<meta property="og:updated_time" content="2017-12-13T12:35:26.050Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="基于keepalived(主从+双主) + LVS(DR模型) + DNS实现http高可用集群服务">
+<meta name="twitter:description" content="什么是keepalived呢？keepalived是实现高可用的一种轻量级的技术手段，主要用来防止单点故障(单点故障是指一旦某一点出现故障就会导致整个系统架构的不可用)的发生。之所以说keepalived是轻量级的，是相对于corosync + ldirectord来说的。 keepalived也可以实现高可用集群，而且配置起来比corosync + ldirectord简单方便很多，keepal">
+<meta name="twitter:image" content="https://i.imgur.com/EGkiWQB.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://code.meirenji.info/2017/12/13/基于keepalived-主从-双主-LVS-DR模型-DNS实现http高可用集群服务/"/>
+
+
+
+
+
+  <title>基于keepalived(主从+双主) + LVS(DR模型) + DNS实现http高可用集群服务 | 奶爸的天空</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">奶爸的天空</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://code.meirenji.info/2017/12/13/基于keepalived-主从-双主-LVS-DR模型-DNS实现http高可用集群服务/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ben wong">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="奶爸的天空">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">基于keepalived(主从+双主) + LVS(DR模型) + DNS实现http高可用集群服务</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-13T20:33:06+09:00">
+                2017-12-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全运维/" itemprop="url" rel="index">
+                    <span itemprop="name">安全运维</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="什么是keepalived呢？"><a href="#什么是keepalived呢？" class="headerlink" title="什么是keepalived呢？"></a>什么是keepalived呢？</h2><p>keepalived是实现高可用的一种<strong>轻量级</strong>的技术手段，主要用来防止<strong>单点故障</strong>(单点故障是指一旦某一点出现故障就会导致整个系统架构的不可用)的发生。<br>之所以说keepalived是轻量级的，是相对于corosync + ldirectord来说的。</p>
+<p>keepalived也可以实现<strong>高可用集群</strong>，而且配置起来比corosync + ldirectord简单方便很多，keepalived与corosync的工作机制相差很多。</p>
+<p>corosync + ldirectord实现的功能虽然强大，但配置起来比较麻烦，而keepalived功能虽然简单，但配置起来比较容易。</p>
+<p>也就是说keepalived可实现corosync + ldirectord实现的功能，只不过前者没有后者功能强大而已。这里主要介绍keepalived。</p>
+<p>在介绍keepalived之前，不得不先介绍下一个协议——VRRP。之所以要介绍这个协议，是因为==VRRP协议是keepalived实现的基础==。</p>
+<p>下面先来一块看下这个这协议是干吗用的吧。</p>
+<p><img src="https://i.imgur.com/EGkiWQB.png" alt="image"></p>
+<p>如上图所示，通常，同一网段内的所有主机都设置一条相同的、以网关为下一跳的缺省路由。</p>
+<p>主机发往其他网段的报文将通过缺省路由发往网关，再由网关进行转发，从而实现主机与外部网络的通信。</p>
+<p>当网关发生故障时，本网段内所有以网关为缺省路由的主机将无法与外部网络通信，仅能实现内部主机间通信。</p>
+<p>缺省路由为用户的配置操作提供了方便，但是对缺省网关设备提出了很高的稳定性要求。</p>
+<p>增加出口网关是提高系统可靠性的常见方法，此时如何在多个出口之间进行选路就成为需要解决的问题。而VRRP正好解决了此问题。</p>
+<hr>
+<h2 id="VRRP："><a href="#VRRP：" class="headerlink" title="VRRP："></a>VRRP：</h2><p>Virtual Router Redundancy Protocol，<strong>虚拟路由冗余协议</strong>。</p>
+<p>VRRP说白了就是<strong>实现地址漂移</strong>的，是一种<strong>容错协议</strong>，在提高可靠性的同时，简化了主机的配置。</p>
+<p>该协议能够实现将可以承担网关功能的一组路由器加入到备份组中，形成一台虚拟路由器，由VRRP的选举机制决定哪台路由器承担转发任务，局域网内的主机只需将虚拟路由器配置为缺省网关。</p>
+<p>在VRRP协议出现之前，为了不让单个路由器成为本地与外部通信的瓶颈，我们需要有多个路由，在此种模式下，我们内部的主机就需要将自己的网关指向不同的路由器，这样的配置对我们的网关管理员来说是很麻烦的，且不容易实现。</p>
+<p>在VRRP协议出现后，为了不让单个路由器成为本地与外部通信的瓶颈，我们仍需要有多个路由，但可以使用同一个缺省网关，我们只需将内部主机指定一个缺省网关即可。VRRP协议会根据优先级来选择一个正常的路由作为主路由器实现与外部的通信，而其他路由则作为备份路由不参与转发。</p>
+<p>在此模式下，多个路由器组成虚拟路由器组，物理上是多个路由器组成，但在逻辑上却是表现为只有一个路由。</p>
+<p>效果如下图所示：</p>
+<p><img src="https://i.imgur.com/vQZQvzG.png" alt="image"></p>
+<p>在上图中，Router A、Router B和Router C组成一个虚拟路由器。</p>
+<p>各虚拟路由器都有自己的IP地址。局域网内的主机将虚拟路由器设置为缺省网关。</p>
+<p>Router A、Router B和Router C中优先级最高的路由器作为Master路由器，承担网关的功能。其余两台路由器作为Backup路由器。当master路由器出故障后，backup路由器会根据优先级重新选举新的master路由器承担网关功能。</p>
+<p>Master 路由器周期性地发送VRRP 报文，在虚拟路由器中公布其配置信息（优先级等）和工作状况。Backup路由器通过接收到VRRP 报文的情况来判断Master 路由器是否工作正常。</p>
+<p>VRRP根据优先级来确定备份组中每台路由器的角色（Master 路由器或Backup 路由器）。</p>
+<p>优先级越高，则越有可能成为Master 路由器。VRRP优先级的可配置的取值范围为1 到254。</p>
+<p>为了防止非法用户构造报文攻击备份组，VRRP通过在VRRP报文中增加认证字的方式，验证接收到的VRRP报文。</p>
+<h2 id=""><a href="#" class="headerlink" title=""></a><a id="more"></a></h2><p>VRRP提供了两种认证方式：</p>
+<h2 id="simple：简单字符认证。"><a href="#simple：简单字符认证。" class="headerlink" title="simple：简单字符认证。"></a>simple：简单字符认证。</h2><p>发送VRRP 报文的路由器将认证字填入到VRRP 报文中，而收到VRRP 报文的路由器会将收到的VRRP 报文中的认证字和本地配置的认证字进行比较。如果认证字相同，则认为接收到的报文是真实、合法的VRRP 报文；否则认为接收到的报文是一个非法报文。</p>
+<p>md5：MD5 认证。<br>发送VRRP 报文的路由器利用认证字和MD5 算法对VRRP 报文进行摘要运算，运算结果保存在Authentication Header（认证头）中。<br>收到VRRP报文的路由器会利用认证字和MD5 算法进行同样的运算，并将运算结果与认证头的内容进行比较。如果相同，则认为接收到的报文是真实、合法的VRRP 报文；否则认为接收到的报文是一个非法报文。</p>
+<p>在有多个路由器组成的虚拟路由中，当我们的内部主机很多时，如果所有主机都使用同一个master路由，会使得其他路由器很清闲，很浪费资源，我们期望我们本地的内部主机平分到各个路由器上，即让我们的内部主机的缺省网关指向不同的路由，从而减轻因只有一个master路由而造成网络带宽拥堵的负担。</p>
+<p>这就是负载分担VRRP。但这个如何实现呢？先看下面的配置效果图：</p>
+<p><img src="https://i.imgur.com/baup2eV.jpg" alt="image"></p>
+<p>在此情况下，同一台路由器同时加入多个VRRP备份组，在不同备份组中有不同的优先级，从而实现负载分担。</p>
+<p>在上图中，有三个备份组存在：</p>
+<p>备份组1：对应虚拟路由器1。Router A作为Master路由器，Router B和Router C作为Backup路由器。<br>备份组2：对应虚拟路由器2。Router B作为Master路由器，Router A和Router C作为Backup路由器。<br>备份组3：对应虚拟路由器3。Router C作为Master路由器，Router A和Router B作为Backup路由器。</p>
+<p>为了实现业务流量在Router A、Router B和RouterC之间进行负载分担，需要将局域网内的主机的缺省网关分别设置为虚拟路由器1、2和3。在配置优先级时，需要确保三个备份组中各路由器的VRRP优先级形成交叉对应。</p>
+<p>为了便于理解，这里给出一张表，我们假定有三个路由设备Router A、B、C和三台主机Host A、B、C，列举有在不同的虚拟路由组中，各路由器所具有的VRRP优先级如下表所示。</p>
+<p><img src="https://i.imgur.com/qyFCHn9.jpg" alt="image"></p>
+<p>从上表可以看到，各路由分别属于不同的虚拟路由组。</p>
+<p>对路由器A来说，因在虚拟路由组1中Router A的优先级高于另外两个，因此，Router A 作为 Master 路由器，Router B 和Router C 作为 Backup路由器；</p>
+<p>同样，对路由器B来说，因在虚拟路由器组2中Router B的优先级高于另外两个，因此，Router B 作为 Master 路由器，Router A 和Router C 作为 Backup路由器；</p>
+<p>对路由器C来说，因在虚拟路由器组3中Router C的优先级高于另外两个，因此，Router C 作为 Master 路由器，Router A 和Router B 作为 Backup路由器。</p>
+<p>对不同的主机来说，一旦其master路由器出故障后，会在另外正常的路由器中根据优先级重新选定master路由。</p>
+<p>如这里假定Host A的默认网关指向Router A，即Host A指向虚拟路由器组1的默认网关，对主机A来说，如果其master路由出现故障，即Router</p>
+<p>A出现故障，则会从另外两个正常的备份虚拟路由中根据各自的优先级选取高优先级的作为新的master路由，这里就是选取Router B作为其master路由来完成网关功能。</p>
+<p>假如想了解更多关于VRRP协议相关的信息请查阅相关资料，这里不再过多介绍。</p>
+<p>在文章开始我就提到，keepalived实现的基础就是基于VRRP协议，上边介绍了那么多关于VRRP协议的相关知识，不知道你是否已经猜到keepalived与VRRP协议到底有什么关系。</p>
+<p>keepalived设计之初就是为LVS提供高可用集群的，下面给出一个keepalived官方给的设计图：</p>
+<p><img src="https://i.imgur.com/zvwxm6o.gif" alt="image"></p>
+<p>从上图可以看出，keepalived包括三个组件：IO复用组件、内存管理组件和控制组件。</p>
+<p>在核心组件中IPVS wrapper就是负责生成ipvs规则的，所以说keepalived设计之初就是为ipvs也就是LVS提供高可用集群功能的。</p>
+<p>早期的keepalived实现的共能很简单，一般只需三个功能：一个是将IP地址转移到其他节点上，一个就是在另一个主机上生成ipvs规则，最后一个就是健康状况检查。那如何实现IP地址漂移呢，或者说如何实现IP地址转移的呢？这就需要借助于VRRP协议实现了。</p>
+<p>keepalived通过软件的方式在其内部模拟实现VRRP协议，然后借助于VRRP协议实现IP地址漂移。现在知道为什么花那么多篇幅介绍VRRP协议了吧。</p>
+<p>在下面配置keepalived的时候，还会用到VRRP协议的相关知识，因此一定要清楚的理解VRRP的工作机制，否则在下面配置keepalived的时候你可能会眼花缭乱。</p>
+<p>从上边的设计图我们就可以看到，keepalived的出生就是为lvs提供高可用集群服务的，因此，采用keepalived为lvs提供高可用集群服务，配置起来比较简单方便。</p>
+<p>在上边我一直强调keepalived设计之初是为lvs提供高可用集群服务的，现在假如我只想通过keepalived为某个服务，不再为lvs高可用服务，比如说通过两台主机为web服务提供高可用服务，该怎么办呢，或者说能否实现呢？</p>
+<p>上边提到，keepalived实现的功能主要有三个，既然我们不为lvs提供高可用服务了，那生成ipvs规则和健康状况检查就不需要了，仅需要提供IP地址转移即可。因此，采用keepalived来实现IP地址转移，我们仍然可以实现为web服务提供高可用服务。</p>
+<p>但又遇到另一个问题，我们进实现了IP地址漂移，那我们的web服务怎么办呢，如何实现高可用呢，不能进实现IP地址转移啊，那样的话只能说是IP地址高可用，不能说是web服务高可用？其实现在的keepalived还有其他额外的功能。</p>
+<p>keepalived可以通过调用外部脚本的功能，来监控外部其他资源。在keepalived的配置文件中，一般都会有包含如下三行信息：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vrrp_script &quot;killall -0 SERVICE_NAME&quot;</span><br><span class="line">notify-master &quot;script&quot;</span><br><span class="line">notify-backup &quot;script&quot;</span><br></pre></td></tr></table></figure>
+<p>第一行仅仅实现改变优先级，当IP实现漂移后，在另一个节点上检查是否有该服务，如果有该服务，尝试杀死该服务时会返回正确结果，如果没有该服务会返回错误结果，然后根据返回的结果来修改自身的优先级；</p>
+<p>第二行表示，如果是主节点，执行相应的脚本，启动相应的服务；</p>
+<p>第三行表示，如果是从节点，执行相应的脚本，停止相应的服务。但是这个脚本需要自己写，这是keepalived中比较麻烦的一个问题。</p>
+<p>在下面keepalived的配置文件中会详细介绍如何调用外部脚本来监控其他外部资源。这里不再具体阐述，读者仅仅有个印象即可。枯燥的理论知识终于介绍完毕，你是不是有种解脱的感觉。好吧，下面跟着我一块来配置keepalived吧。</p>
+<hr>
+<h2 id="实验场景："><a href="#实验场景：" class="headerlink" title="实验场景："></a>实验场景：</h2><p>在VMware上安装RedHat5.8，内核为Linux-2.6.18，这里模拟实现http服务的高可用，采用两台主机做keepalived高可用，另外两台做http高可用服务集群，安装的系统均为RedHat5.8，内核为Linux-2.6.18。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">keepalived高可用主机IP：172.16.32.30和172.16.32.31</span><br><span class="line">http服务高可用主机IP：172.16.32.32和172.16.32.33</span><br><span class="line">VIP采用172.16.32.5</span><br></pre></td></tr></table></figure>
+<p>这里采用LVS的DR模型来实现集群服务。所以keepalived只需一个网卡即可。假如你想做NAT模型，请添加第二块网卡。LVS的相关理论知识会在以后的博客中介绍。</p>
+<p>关闭四台主机的selinux。在命令行界面执行setenforce 0可关闭selinux，否则会对我们的测试有影响。</p>
+<p>关闭iptables防火墙。</p>
+<p><img src="https://i.imgur.com/iaHqNob.jpg" alt="image"></p>
+<hr>
+<p>各虚拟机及主机名和IP对应关系如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">虚拟机                 主机名                IP地址</span><br><span class="line"> HA1            node1.langdu.com           172.16.32.30</span><br><span class="line"> HA2            node2.langdu.com           172.16.32.31</span><br><span class="line"> HA3            node3.langdu.com           172.16.32.32</span><br><span class="line"> HA4            node4.langdu.com           172.16.32.33</span><br></pre></td></tr></table></figure>
+<p>知识点补充：</p>
+<p>集群(Cluster)类型：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">LB：Load Balancing，负载均衡集群，以提高服务的并发能力为着眼点</span><br><span class="line">HA：High Available，高可用集群，以提高服务可用性为着眼点</span><br><span class="line">HP(HPC)：High Performance，高性能集群，以提高服务系统处理性能为着眼点</span><br></pre></td></tr></table></figure>
+<p>对于高可用集群来说，为避免集群分裂，一个高可用集群至少要有3个节点，或奇数个节点。这里因硬件的限制，我仅用了两个节点，在实际使用中最好使用奇数个节点。既然是高可用集群了，那可用性如何计算呢？这里给出一个计算公式：可用性=在线时间/(在线时间+故障处理时间)<br>可能用到的各IP简写：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">CIP：Client IP</span><br><span class="line">VIP：virtual IP</span><br><span class="line">DIP：Director IP</span><br><span class="line">RIP：realserver IP</span><br></pre></td></tr></table></figure>
+<p>LVS类型：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">LVS-NAT：地址转换</span><br><span class="line">LVS-DR：直接路由</span><br><span class="line">LVS-TUN：隧道</span><br></pre></td></tr></table></figure>
+<p>各类型需遵循的法则：</p>
+<p>LVS-NAT：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">集群节点跟director必须在同一个IP网络中</span><br><span class="line">    RIP地址通常是私有地址，仅用于各集群节点间通信</span><br><span class="line">    director位于client和reals erver之间，并负责处理进出的所有通信</span><br><span class="line">    realserver必须将网关指向DIP</span><br><span class="line">    支持端口映射</span><br><span class="line">    realserver可以使用任意OS</span><br><span class="line">    较大规模应用场景中，director易成为系统瓶颈</span><br></pre></td></tr></table></figure>
+<p>LVS-DR：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">此模型下VIP地址配置在realserver的网卡别名上，通常情况下是隐藏的。</span><br><span class="line">    集群节点跟director必须在同一个物理网络中</span><br><span class="line">    RIP可以使用公网地址，实现便捷的远程管理和监控</span><br><span class="line">    director仅负责处理入站请求，响应报文则由realserver直接发往客户端</span><br><span class="line">    realserver不能将网关指向DIP</span><br><span class="line">    不支持端口映射</span><br></pre></td></tr></table></figure>
+<p>LVS-TUN </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">集群节点可以跨越互联网</span><br><span class="line">    RIP必须是公网IP地址</span><br><span class="line">    director仅负责处理入站请求，响应报文则由realserver直接发往客户端</span><br><span class="line">    realserver不能将网关指向director</span><br><span class="line">    只有支持隧道功能的OS才能用于realserver</span><br><span class="line">    不支持端口映射</span><br></pre></td></tr></table></figure>
+<p>Director调度策略：  </p>
+<p>静态调度</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">rr：轮叫，又称轮询</span><br><span class="line">    wrr：Weight rr，加权轮询</span><br><span class="line">    sh：source hashing，源地址hash</span><br><span class="line">         实现会话绑定：session affinity</span><br><span class="line">         ssession sharing：会话共享</span><br><span class="line">    dh：destination hash：目标地址hash</span><br></pre></td></tr></table></figure>
+<p>动态调度     </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">lc：最少连接</span><br><span class="line">         active*256+inactive</span><br><span class="line">         谁的小，挑谁</span><br><span class="line">    wlc：加权最少连接</span><br><span class="line">         (active*256+inactive)/weight</span><br><span class="line">         谁的小，挑谁</span><br><span class="line">    sed：最短期望延迟</span><br><span class="line">         (active+1)*256/weight</span><br><span class="line">    nq：never queue，永不排队</span><br><span class="line">    LBLC：基于本地的最少连接</span><br><span class="line">    LBLCR：基于本地的带复制功能的最少连接</span><br></pre></td></tr></table></figure>
+<p>安装完ipvsadm后默认方法：wlc</p>
+<p>LVS-DR模型：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">kernel parameter：</span><br><span class="line">arp_announce：定义将自己的地址向外通告时的通告级别</span><br><span class="line">              0：将本机任何接口上的任何地方向外通告(默认为0)</span><br><span class="line">              1：试图仅想目标网络通告与其网络匹配的地址</span><br><span class="line">              2：仅将与本地接口上地址匹配的网络进行通告</span><br><span class="line"></span><br><span class="line">arp_ignore：定义接受到ARP请求时的响应级别</span><br><span class="line">              0：只要本地配置的有相应地址，就给予响应(默认为0)</span><br><span class="line">              1：仅在请求的目标地址配置请求到达的接口上的时候，才给予响应</span><br></pre></td></tr></table></figure>
+<p>集群相关基础性知识基本就这些了。还有其他的这里就暂不介绍了，相关更多知识会在以后的集群博客中介绍。这里知识帮助理解。</p>
+<p>实现集群的前提：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1、时间同步，这里采用cron任务计划实现；</span><br><span class="line">2、主机名解析，最好通过配置/etc/hosts实现，不要使用DNS来实现，这里通过配置/etc/hosts来实现；</span><br><span class="line">3、双机互信。</span><br></pre></td></tr></table></figure>
+<p>首先，解决时间同步的问题：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">service ntpd stop    #在四台主机上关闭本机上时间同步的服务，因我们常挂起虚拟机，各虚拟机时间可能不相同，因此我们不使用系统时间同步的服务</span><br><span class="line">ntpdate 172.16.0.1#在各主机上执行该命令，同步时间与该地址的时间相同，该地址最好可以上网，这里是与本地网关服务器的时间同步</span><br><span class="line">crontab -e    #在各主机上使用该命令添加cron任务，每5分钟同步一下时间，同步后不管输出什么信息都送到/dev/null中，否则，你会每5分钟收到一封邮件</span><br><span class="line">*/5****/sbin/ntpdate 172.16.0.1&amp;&gt; /dev/null</span><br></pre></td></tr></table></figure>
+<p>然后，配置主机名解析：<br>我们先来修改各主机名：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hostname node1.langdu.com     #使用该命令修改主机名，可立即生效，使用logout退出虚拟机后在登录即可看到效果</span><br><span class="line">vim  /etc/sysconfig/network    #编辑IP为172.16.32.30的主机，修改其主机名</span><br><span class="line">HOSTNAME=node1.langdu.com     #修改主机名</span><br></pre></td></tr></table></figure>
+<p>同样在其他主机上也修改主机名。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">hostname node2.langdu.com     #使用该命令修改主机名，可立即生效，使用logout退出虚拟机后在登录即可看到效果</span><br><span class="line">vim  /etc/sysconfig/network    #编辑IP为172.16.32.31的主机，修改其主机名</span><br><span class="line">HOSTNAME=node2.langdu.com     #修改主机名</span><br><span class="line">hostname node3.langdu.com     #使用该命令修改主机名，可立即生效，使用logout退出虚拟机后在登录即可看到效果</span><br><span class="line">vim  /etc/sysconfig/network    #编辑IP为172.16.32.32的主机，修改其主机名</span><br><span class="line">HOSTNAME=node3.langdu.com     #修改主机名</span><br><span class="line">hostname node4.langdu.com     #使用该命令修改主机名，可立即生效，使用logout退出虚拟机后在登录即可看到效果</span><br><span class="line">vim  /etc/sysconfig/network    #编辑IP为172.16.32.33的主机，修改其主机名</span><br><span class="line">HOSTNAME=node4.langdu.com     #修改主机名</span><br><span class="line">vim /etc/hosts  #在IP为172.16.32.30的主机上，编辑该文件，添加如下四行信息</span><br><span class="line">172.16.32.30node1.langdu.com     node1</span><br><span class="line">172.16.32.31node2.langdu.com     node2</span><br><span class="line">172.16.32.32node3.langdu.com     node3</span><br><span class="line">172.16.32.33node4.langdu.com     node4</span><br></pre></td></tr></table></figure>
+<p>在node1主机上使用scp命令将该文件传给其他三台主机：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">scp /etc/hosts 172.16.32.31:/etc/#执行该命令时，需输入各主机的密码，可能有点麻烦</span><br><span class="line">scp /etc/hosts 172.16.32.32:/etc/</span><br><span class="line">scp /etc/hosts 172.16.32.33:/etc/</span><br></pre></td></tr></table></figure>
+<p>最后，实现双机互信：<br>因我们这里是两台主机做keepalived，两台主机做http，因此，我们将前两台实现双机互信，后两台实现双机互信，即node1和node2双机互信，node3和node4双机互信。<br>首先在node1上：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -f ~/.ssh/id_rsa -P &apos;&apos;    #在/root目录下执行该命令，生成密钥文件，密码为空</span><br><span class="line">ssh-copy-id-i .ssh/id_rsa.pub root@172.16.32.31#使用该命令将该密钥传给另一台主机，身份为root，确保当前处于/root目录下</span><br></pre></td></tr></table></figure>
+<p>接着在node2上：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa  -P &apos;&apos;    #在/root目录下执行该命令，生成密钥文件，密码为空</span><br><span class="line">ssh-copy-id-i .ssh/id_rsa.pub root@172.16.32.30#使用该命令将该密钥传给另一台主机，身份为root，确保当前处于/root目录下</span><br></pre></td></tr></table></figure>
+<p>这样，以后在node1和node2之间通信时，我们就不需要输入密码了<br>ssh node2 ‘ifconfig’#在node1主机上，使用该命令，查看下是否已实现双机互信<br>同样在另外两台主机上也需要执行上述命令<br>在node3主机上，执行如下命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -f ~/.ssh/id_rsa -P &apos;&apos;    #在/root目录下执行该命令，生成密钥文件，密码为空</span><br><span class="line">ssh-copy-id-i .ssh/id_rsa.pub root@172.16.32.33#使用该命令将该密钥传给另一台主机，身份为root，确保当前处于/root目录下</span><br></pre></td></tr></table></figure>
+<p>接着在node4上：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa  -P &apos;&apos;    #在/root目录下执行该命令，生成密钥文件，密码为空</span><br><span class="line">ssh-copy-id-i .ssh/id_rsa.pub root@172.16.32.32#使用该命令将该密钥传给另一台主机，身份为root，确保当前处于/root目录下</span><br></pre></td></tr></table></figure>
+<p>准备工作已经完毕，现在来安装我们的keepalived软件包。这里我们通过安装rpm包来实现，有兴趣的读者也可以从网上下载源码包，自己编译安装。本rpm是经过源码编译制作的rpm包，相关的脚本及示例配置文件都已制作进来，所以，直接在本地安装即可。假如你是从网上下载的rpm包，里边是没有示例配置文件和相关脚本的，需要自己写。</p>
+<p>首先准备好我们的yum源，解决依赖关系时有可能用到里边的相关rpm包。<br>在node1上，使用如下命令完成安装，同样在node2上也需要安装该软件包，因node1和node2实现keepalived高可用。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">yum -y --nogpgcheck localinstall keepalived-1.2.7-5.el5.i386.rpm   #因rpm我们以下载至本地，所以采用本地安装，别忘了在另一台主机上也安装该软件包</span><br><span class="line">rpm -ql keepalived    #使用该命令查看安装的rpm生成哪些文件，这里只贴出生成的部分文件</span><br><span class="line">/etc/keepalived</span><br><span class="line">/etc/keepalived/keepalived.conf </span><br><span class="line">/etc/keepalived/keepalived.conf.haproxy_example       #配置示例文件，网上下载的rpm包安装后没有该文件</span><br><span class="line">/etc/keepalived/notify.sh       #脚本文件，同样网上下载安装的也没有该脚本文件</span><br><span class="line">/etc/rc.d/init.d/keepalived</span><br><span class="line">/etc/sysconfig/keepalived</span><br><span class="line">/usr/bin/genhash</span><br><span class="line">/usr/sbin/keepalived</span><br></pre></td></tr></table></figure>
+<p>一起来看下配置文件里的内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">/etc/keepalived/keepalived.conf配置文件中，可分为三个部分：</span><br><span class="line">global_defs     #全局配置部分</span><br><span class="line">vrrp_instance VI_1     #vrrp实例，用来定义虚拟路由组</span><br><span class="line">virtual_server 192.168.200.100 443    #虚拟服务部分，用来定义LVS相关配置的</span><br></pre></td></tr></table></figure>
+<p>各部分配置的各参数含义：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">global_defs &#123;</span><br><span class="line">notification_email &#123;    #通知邮件收件人</span><br><span class="line">acassen@firewall.loc</span><br><span class="line">failover@firewall.loc</span><br><span class="line">sysadmin@firewall.loc</span><br><span class="line">&#125;</span><br><span class="line">notification_email_from Alexandre.Cassen@firewall.loc     #定义通知邮件的来源</span><br><span class="line">smtp_server 192.168.200.1</span><br><span class="line">smtp_connect_timeout 30</span><br><span class="line">router_id LVS_DEVEL</span><br><span class="line">&#125;</span><br><span class="line">vrrp_instance VI_1 &#123;     #vrrp实例部分</span><br><span class="line">state MASTER           #定义初始状态下虚拟路由状态</span><br><span class="line">interface eth0           #定义配置在哪个端口上</span><br><span class="line">virtual_router_id 51#虚拟路由组ID号</span><br><span class="line">priority 100#优先级</span><br><span class="line">advert_int 1#每隔1秒进行通告</span><br><span class="line">authentication &#123;             #实现认证</span><br><span class="line">auth_type PASS         #采用字符认证</span><br><span class="line">auth_pass 1111#认证需要的字符串，最好是随机生成的，两边主机需一样</span><br><span class="line">&#125;</span><br><span class="line">virtual_ipaddress &#123;        #在对应接口上配置虚拟IP，可根据需要进行添加或删除</span><br><span class="line">192.168.200.16</span><br><span class="line">192.168.200.17</span><br><span class="line">192.168.200.18</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line">virtual_server 192.168.200.100443&#123;    #虚拟服务部分，虚拟IP和端口分别是多少，</span><br><span class="line">delay_loop 6#获取服务时的等待时间</span><br><span class="line">lb_algo rr           #集群调度策略，默认为轮询，可自行修改</span><br><span class="line">lb_kind NAT        #集群转发方式</span><br><span class="line">nat_mask 255.255.255.0#虚拟IP的掩码</span><br><span class="line">persistence_timeout 50#集群持久连接超时时长，不想支持持久连接可去掉该项</span><br><span class="line">protocol TCP       #协议为TCP</span><br><span class="line">sorry_server 192.168.200.2001358#定义当real_server都down之后，该怎么办</span><br><span class="line">real_server 192.168.201.100443&#123;     #真实后台服务器IP及端口号，当有多个RIP时可出现多次</span><br><span class="line">weight 1#该服务器的权重</span><br><span class="line">SSL_GET &#123;          #采用SSL进行健康检查，还有其他方式也可实现健康检查</span><br><span class="line">url &#123;</span><br><span class="line">path /#通过443端口到指定路径下获取相关服务</span><br><span class="line">digest ff20ad2481f97b1754ef3e12ecd3a9cc    #摘要码</span><br><span class="line">&#125;</span><br><span class="line">url &#123;</span><br><span class="line">path /mrtg/</span><br><span class="line">status_code 200#状态码，访问正常时状态码为200</span><br><span class="line">&#125;</span><br><span class="line">connect_timeout 3#定义多长时间检查一次</span><br><span class="line">nb_get_retry 3#检查不健康后，重试次数</span><br><span class="line">delay_before_retry 3#多长时间重试一次</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>keepalived配置文件主要内容已经介绍完毕。</p>
+<p>想要了解更多keepalived配置文件的信息可使用该命令来查看：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">man keepalived.conf</span><br></pre></td></tr></table></figure>
+<p>接下来我们先去配置好http高可用服务两台主机，然后再回来配置keepalived。</p>
+<p>既然是LVS的DR模型，那我们先来配置另外两台主机，来实现http高可用集群。</p>
+<p>首先，打开另外两外两台提供http服务的虚拟机，这里是HA3和HA4。</p>
+<p>为了方便你也可以改为RS1和RS2。<br>先在HA3上执行如下命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">rpm -q httpd    #确保已经安装过httpd软件包，如果没有请自行安装该软件包</span><br><span class="line">echo &quot;&lt;h1&gt;RS1.langdu.com&lt;/h1&gt;&quot; &gt; /var/www/html/index.html     #为http提供主界面</span><br><span class="line">service httpd start       #启动服务</span><br><span class="line">同样，在HA4虚拟机上也执行同样的命令，但主界面要换成相应的命令。</span><br><span class="line">rpm -q httpd    #确保已经安装过httpd软件包，如果没有请自行安装该软件包</span><br><span class="line">echo &quot;&lt;h1&gt;RS2.langdu.com&lt;/h1&gt;&quot; &gt; /var/www/html/index.html     #为http提供主界面</span><br><span class="line">service httpd start       #启动服务</span><br></pre></td></tr></table></figure>
+<p>然后在我们的物理机上尝试访问这两个IP，看是否可以访问。</p>
+<p><img src="https://i.imgur.com/MgMcJnA.jpg" alt="image"></p>
+<p>在DR模型中，只添加个http服务还不行，还有许多需要修改，貌似不是很简单，好吧，为了节约时间，这里我们通过一个脚本实现修改各个数据。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/bash</span><br><span class="line">#</span><br><span class="line"># Script to start LVS DR real server.</span><br><span class="line"># chkconfig: - 90 10</span><br><span class="line"># description: LVS DR real server</span><br><span class="line">#</span><br><span class="line">.  /etc/rc.d/init.d/functions</span><br><span class="line">VIP=172.16.32.5#定义VIP</span><br><span class="line">host=`/bin/hostname`</span><br><span class="line">case &quot;$1&quot;in</span><br><span class="line">start)</span><br><span class="line"># Start LVS-DR real server on this machine.</span><br><span class="line">/sbin/ifconfig lo down</span><br><span class="line">/sbin/ifconfig lo up</span><br><span class="line">echo 1&gt; /proc/sys/net/ipv4/conf/lo/arp_ignore     </span><br><span class="line">echo 2&gt; /proc/sys/net/ipv4/conf/lo/arp_announce</span><br><span class="line">echo 1&gt; /proc/sys/net/ipv4/conf/all/arp_ignore</span><br><span class="line">echo 2&gt; /proc/sys/net/ipv4/conf/all/arp_announce</span><br><span class="line">/sbin/ifconfig lo:0$VIP broadcast $VIP netmask 255.255.255.255up</span><br><span class="line">/sbin/route add -host $VIP dev lo:0</span><br><span class="line">;;</span><br><span class="line">stop)</span><br><span class="line"># Stop LVS-DR real server loopback device(s).</span><br><span class="line">/sbin/ifconfig lo:0down</span><br><span class="line">echo 0&gt; /proc/sys/net/ipv4/conf/lo/arp_ignore</span><br><span class="line">echo 0&gt; /proc/sys/net/ipv4/conf/lo/arp_announce</span><br><span class="line">echo 0&gt; /proc/sys/net/ipv4/conf/all/arp_ignore</span><br><span class="line">echo 0&gt; /proc/sys/net/ipv4/conf/all/arp_announce</span><br><span class="line">;;</span><br><span class="line">status)</span><br><span class="line"># Status of LVS-DR real server.</span><br><span class="line">islothere=`/sbin/ifconfig lo:0| grep $VIP`</span><br><span class="line">isrothere=`netstat -rn | grep &quot;lo:0&quot;| grep $VIP`</span><br><span class="line">if[ ! &quot;$islothere&quot;-o ! &quot;isrothere&quot;];then</span><br><span class="line"># Either the route or the lo:0 device</span><br><span class="line"># not found.</span><br><span class="line">echo &quot;LVS-DR real server Stopped.&quot;</span><br><span class="line">else</span><br><span class="line">echo &quot;LVS-DR real server Running.&quot;</span><br><span class="line">fi</span><br><span class="line">;;</span><br><span class="line">*)</span><br><span class="line"># Invalid entry.</span><br><span class="line">echo &quot;$0: Usage: $0 &#123;start|status|stop&#125;&quot;</span><br><span class="line">exit 1</span><br><span class="line">;;</span><br><span class="line">esac</span><br></pre></td></tr></table></figure>
+<p>记得该脚本需要在另一个主机上也要执行一下。</p>
+<p>两台主机上都执行过上边的脚本后，验证下各参数是否已经修改：下面几个命令均在node3主机上执行，可在node3上使用ssh node4 ‘COMMAND’来验证下node4上各参数是否已修改</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">ifconfig    #在node3上执行该命令，查看是否有VIP，使用ssh node4 &apos;ifconfig&apos;命令查看node4上是否也有VIP</span><br><span class="line">eth0      Link encap:Ethernet  HWaddr 00:0C:29:7F:8F:44</span><br><span class="line">inet addr:172.16.32.33Bcast:172.16.255.255Mask:255.255.0.0</span><br><span class="line">UP BROADCAST RUNNING MULTICAST  MTU:1500Metric:1</span><br><span class="line">RX packets:162748errors:0dropped:0overruns:0frame:0</span><br><span class="line">TX packets:2368errors:0dropped:0overruns:0carrier:0</span><br><span class="line">collisions:0txqueuelen:1000</span><br><span class="line">RX bytes:26502458(25.2MiB)  TX bytes:200681(195.9KiB)</span><br><span class="line">Interrupt:59Base address:0x2000</span><br><span class="line">lo        Link encap:Local Loopback</span><br><span class="line">inet addr:127.0.0.1Mask:255.0.0.0</span><br><span class="line">UP LOOPBACK RUNNING  MTU:16436Metric:1</span><br><span class="line">RX packets:10errors:0dropped:0overruns:0frame:0</span><br><span class="line">TX packets:10errors:0dropped:0overruns:0carrier:0</span><br><span class="line">collisions:0txqueuelen:0</span><br><span class="line">RX bytes:666(666.0b)  TX bytes:666(666.0b)</span><br><span class="line">lo:0Link encap:Local Loopback</span><br><span class="line">inet addr:172.16.32.5Mask:255.255.255.255</span><br><span class="line">UP LOOPBACK RUNNING  MTU:16436Metric:1</span><br><span class="line">route -n   #查看是否有配置的VIP特定路由</span><br><span class="line">Kernel IP routing table</span><br><span class="line">Destination     Gateway         Genmask         Flags Metric Ref    Use Iface</span><br><span class="line">172.16.32.50.0.0.0255.255.255.255UH    000lo</span><br><span class="line">169.254.0.00.0.0.0255.255.0.0U     000eth0</span><br><span class="line">172.16.0.00.0.0.0255.255.0.0U     000eth0</span><br><span class="line">0.0.0.0172.16.0.10.0.0.0UG    000eth0</span><br><span class="line">cat /proc/sys/net/ipv4/conf/all/arp_ignore</span><br><span class="line">1</span><br><span class="line">cat /proc/sys/net/ipv4/conf/all/arp_announce</span><br><span class="line">2</span><br></pre></td></tr></table></figure>
+<p>到此，我们的两台RealServer都以配置完毕，而且其http服务也已正常工作。</p>
+<p>现在去编辑我们的keepalived的配置文件，并修改成我们所需要的。</p>
+<p>先在node1主机上进行修改：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/keepalived/keepalived.conf</span><br><span class="line">global_defs &#123;</span><br><span class="line">notification_email &#123;</span><br><span class="line">root@localhost     #有通告信息时将邮件发给管理员</span><br><span class="line">&#125;</span><br><span class="line">notification_email_from keepalived@localhost    #通告邮件来自哪里</span><br><span class="line">smtp_server 127.0.0.1</span><br><span class="line">smtp_connect_timeout 30</span><br><span class="line">router_id LVS_DEVEL</span><br><span class="line">&#125;</span><br><span class="line">vrrp_script chk_httpd &#123;     #定义该vrrp脚本，上边应提到keepalived就是靠这些脚本来实现其相关功能的</span><br><span class="line">script &quot;killall -0 httpd&quot;#尝试杀死该服务，但不是真正杀死该服务，仅为了测试该服务是否启动而已</span><br><span class="line">interval 2</span><br><span class="line"># check every 2 seconds</span><br><span class="line">weight -2</span><br><span class="line"># if failed, decrease 2 of the priority</span><br><span class="line">fall 2</span><br><span class="line"># require 2 failures for failures</span><br><span class="line">rise 1</span><br><span class="line"># require 1 sucesses for ok</span><br><span class="line">&#125;</span><br><span class="line">vrrp_script chk_schedown &#123;        #定义该vrrp脚本，来实现手动转移IP地址，待会演示效果</span><br><span class="line">script &quot;[[ -f /etc/keepalived/down ]] &amp;&amp; exit 1 || exit 0&quot;#如果有这个文件，则返回1，否则返回0</span><br><span class="line">interval 2</span><br><span class="line">weight -2#优先级减2</span><br><span class="line">&#125;</span><br><span class="line">vrrp_instance VI_1 &#123;</span><br><span class="line">state MASTER                  #定义该主机为master路由</span><br><span class="line">interface eth0</span><br><span class="line">virtual_router_id 132#定义虚拟路由组ID号，同一网段内不要使用相同的组ID，否则会报错</span><br><span class="line">priority 101#定义其优先级</span><br><span class="line">advert_int 1</span><br><span class="line">authentication &#123;</span><br><span class="line">auth_type PASS</span><br><span class="line">auth_pass langdu          #字符串认证时使用的字符串，可自行修改，但要保证两个keepalived主机上的字符串相同</span><br><span class="line">&#125;</span><br><span class="line">virtual_ipaddress &#123;</span><br><span class="line">172.16.32.5/16dev eth0 label eth0:0#定义VIP，并制定设备和别名</span><br><span class="line">&#125;</span><br><span class="line">track_script &#123;     #健康检查脚本</span><br><span class="line">chk_httpd</span><br><span class="line">chk_schedown</span><br><span class="line">&#125;</span><br><span class="line">notify_master &quot;/etc/keepalived/notify.sh master&quot;#如果是master路由器，传递master参数</span><br><span class="line">notify_backup &quot;/etc/keepalived/notify.sh backup&quot;#如果是backup路由，传递backup参数</span><br><span class="line">notify_fault &quot;/etc/keepalived/notify.sh fault&quot;#如果失败了，传递fault参数</span><br><span class="line">&#125;</span><br><span class="line">virtual_server 172.16.32.580&#123;    #定义虚拟服务器，因我们测试的是http服务，所以端口为80</span><br><span class="line">delay_loop 6</span><br><span class="line">lb_algo rr</span><br><span class="line">lb_kind DR</span><br><span class="line">nat_mask 255.255.0.0#该掩码为虚拟服务器的掩码</span><br><span class="line"># persistence_timeout 50     #为了待会刷新界面时查看效果，这里我没有启用持久连接，而是将其注释掉了</span><br><span class="line">protocol TCP</span><br><span class="line">real_server 172.16.32.3280&#123;    #定义RIP和端口号</span><br><span class="line">weight 1#权重，在rr调度方式下，该值没有实际意义</span><br><span class="line">HTTP_GET &#123;          #使用HTTP进行健康检查，假如你使用的是https服务，就需要使用基于SSL的健康检查</span><br><span class="line">url &#123;</span><br><span class="line">path /</span><br><span class="line">status_code 200#状态码</span><br><span class="line">&#125;</span><br><span class="line">connect_timeout 2</span><br><span class="line">nb_get_retry 3</span><br><span class="line">delay_before_retry 2</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line">real_server 172.16.32.3380&#123;     #指定另一个RIP和端口号，上边已经提到，当有多个realserver时，该项可以出现多次</span><br><span class="line">weight 2</span><br><span class="line">HTTP_GET &#123;</span><br><span class="line">url &#123;</span><br><span class="line">path /</span><br><span class="line">status_code 200</span><br><span class="line">&#125;</span><br><span class="line">connect_timeout 2</span><br><span class="line">nb_get_retry 3</span><br><span class="line">delay_before_retry 3</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line">下面这个脚本时实现健康检查用的。即上边用到的notify.sh脚本。</span><br><span class="line">#!/bin/bash</span><br><span class="line"># Author: onlyyou</span><br><span class="line"># description: An example of notify script</span><br><span class="line">#</span><br><span class="line">ifalias=$&#123;2:-eth0:0&#125;</span><br><span class="line">interface=$(echo $ifalias | awk -F: &apos;&#123;print $1&#125;&apos;)</span><br><span class="line">vip=$(ip addr show $interface | grep $ifalias | awk &apos;&#123;print $2&#125;&apos;)</span><br><span class="line">contact=&apos;root@localhost&apos;</span><br><span class="line">workspace=$(dirname $0)</span><br><span class="line">notify() &#123;</span><br><span class="line">subject=&quot;$ip change to $1&quot;</span><br><span class="line">body=&quot;$ip change to $1 $(date &apos;+%F %H:%M:%S&apos;)&quot;</span><br><span class="line">echo $body | mail -s &quot;$1 transition&quot;$contact    #实现发送邮件</span><br><span class="line">&#125;</span><br><span class="line">case &quot;$1&quot;in</span><br><span class="line">master)</span><br><span class="line">notify master</span><br><span class="line">exit 0</span><br><span class="line">;;</span><br><span class="line">backup)</span><br><span class="line">notify backup</span><br><span class="line">/etc/rc.d/init.d/httpd restart</span><br><span class="line">exit 0</span><br><span class="line">;;</span><br><span class="line">fault)</span><br><span class="line">notify fault</span><br><span class="line">exit 0</span><br><span class="line">;;</span><br><span class="line">*)</span><br><span class="line">echo &apos;Usage: $(basename $0) &#123;master|backup|fault&#125;&apos;</span><br><span class="line">exit 1</span><br><span class="line">;;</span><br><span class="line">esac</span><br><span class="line">scp /etc/keepalived/keepalived.conf node2:/etc/keepalived/#将配置文件发给另一个keepalived主机，这里发给node2，假如你的主机不是node2，请做相应修改</span><br><span class="line">在node2主机上，修改刚传过来的keepalived的配置文件。这里只需修改两项即可：</span><br><span class="line">vim /etc/keepalived/keepalived.conf</span><br><span class="line">vrrp_instance VI_1 &#123;</span><br><span class="line">state BACKUP          #设置该node2主机为backup路由</span><br><span class="line">interface eth0</span><br><span class="line">virtual_router_id 132</span><br><span class="line">priority 100#设定node2主机的优先级为100，低于node1</span><br><span class="line">advert_int 1</span><br><span class="line">authentication &#123;</span><br><span class="line">auth_type PASS</span><br><span class="line">auth_pass langdu</span><br><span class="line">&#125;</span><br><span class="line">virtual_ipaddress &#123;</span><br><span class="line">172.16.32.5/16dev eth0 label eth0:0</span><br><span class="line">&#125;</span><br><span class="line">track_script &#123;</span><br><span class="line">chk_httpd</span><br><span class="line">chk_schedown</span><br><span class="line">&#125;</span><br><span class="line">notify_master &quot;/etc/keepalived/notify.sh master&quot;</span><br><span class="line">notify_backup &quot;/etc/keepalived/notify.sh backup&quot;</span><br><span class="line">notify_fault &quot;/etc/keepalived/notify.sh fault&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在node2主机上，我们只需修改上述两项即可。</p>
+<p>修改完成后保存退出，接下来就可以启动keepalived服务了。</p>
+<p>在上边给的keepalived设计图中我们已经看到，keepalived是为ipvs提供高可用服务的，并且会生成ipvs规则，但需要我们事先安装ipvsadm软件包。好吧，现在我们去安装ipvsadm软件包，然后再启动keepalived服务。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssh node2 &apos;yum -y install ipvsadm&apos;   #通过node1主机在node2上安装ipvsadm软件包</span><br><span class="line">yum -y install ipvsadm   #在node1上安装软件包</span><br></pre></td></tr></table></figure>
+<p>安装完毕后启动我们的keepalived服务。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">service keepalived start    #启动node1上的keepalived服务</span><br><span class="line">ssh node2 &apos;service keepalived start&apos;   #在node1上启动node2的keepalived服务</span><br></pre></td></tr></table></figure>
+<p>我们先来看下我们的日志，看有没有记录什么信息。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">tail /var/log/messages    #查看日志</span><br><span class="line">May 1618:19:22node1 Keepalived_vrrp[789]: Using LinkWatch kernel netlink reflector...</span><br><span class="line">May 1618:19:22node1 Keepalived_vrrp[789]: VRRP sockpool: [ifindex(2), proto(112), fd(11,12)]</span><br><span class="line">May 1618:19:22node1 Keepalived_vrrp[789]: VRRP_Instance(VI_1) Transition to MASTER STATE   #传输master状态</span><br><span class="line">May 1618:19:22node1 Keepalived_vrrp[789]: VRRP_Instance(VI_1) Received lower prio advert, forcing new election</span><br><span class="line">May 1618:19:23node1 Keepalived_vrrp[789]: VRRP_Instance(VI_1) Entering MASTER STATE       #进入master状态</span><br><span class="line">May 1618:19:23node1 Keepalived_vrrp[789]: VRRP_Instance(VI_1) setting protocol VIPs.            #设置VIP地址</span><br><span class="line">May 1618:19:23node1 Keepalived_vrrp[789]: VRRP_Instance(VI_1) Sending gratuitous ARPs on eth0 for172.16.32.5</span><br><span class="line">May 1618:19:23node1 Keepalived_vrrp[789]: Netlink reflector reports IP 172.16.32.5added</span><br><span class="line">May 1618:19:23node1 Keepalived_healthcheckers[788]: Netlink reflector reports IP 172.16.32.5added</span><br><span class="line">May 1618:19:28node1 Keepalived_vrrp[789]: VRRP_Instance(VI_1) Sending gratuitous ARPs on eth0 for172.16.32.5</span><br><span class="line">从上边的日志可以看到，我们的配置已经生效。那一起看下ipvs规则吧。</span><br><span class="line">ipvsadm -l -n   #使用该命令，查看是否有ipvs规则，显示如下：</span><br><span class="line">IP Virtual Server version 1.2.1(size=4096)</span><br><span class="line">Prot LocalAddress:Port Scheduler Flags</span><br><span class="line">-&gt; RemoteAddress:Port           Forward Weight ActiveConn InActConn</span><br><span class="line">TCP  172.16.32.5:80rr</span><br><span class="line">-&gt; 172.16.32.33:80Route   100</span><br><span class="line">-&gt; 172.16.32.32:80Route   100</span><br><span class="line">ifconfig    #查看下node1上的IP配置情况</span><br><span class="line">eth0      Link encap:Ethernet  HWaddr 00:0C:29:9F:2F:AF</span><br><span class="line">inet addr:172.16.32.30Bcast:172.16.255.255Mask:255.255.0.0</span><br><span class="line">UP BROADCAST RUNNING MULTICAST  MTU:1500Metric:1</span><br><span class="line">RX packets:290653errors:1dropped:0overruns:0frame:0</span><br><span class="line">TX packets:13874errors:0dropped:0overruns:0carrier:0</span><br><span class="line">collisions:0txqueuelen:1000</span><br><span class="line">RX bytes:46393162(44.2MiB)  TX bytes:2014631(1.9MiB)</span><br><span class="line">Interrupt:59Base address:0x2000</span><br><span class="line">eth0:0Link encap:Ethernet  HWaddr 00:0C:29:9F:2F:AF</span><br><span class="line">inet addr:172.16.32.5Bcast:0.0.0.0Mask:255.255.0.0</span><br><span class="line">UP BROADCAST RUNNING MULTICAST  MTU:1500Metric:1</span><br><span class="line">Interrupt:59Base address:0x2000</span><br><span class="line">lo        Link encap:Local Loopback</span><br><span class="line">inet addr:127.0.0.1Mask:255.0.0.0</span><br><span class="line">UP LOOPBACK RUNNING  MTU:16436Metric:1</span><br><span class="line">RX packets:10errors:0dropped:0overruns:0frame:0</span><br><span class="line">TX packets:10errors:0dropped:0overruns:0carrier:0</span><br><span class="line">collisions:0txqueuelen:0</span><br><span class="line">RX bytes:666(666.0b)  TX bytes:666(666.0b)</span><br></pre></td></tr></table></figure>
+<p>配置的VIP也已生效，我们的ipvs规则已经实现。现在在我们的物理机上访问下172.16.32.5，看一下，是否可以访问，显示什么信息吧。</p>
+<p><img src="https://i.imgur.com/wm9s8AV.jpg" alt="image"></p>
+<p>到目前为止，貌似我们还没有实现IP地址漂移。好吧，从上边给的配置文件，可以看出来，我们只需在master路由主机上，在相应目录下创建一个down文件即可实现手动漂移IP地址。</p>
+<p>在node1上</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">cd /etc/keepalived/#进入该目录</span><br><span class="line">touch down    #创建该文件，用来实现手动漂移IP地址</span><br><span class="line">tail /var/log/messages    #停几秒钟后，查看日志</span><br><span class="line">May 1619:15:32node1 Keepalived_vrrp[2816]: VRRP_Instance(VI_1) Entering MASTER STATE</span><br><span class="line">May 1619:15:32node1 Keepalived_vrrp[2816]: VRRP_Instance(VI_1) setting protocol VIPs.</span><br><span class="line">May 1619:15:32node1 Keepalived_vrrp[2816]: VRRP_Instance(VI_1) Sending gratuitous ARPs on eth0 for172.16.32.5</span><br><span class="line">May 1619:15:32node1 Keepalived_healthcheckers[2815]: Netlink reflector reports IP 172.16.32.5added</span><br><span class="line">May 1619:15:32node1 Keepalived_vrrp[2816]: Netlink reflector reports IP 172.16.32.5added</span><br><span class="line">May 1619:15:32node1 Keepalived_vrrp[2816]: VRRP_Instance(VI_1) Received higher prio advert    #收到更高优先级的通告信息</span><br><span class="line">May 1619:15:32node1 Keepalived_vrrp[2816]: VRRP_Instance(VI_1) Entering BACKUP STATE     #进入backup状态</span><br><span class="line">May 1619:15:32node1 Keepalived_vrrp[2816]: VRRP_Instance(VI_1) removing protocol VIPs.     #转移VIP地址</span><br><span class="line">May 1619:15:32node1 Keepalived_healthcheckers[2815]: Netlink reflector reports IP 172.16.32.5removed</span><br><span class="line">May 1619:15:32node1 Keepalived_vrrp[2816]: Netlink reflector reports IP 172.16.32.5removed</span><br><span class="line">ifconfig   #使用该命令，查看下node1主机的VIP是否存在，可看到已转移到其他主机</span><br><span class="line">eth0      Link encap:Ethernet  HWaddr 00:0C:29:9F:2F:AF</span><br><span class="line">inet addr:172.16.32.30Bcast:172.16.255.255Mask:255.255.0.0</span><br><span class="line">UP BROADCAST RUNNING MULTICAST  MTU:1500Metric:1</span><br><span class="line">RX packets:347881errors:1dropped:0overruns:0frame:0</span><br><span class="line">TX packets:21333errors:0dropped:0overruns:0carrier:0</span><br><span class="line">collisions:0txqueuelen:1000</span><br><span class="line">RX bytes:50760780(48.4MiB)  TX bytes:2653767(2.5MiB)</span><br><span class="line">Interrupt:59Base address:0x2000</span><br><span class="line">lo        Link encap:Local Loopback</span><br><span class="line">inet addr:127.0.0.1Mask:255.0.0.0</span><br><span class="line">UP LOOPBACK RUNNING  MTU:16436Metric:1</span><br><span class="line">RX packets:10errors:0dropped:0overruns:0frame:0</span><br><span class="line">TX packets:10errors:0dropped:0overruns:0carrier:0</span><br><span class="line">collisions:0txqueuelen:0</span><br><span class="line">RX bytes:666(666.0b)  TX bytes:666(666.0b)</span><br><span class="line">在node2主机上查看其日志。</span><br><span class="line">tail /var/log/messages   #查看node2的日志信息</span><br><span class="line">May 1619:15:32node1 Keepalived_vrrp[2464]: VRRP_Instance(VI_1) forcing a new MASTER election</span><br><span class="line">May 1619:15:32node1 Keepalived_vrrp[2464]: VRRP_Instance(VI_1) forcing a new MASTER election</span><br><span class="line">May 1619:15:33node1 Keepalived_vrrp[2464]: VRRP_Instance(VI_1) Transition to MASTER STATE</span><br><span class="line">May 1619:15:34node1 Keepalived_vrrp[2464]: VRRP_Instance(VI_1) Entering MASTER STATE    #进入master状态</span><br><span class="line">May 1619:15:34node1 Keepalived_vrrp[2464]: VRRP_Instance(VI_1) setting protocol VIPs.    #设定VIP</span><br><span class="line">May 1619:15:34node1 Keepalived_healthcheckers[2463]: Netlink reflector reports IP 172.16.32.5added</span><br><span class="line">May 1619:15:34node1 avahi-daemon[3375]: Registering new address record for172.16.32.5on eth0.</span><br><span class="line">May 1619:15:34node1 Keepalived_vrrp[2464]: VRRP_Instance(VI_1) Sending gratuitous ARPs on eth0 for172.16.32.5</span><br><span class="line">May 1619:15:34node1 Keepalived_vrrp[2464]: Netlink reflector reports IP 172.16.32.5added</span><br><span class="line">May 1619:15:39node1 Keepalived_vrrp[2464]: VRRP_Instance(VI_1) Sending gratuitous ARPs on eth0 for172.16.32.5</span><br></pre></td></tr></table></figure>
+<p>在在我们的物理机访问下，看能否访问。依然在浏览器地址栏输入172.16.32.5，可以看到，访问正常。<br>现在，我们删掉/etc/keepalived/down这个文件，看能否实现IP漂移回来。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">rm /etc/keepalived/down      #删除node1主机上该文件</span><br><span class="line">rm: remove regular empty file`down&apos;? y</span><br><span class="line">tail /var/log/messages    #查看日志信息</span><br><span class="line">May 1619:15:32node1 Keepalived_vrrp[2816]: Netlink reflector reports IP 172.16.32.5removed</span><br><span class="line">May 1619:27:54node1 Keepalived_vrrp[2816]: VRRP_Script(chk_schedown) succeeded</span><br><span class="line">May 1619:27:55node1 Keepalived_vrrp[2816]: VRRP_Instance(VI_1) forcing a new MASTER election</span><br><span class="line">May 1619:27:55node1 Keepalived_vrrp[2816]: VRRP_Instance(VI_1) forcing a new MASTER election</span><br><span class="line">May 1619:27:56node1 Keepalived_vrrp[2816]: VRRP_Instance(VI_1) Transition to MASTER STATE</span><br><span class="line">May 1619:27:57node1 Keepalived_vrrp[2816]: VRRP_Instance(VI_1) Entering MASTER STATE    #进入master状态</span><br><span class="line">May 1619:27:57node1 Keepalived_vrrp[2816]: VRRP_Instance(VI_1) setting protocol VIPs.</span><br><span class="line">May 1619:27:57node1 Keepalived_vrrp[2816]: VRRP_Instance(VI_1) Sending gratuitous ARPs on eth0 for172.16.32.5</span><br><span class="line">May 1619:27:57node1 Keepalived_healthcheckers[2815]: Netlink reflector reports IP 172.16.32.5added</span><br><span class="line">May 1619:27:57node1 Keepalived_vrrp[2816]: Netlink reflector reports IP 172.16.32.5added</span><br></pre></td></tr></table></figure>
+<p>至此，我们已成功实现了keepalived的相关功能。以上演示的仅仅是主从模式下地址漂移。那我们能否实现在双主模式下实现地址漂移呢？答案是肯定的。</p>
+<p>实现双主模式配置：</p>
+<p>在node1主机上，修改keepalived配置文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/keepalived/keepalived.conf   #其他信息不变，仅修改如下信息</span><br><span class="line">vrrp_instance VI_2 &#123;    #添加虚拟路由组2</span><br><span class="line">state BACKUP          #定义该路由在虚拟路由组2中为backup路由</span><br><span class="line">interface eth0</span><br><span class="line">virtual_router_id 232#定义组ID</span><br><span class="line">priority 200#定义在该组中的优先级</span><br><span class="line">advert_int 1</span><br><span class="line">authentication &#123;</span><br><span class="line">auth_type PASS</span><br><span class="line">auth_pass langdu</span><br><span class="line">&#125;</span><br><span class="line">virtual_ipaddress &#123;</span><br><span class="line">172.16.32.6/16dev eth0 label eth0:1#因是双主模型，定义VIP及设备和别名，同上边定义的别名要区分开</span><br><span class="line">&#125;</span><br><span class="line">track_script &#123;</span><br><span class="line">chk_httpd</span><br><span class="line">chk_schedown</span><br><span class="line">&#125;</span><br><span class="line">notify_master &quot;/etc/keepalived/notify.sh master eth0:1&quot;#修改这三项，因我们有意定义成其他别名</span><br><span class="line">notify_backup &quot;/etc/keepalived/notify.sh backup eth0:1&quot;</span><br><span class="line">notify_fault &quot;/etc/keepalived/notify.sh fault eth0:1&quot;</span><br><span class="line">&#125;</span><br><span class="line">同时注释掉virtual_server部分。在双主模型下，我们不使用virtual_server部分。</span><br><span class="line">scp /etc/keepalived/keepalived.conf  node2:/etc/keepalived/#将该配置文件传给另一个主机，即node2</span><br><span class="line">在node2上，修改keepalived配置文件</span><br><span class="line">vim /etc/keepalived/keepalived.conf</span><br><span class="line">vrrp_instance VI_2 &#123;     #在该主机上修改虚拟路由组2</span><br><span class="line">state MASTER       #修改在该组中本路由为master路由</span><br><span class="line">interface eth0</span><br><span class="line">virtual_router_id 232#定义组ID</span><br><span class="line">priority 201#修改在该组中的优先级，一定要高于node1中虚拟路由组2的优先级</span><br><span class="line">advert_int 1</span><br><span class="line">authentication &#123;</span><br><span class="line">auth_type PASS</span><br><span class="line">auth_pass langdu</span><br><span class="line">&#125;</span><br><span class="line">virtual_ipaddress &#123;</span><br><span class="line">172.16.32.6/16dev eth0 label eth0:1#因是双主模型，定义VIP及设备和别名，同上边定义的别名要区分开</span><br><span class="line">&#125;</span><br><span class="line">track_script &#123;</span><br><span class="line">chk_httpd</span><br><span class="line">chk_schedown</span><br><span class="line">&#125;</span><br><span class="line">notify_master &quot;/etc/keepalived/notify.sh master eth0:1&quot;</span><br><span class="line">notify_backup &quot;/etc/keepalived/notify.sh backup eth0:1&quot;</span><br><span class="line">notify_fault &quot;/etc/keepalived/notify.sh fault eth0:1&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在双主模型下，为了让同一个域名解析到不同的IP上，我们需要用到DNS将其解析到不同的两个IP上。这里，为了查看效果，我们先不安装DNS解析。待会在实现。</p>
+<p>以上配置好后，重启keepalived服务。在物理机上在浏览器地址栏分别输入172.16.32.5和172.16.32.6查看显示效果。</p>
+<p>可以看到，显示正常。我们的配置是正确的。</p>
+<p>在我们的node1主机上，我们来手动实现地址漂移，看能否实现。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">cd /etc/keepalived   #进入该目录</span><br><span class="line">touch down        #创建该文件</span><br><span class="line">tail /var/log/messages      #查看日志信息</span><br><span class="line">May 1621:25:25node1 named[16646]: zone localhost/IN: loaded serial 0</span><br><span class="line">May 1621:25:25node1 named[16646]: zone managed-keys.bind/IN/_meta: loaded serial 10</span><br><span class="line">May 1621:25:25node1 named[16646]: running</span><br><span class="line">May 1621:25:25node1 named[16646]: zone langdu.com/IN: sending notifies (serial 2013005)</span><br><span class="line">May 1621:45:59node1 Keepalived_vrrp[11785]: VRRP_Script(chk_schedown) failed</span><br><span class="line">May 1621:46:00node1 Keepalived_vrrp[11785]: VRRP_Instance(VI_1) Received higher prio advert</span><br><span class="line">May 1621:46:00node1 Keepalived_vrrp[11785]: VRRP_Instance(VI_1) Entering BACKUP STATE    #可看到进入backup状态</span><br><span class="line">May 1621:46:00node1 Keepalived_vrrp[11785]: VRRP_Instance(VI_1) removing protocol VIPs.      #VIP漂移成功</span><br><span class="line">May 1621:46:00node1 Keepalived_vrrp[11785]: Netlink reflector reports IP 172.16.32.5removed</span><br><span class="line">May 1621:46:00node1 Keepalived_healthcheckers[11784]: Netlink reflector reports IP 172.16.32.5removed</span><br><span class="line">现在，一起看下node2上的日志信息：</span><br><span class="line">tail /var/log/messages</span><br><span class="line">May 1621:46:00node1 Keepalived_vrrp[11537]: VRRP_Instance(VI_1) forcing a new MASTER election</span><br><span class="line">May 1621:46:00node1 Keepalived_vrrp[11537]: VRRP_Instance(VI_1) forcing a new MASTER election</span><br><span class="line">May 1621:46:01node1 Keepalived_vrrp[11537]: VRRP_Instance(VI_1) Transition to MASTER STATE</span><br><span class="line">May 1621:46:02node1 Keepalived_vrrp[11537]: VRRP_Instance(VI_1) Entering MASTER STATE     #进入master状态</span><br><span class="line">May 1621:46:02node1 Keepalived_vrrp[11537]: VRRP_Instance(VI_1) setting protocol VIPs.</span><br><span class="line">May 1621:46:02node1 Keepalived_vrrp[11537]: VRRP_Instance(VI_1) Sending gratuitous ARPs on eth0 for172.16.32.5</span><br><span class="line">May 1621:46:02node1 Keepalived_vrrp[11537]: Netlink reflector reports IP 172.16.32.5added   #添加另一个VIP</span><br><span class="line">May 1621:46:02node1 Keepalived_healthcheckers[11536]: Netlink reflector reports IP 172.16.32.5added</span><br><span class="line">May 1621:46:02node1 avahi-daemon[3375]: Registering new address record for172.16.32.5on eth0.</span><br><span class="line">May 1621:46:07node1 Keepalived_vrrp[11537]: VRRP_Instance(VI_1) Sending gratuitous ARPs on eth0 for172.16.32.5</span><br><span class="line">现在我们来安装DNS服务器，实现将同一个域名解析到不同的IP地址上。这里我们将node1作为DNS服务器来负责域名解析。因此，以下命令在node1主机上执行。</span><br><span class="line">yum -y install bind97 bind97-utils   #安装bind97，来提供DNS服务，在安装前请确保你的虚拟机上没有安装其他bind软件包</span><br><span class="line">vim /etc/named.rfc1912.zones    #编辑该文件，添加如下信息</span><br><span class="line">zone &quot;langdu.com&quot;IN &#123;         #添加该区域，DNS相关配置请查看我的相关博客，里边有详细介绍</span><br><span class="line">typemaster;        </span><br><span class="line">file&quot;langdu.com.zone&quot;;</span><br><span class="line">&#125;;</span><br><span class="line">zone &quot;32.16.172.in-addr.arpa&quot;IN &#123;</span><br><span class="line">typemaster;</span><br><span class="line">file&quot;172.16.32.zone&quot;;</span><br><span class="line">&#125;;</span><br><span class="line">cd /etc/named</span><br><span class="line">vim 172.16.32.zone#编辑该文件，添加如下内容：</span><br><span class="line">$TTL 600</span><br><span class="line">@          IN     SOA     ns.langdu.com.          admin.langdu.com. (</span><br><span class="line">2013005</span><br><span class="line">4H</span><br><span class="line">5M</span><br><span class="line">3D</span><br><span class="line">1D)</span><br><span class="line">IN     NS     ns.langdu.com.</span><br><span class="line">30IN     PTR     ns.langdu.com.</span><br><span class="line">6IN     PTR     www.langdu.com.</span><br><span class="line">5IN     PTR     www.langdu.com.</span><br><span class="line">vim langdu.com.zone     #编辑该文件，添加如下内容：</span><br><span class="line">$TTL 600</span><br><span class="line">@          IN     SOA     ns.langdu.com.          admin.langdu.com. (</span><br><span class="line">2013005</span><br><span class="line">4H</span><br><span class="line">5M</span><br><span class="line">3D</span><br><span class="line">1D)</span><br><span class="line">IN     NS     ns</span><br><span class="line">IN     NS     www</span><br><span class="line">IN     NS     www</span><br><span class="line">ns              IN     A     172.16.32.30</span><br><span class="line">www          IN     A     172.16.32.5#实现将同一个域名解析到不同的IP上</span><br><span class="line">www          IN     A     172.16.32.6</span><br><span class="line">named-checkconf    #检查配置文件</span><br><span class="line">named-checkzone &quot;langdu.com&quot;/var/named/langdu.com.zone       #检查区域文件</span><br><span class="line">named-checkzone &quot;32.16.172.in-addr.arpa&quot;/var/named/172.16.32.zone</span><br><span class="line">在我们的物理机上修改hosts文件。</span><br><span class="line">打开C:\Windows\System32\drivers\etc/hosts文件，添加两行信息：</span><br><span class="line">172.16.32.5www.langdu.com</span><br><span class="line">172.16.32.6www.langdu.com</span><br><span class="line">检查没有问题后启动服务。</span><br><span class="line">service named start</span><br><span class="line">dig -t A www.langdu.com @172.16.32.30#使用该命令查询下DNS服务器是否可用，以下是显示结果：</span><br><span class="line">; &lt;&lt;&gt;&gt; DiG 9.7.0-P2-RedHat-9.7.0-6.P2.el5_7.4&lt;&lt;&gt;&gt; -t A www.langdu.com @172.16.32.30</span><br><span class="line">;; globaloptions: +cmd</span><br><span class="line">;; Got answer:</span><br><span class="line">;; -&gt;&gt;HEADER&lt;&lt;-opcode: QUERY, status: NOERROR, id: 5351</span><br><span class="line">;; flags: qr aa rd ra; QUERY: 1, ANSWER: 2, AUTHORITY: 2, ADDITIONAL: 1</span><br><span class="line">;; QUESTION SECTION:</span><br><span class="line">;www.langdu.com.               IN     A</span><br><span class="line">;; ANSWER SECTION:</span><br><span class="line">www.langdu.com.          600IN     A     172.16.32.5#解析成功，可看到同一域名解析出两个IP地址</span><br><span class="line">www.langdu.com.          600IN     A     172.16.32.6</span><br><span class="line">;; AUTHORITY SECTION:</span><br><span class="line">langdu.com.          600IN     NS     ns.langdu.com.</span><br><span class="line">langdu.com.          600IN     NS     www.langdu.com.</span><br><span class="line">;; ADDITIONAL SECTION:</span><br><span class="line">ns.langdu.com.          600IN     A     172.16.32.30</span><br><span class="line">;; Query time: 5msec</span><br><span class="line">;; SERVER: 172.16.32.30#53(172.16.32.30)</span><br><span class="line">;; WHEN: Thu May 1621:42:072013</span><br><span class="line">;; MSG SIZE  rcvd: 111</span><br></pre></td></tr></table></figure>
+<p>我们的DNS服务器也做好了。现在在物理机上的浏览器地址栏输入www.langdu.com，查看下显示效果。因为是DNS服务器解析得到的，因此，刷新多次后可能还是显示同一个界面内容。</p>
+<p><a href="http://blog.51cto.com/lq2419/1202890" target="_blank" rel="noopener">原文引自这里</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/keepalived/" rel="tag"># keepalived</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/13/shell脚本替换文件中某个字符串/" rel="next" title="shell脚本替换文件中某个字符串">
+                <i class="fa fa-chevron-left"></i> shell脚本替换文件中某个字符串
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="ben wong" />
+            
+              <p class="site-author-name" itemprop="name">ben wong</p>
+              <p class="site-description motion-element" itemprop="description">要么忙着活，要么忙着死</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://imgur.com" title="图床" target="_blank">图床</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是keepalived呢？"><span class="nav-number">1.</span> <span class="nav-text"><a href="#&#x4EC0;&#x4E48;&#x662F;keepalived&#x5462;&#xFF1F;" class="headerlink" title="&#x4EC0;&#x4E48;&#x662F;keepalived&#x5462;&#xFF1F;"></a>&#x4EC0;&#x4E48;&#x662F;keepalived&#x5462;&#xFF1F;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#VRRP："><span class="nav-number">2.</span> <span class="nav-text"><a href="#VRRP&#xFF1A;" class="headerlink" title="VRRP&#xFF1A;"></a>VRRP&#xFF1A;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#"><span class="nav-number">3.</span> <span class="nav-text"><a href="#" class="headerlink" title=""></a><a id="more"></a></span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#simple：简单字符认证。"><span class="nav-number">4.</span> <span class="nav-text"><a href="#simple&#xFF1A;&#x7B80;&#x5355;&#x5B57;&#x7B26;&#x8BA4;&#x8BC1;&#x3002;" class="headerlink" title="simple&#xFF1A;&#x7B80;&#x5355;&#x5B57;&#x7B26;&#x8BA4;&#x8BC1;&#x3002;"></a>simple&#xFF1A;&#x7B80;&#x5355;&#x5B57;&#x7B26;&#x8BA4;&#x8BC1;&#x3002;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实验场景："><span class="nav-number">5.</span> <span class="nav-text"><a href="#&#x5B9E;&#x9A8C;&#x573A;&#x666F;&#xFF1A;" class="headerlink" title="&#x5B9E;&#x9A8C;&#x573A;&#x666F;&#xFF1A;"></a>&#x5B9E;&#x9A8C;&#x573A;&#x666F;&#xFF1A;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ben wong</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://louis90.disqus.com/count.js" async></script>
+    
+
+    
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="奶爸的天空">
 <meta property="og:description" content="将当前目录下包含jack串的文件中，jack字符串替换为tom  1sed -i &amp;quot;s/jack/tom/g&amp;quot; `grep &amp;quot;jack&amp;quot; -rl ./`  将某个文件中的jack字符串替换为tom  1sed -i &amp;quot;s/jack/tom/g&amp;quot; test.txt  linux sed 批量替换多个文件中的字符串  1sed -i &amp;qu">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-12-13T10:40:56.338Z">
+<meta property="og:updated_time" content="2017-12-13T10:44:36.387Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="shell脚本替换文件中某个字符串">
 <meta name="twitter:description" content="将当前目录下包含jack串的文件中，jack字符串替换为tom  1sed -i &amp;quot;s/jack/tom/g&amp;quot; `grep &amp;quot;jack&amp;quot; -rl ./`  将某个文件中的jack字符串替换为tom  1sed -i &amp;quot;s/jack/tom/g&amp;quot; test.txt  linux sed 批量替换多个文件中的字符串  1sed -i &amp;qu">
@@ -409,7 +409,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">perl -pi -e &apos;s|ABCD|Linux|g&apos; `find ./ -type f`</span><br></pre></td></tr></table></figure>
 <p>将调用perl执行一条替换命令，把find命令找到的所有文件内容中的ABCD替换为Linux</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find ./ -type f</span><br></pre></td></tr></table></figure>
-<p>此命令是显示当前目录下所有的文件,上面的“s|ABCD|Linux| g”是perl要执行的脚本，即把所有ABCD替换为Linux,如果不写最后的那个g，“s|ABCD|Linux| ”将只替换每一行开头的ABCD </p>
+<p>此命令是显示当前目录下所有的文件,上面的 “s|ABCD|Linux| g” 是perl要执行的脚本，即把所有ABCD替换为Linux,如果不写最后的那个g，“s|ABCD|Linux| ”将只替换每一行开头的ABCD </p>
 
       
     </div>
@@ -449,6 +449,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/12/13/基于keepalived-主从-双主-LVS-DR模型-DNS实现http高可用集群服务/" rel="prev" title="基于keepalived(主从+双主) + LVS(DR模型) + DNS实现http高可用集群服务">
+                基于keepalived(主从+双主) + LVS(DR模型) + DNS实现http高可用集群服务 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -530,7 +534,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-count">9</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -552,7 +556,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">7</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
