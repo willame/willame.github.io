@@ -82,7 +82,7 @@
 <meta name="description" content="要么忙着活，要么忙着死">
 <meta property="og:type" content="website">
 <meta property="og:title" content="奶爸的天空">
-<meta property="og:url" content="http://code.meirenji.info/tags/shadowsocks/index.html">
+<meta property="og:url" content="http://code.meirenji.info/tags/Shadowsocks/index.html">
 <meta property="og:site_name" content="奶爸的天空">
 <meta property="og:description" content="要么忙着活，要么忙着死">
 <meta property="og:locale" content="zh-Hans">
@@ -118,13 +118,13 @@
 
 
 
-  <link rel="canonical" href="http://code.meirenji.info/tags/shadowsocks/"/>
+  <link rel="canonical" href="http://code.meirenji.info/tags/Shadowsocks/"/>
 
 
 
 
 
-  <title>标签: shadowsocks | 奶爸的天空</title>
+  <title>标签: Shadowsocks | 奶爸的天空</title>
   
 
 
@@ -278,7 +278,7 @@
 
     <div id="posts" class="posts-collapse">
       <div class="collection-title">
-        <h1>shadowsocks<small>标签</small>
+        <h1>Shadowsocks<small>标签</small>
         </h1>
       </div>
 
@@ -290,9 +290,9 @@
 
       <h2 class="post-title">
         
-            <a class="post-title-link" href="/2017/12/16/科学上网精编/" itemprop="url">
+            <a class="post-title-link" href="/2017/12/09/Ubuntu配置Shadowsocks实现终端代理/" itemprop="url">
               
-                <span itemprop="name">科学上网精编</span>
+                <span itemprop="name">Ubuntu配置Shadowsocks实现终端代理</span>
               
             </a>
         
@@ -300,9 +300,9 @@
 
       <div class="post-meta">
         <time class="post-time" itemprop="dateCreated"
-              datetime="2017-12-16T12:38:20+09:00"
-              content="2017-12-16" >
-          12-16
+              datetime="2017-12-09T18:04:26+09:00"
+              content="2017-12-09" >
+          12-09
         </time>
       </div>
 
@@ -366,7 +366,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-count">12</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -944,7 +944,34 @@
 
 </body>
 </html>
- 
+indow;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
 
   
 
