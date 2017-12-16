@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="奶爸的天空">
 <meta property="og:description" content="首先，将现有vps系统更新过最新版本。  123apt-get updateapt-get upgrade 命令  1uname -a 检查当前Kernel版本。结果举例： 1Linux localhost 4.0.4-x86_64-linode57 #1 SMP Thu May 21 11:01:47 EDT 2015 x86_64 x86_64 x86_64 GNU/Linux  接下来是安">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-12-16T06:26:21.339Z">
+<meta property="og:updated_time" content="2017-12-16T06:32:40.489Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Ubuntu14.04更换内核以安装锐速">
 <meta name="twitter:description" content="首先，将现有vps系统更新过最新版本。  123apt-get updateapt-get upgrade 命令  1uname -a 检查当前Kernel版本。结果举例： 1Linux localhost 4.0.4-x86_64-linode57 #1 SMP Thu May 21 11:01:47 EDT 2015 x86_64 x86_64 x86_64 GNU/Linux  接下来是安">
@@ -400,6 +400,7 @@
 </ol>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Ubuntu:</span><br><span class="line"></span><br><span class="line">apt-get update</span><br><span class="line"> </span><br><span class="line">apt-get install linux-image-virtual grub2</span><br><span class="line"></span><br><span class="line">Debian:</span><br><span class="line"></span><br><span class="line">apt-get install linux-image-amd64 grub2</span><br></pre></td></tr></table></figure>
 <p>注意！远程窗口会显示Grub安装界面，要求你选择grub安装位置，你直接选择不安装即可。</p>
+<a id="more"></a>
 <p>查看默认系统内核版本：</p>
 <h1 id="ls-boot-vmlinuz"><a href="#ls-boot-vmlinuz" class="headerlink" title="ls /boot/vmlinuz*"></a>ls /boot/vmlinuz*</h1><ol>
 <li>接下来我们配置grub启动参数：</li>
