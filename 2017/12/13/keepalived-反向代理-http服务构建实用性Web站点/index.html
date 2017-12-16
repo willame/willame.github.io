@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="keepalived," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="反向代理又有什么用呢？既然有反向代理，那就肯定有正向代理，先说下正向代理。在我们上网的时候，有时候我们不是直接访问某个网站，而是通过某个代理来访问某个网站，然后，再由该代理将结果返回给我们。 这里，这个代理就是正向代理。也就是说在客户端使用的代理叫做正向代理。而反向代理正好相反。 在服务器端，有些服务器出于安全及负载等考虑，不是让客户端直接访问，而是在服务器端，设置一个代理，将所有用户的请求都先发">
+<meta name="keywords" content="keepalived">
+<meta property="og:type" content="article">
+<meta property="og:title" content="keepalived + 反向代理 + http服务构建实用性Web站点">
+<meta property="og:url" content="http://code.meirenji.info/2017/12/13/keepalived-反向代理-http服务构建实用性Web站点/index.html">
+<meta property="og:site_name" content="奶爸的天空">
+<meta property="og:description" content="反向代理又有什么用呢？既然有反向代理，那就肯定有正向代理，先说下正向代理。在我们上网的时候，有时候我们不是直接访问某个网站，而是通过某个代理来访问某个网站，然后，再由该代理将结果返回给我们。 这里，这个代理就是正向代理。也就是说在客户端使用的代理叫做正向代理。而反向代理正好相反。 在服务器端，有些服务器出于安全及负载等考虑，不是让客户端直接访问，而是在服务器端，设置一个代理，将所有用户的请求都先发">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://i.imgur.com/vkIzWXm.jpg">
+<meta property="og:image" content="https://i.imgur.com/KUO4K1Y.jpg">
+<meta property="og:image" content="https://i.imgur.com/W1pz7JN.jpg">
+<meta property="og:image" content="https://i.imgur.com/Xdn95AQ.jpg">
+<meta property="og:image" content="https://i.imgur.com/WSq4mtH.jpg">
+<meta property="og:image" content="https://i.imgur.com/5eVww2B.jpg">
+<meta property="og:image" content="https://i.imgur.com/x0AHbjP.jpg">
+<meta property="og:updated_time" content="2017-12-13T13:07:28.455Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="keepalived + 反向代理 + http服务构建实用性Web站点">
+<meta name="twitter:description" content="反向代理又有什么用呢？既然有反向代理，那就肯定有正向代理，先说下正向代理。在我们上网的时候，有时候我们不是直接访问某个网站，而是通过某个代理来访问某个网站，然后，再由该代理将结果返回给我们。 这里，这个代理就是正向代理。也就是说在客户端使用的代理叫做正向代理。而反向代理正好相反。 在服务器端，有些服务器出于安全及负载等考虑，不是让客户端直接访问，而是在服务器端，设置一个代理，将所有用户的请求都先发">
+<meta name="twitter:image" content="https://i.imgur.com/vkIzWXm.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://code.meirenji.info/2017/12/13/keepalived-反向代理-http服务构建实用性Web站点/"/>
+
+
+
+
+
+  <title>keepalived + 反向代理 + http服务构建实用性Web站点 | 奶爸的天空</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">奶爸的天空</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://code.meirenji.info/2017/12/13/keepalived-反向代理-http服务构建实用性Web站点/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ben wong">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="奶爸的天空">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">keepalived + 反向代理 + http服务构建实用性Web站点</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-13T20:05:06+08:00">
+                2017-12-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全运维/" itemprop="url" rel="index">
+                    <span itemprop="name">安全运维</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="反向代理又有什么用呢？"><a href="#反向代理又有什么用呢？" class="headerlink" title="反向代理又有什么用呢？"></a>反向代理又有什么用呢？</h2><p>既然有反向代理，那就肯定有正向代理，先说下正向代理。在我们上网的时候，有时候我们不是直接访问某个网站，而是通过某个代理来访问某个网站，然后，再由该代理将结果返回给我们。</p>
+<p>这里，这个代理就是正向代理。也就是说在客户端使用的代理叫做正向代理。而反向代理正好相反。</p>
+<p>在服务器端，有些服务器出于安全及负载等考虑，不是让客户端直接访问，而是在服务器端，设置一个代理，将所有用户的请求都先发至该代理，然后，通过代理向服务器端请求相应的资源，然后由该代理向客户端回应。这里的代理就是反向代理。</p>
+<p>在网络中正向代理、反向代理如下图所示：</p>
+<p><img src="https://i.imgur.com/vkIzWXm.jpg" alt="image"></p>
+<p>本文主要介绍如何结合keepalived、反向代理和http服务三者一块工作，共同构建一个高效的、实用性的web服务站点。</p>
+<p>通过一个图，来介绍下如何构建此架构，以及列举出一些常用的提供反向代理和http服务的技术都有哪些。</p>
+<p><img src="https://i.imgur.com/KUO4K1Y.jpg" alt="image"></p>
+<p>从上图可以看到，这里，我将keepalived和反向代理放在同一个主机上实现，后端是提供http服务的主机，采用类似于LVS的NAT模型来实现此架构。</p>
+<p>本博客，仅介绍和演示两种提供反向代理及http服务的技术，分别为：nginx、haproxy和apache、nginx。</p>
+<p>在前面的博客中，我已经介绍过，keepalived主要用来实现对我们的路由实现高可用，以免当只有一个路由时，因该路由故障导致内网无法与外部通信的问题。这里相关的理论知识就不在介绍了。在LNMP相关博文中，我已经介绍过，nginx除了可以提供http服务之外，还有一个重要的功能，那就是可用来做反向代理，这里，正是将nginx作为反向代理来用，同时也结合nginx提供的http服务一起工作。nginx由于其低资源占用，在处理客户端请求时，一万个并发请求也仅占用2.5M内存空间，因此，可以想象为何众多网站采用nginx做代理来实现了吧。haproxy是专用来提供反向代理的服务软件。</p>
+<p>待会在细细介绍haproxy。在LAMP中，已经介绍过apache了，因此，这里也不再过多介绍，仅演示实验。我会在后面的博客中专门介绍apache做代理，后端采用tomcat提供http服务的相关博客，敬请关注。</p>
+<a id="more"></a>
+<h2 id="先介绍下haproxy"><a href="#先介绍下haproxy" class="headerlink" title="先介绍下haproxy"></a>先介绍下haproxy</h2><p>什么是haproxy呢？先来看下百度百科是如何介绍haproxy的吧。</p>
+<blockquote>
+<p>HAProxy提供高可用性、负载均衡以及基于TCP和HTTP应用的代理，支持虚拟主机，它是免费、快速并且可靠的一种解决方案。HAProxy特别适用于那些负载特大的web站点，这些站点通常又需要会话保持或七层处理。HAProxy运行在时下的硬件上，完全可以支持数以万计的并发连接。并且它的运行模式使得它可以很简单安全的整合进您当前的架构中， 同时可以保护你的web服务器不被暴露到网络上。</p>
+<p>HAProxy实现了一种事件驱动、单一进程模型，此模型支持非常大的并发连接数。多进程或多线程模型受内存限制 、系统调度器限制以及无处不在的锁限制，很少能处理数千并发连接。事件驱动模型因为在有更好的资源和时间管理的用户端(User-Space) 实现所有这些任务，所以没有这些问题。此模型的弊端是，在多核系统上，这些程序通常扩展性较差。这就是为什么他们必须进行优化以 使每个CPU时间片(Cycle)做更多的工作。</p>
+</blockquote>
+<p>HAProxy是免费、极速且可靠的用于为TCP和基于HTTP应用程序提供高可用、负载均衡和代理服务的解决方案，尤其适用于高负载且需要持久连接或7层处理机制的web站点。</p>
+<h2 id="演示实验"><a href="#演示实验" class="headerlink" title="演示实验"></a>演示实验</h2><p>包括以下两个：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">一、keepalived + nginx反向代理 + apache服务构建Web站点</span><br><span class="line">二、keepalived + haproxy反向代理 + apache服务构建Web站点</span><br></pre></td></tr></table></figure>
+<p>此处，keepalived用来提供虚拟路由的功能，采用两台主机来实现此功能；nginx反向代理功能与keepalived一起在同一主机上实现。在提供反向代理功能方面，还有另外一个也可以实现反向代理的功能，那就是haproxy，关于haproxy的反向代理功能的实现，会在后面的博客中介绍，敬请关注，这里主要介绍nginx的反向代理功能的实现。</p>
+<p>apache用来提供http服务，后端也可以是一个基于LAMP架构的服务器。在上一遍博客中，提供的一张图片显示，apache的市场份额依然占据着领导地位，其强大的市场份额一时半会还没有哪个能够超越，因此，在企业中，基于LAMP架构来提供http服务还是很多的。这里我们就不演示基于LAMP架构来实现此三者的组合了，有兴趣的话读者可参考我的另一篇博客中介绍的方法自行构建一个LAMP，然后加上nginx的反向代理功能，再加上keepalived来提供虚拟路由功能，将三者结合起来一起工作。</p>
+<p>实验环境：</p>
+<p>本次所示实验都在虚拟机上实现。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">系统：RHEL5.8；</span><br><span class="line">内核：linux-2.6.18-308.el5；</span><br><span class="line">基于keepalived的主从模型实现，后端采用类似于LVS的NAT模型实现。</span><br><span class="line">各IP分配如下所示：</span><br><span class="line">     VIP: 172.16.32.5</span><br><span class="line">     DIP: 172.16.32.30    对应主机名为：node1</span><br><span class="line">            172.16.32.31    对应主机名为：node2</span><br><span class="line">     RIP: 172.16.32.32    对应主机名为：node3</span><br><span class="line">            172.16.32.33    对应主机名为：node4</span><br></pre></td></tr></table></figure>
+<p>实现集群的前提：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1、时间同步</span><br><span class="line">2、双机互信</span><br><span class="line">3、主机名解析</span><br></pre></td></tr></table></figure>
+<p>以上三个前提在前面的博客中我已经介绍过如何实现了，这里就不在介绍了，不知道的请参考我以前的博客。<br>现在开始演示我们的实验。</p>
+<p>一、keepalived + nginx反向代理 + apache提供的http服务构建Web站点</p>
+<p>先看下实现模型图：</p>
+<p><img src="https://i.imgur.com/W1pz7JN.jpg" alt="image"></p>
+<p>在上图中，keepalived和nginx反向代理在同一个主机上实现，后端是apache提供的http服务。</p>
+<p>首先，安装好yum源，然后先去提供http服务的两台后端主机node3和node4上安装apache，以提供http服务。</p>
+<p>以下操作需在node3和node4上都进行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">rpm -q httpd  #查看是否安装此软件包，如果没有配置好yum源后安装此软件包</span><br><span class="line">yum -y install httpd  #安装该软件包</span><br><span class="line">vim /var/www/html/index.html   #编辑该文件，添加如下两行信息，以提供主页</span><br><span class="line">&lt;h1&gt;http://lq2419.blog.51cto.com/&lt;/h1&gt;</span><br><span class="line">&lt;h2&gt;Apache node3, IP: 172.16.32.32&lt;/h2&gt;    #在node4主机上，修改&lt;h2&gt;Apache node4, IP: 172.16.32.33&lt;/h2&gt;</span><br><span class="line">service httpd start   #启动httpd服务</span><br></pre></td></tr></table></figure>
+<p>在我们的物理机上进行测试，显示效果如下所示：</p>
+<p><img src="https://i.imgur.com/Xdn95AQ.jpg" alt="image"></p>
+<p>下面是实现的日志，这里进贴出其中一个主机的日志。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">tail /var/log/httpd/access_log    #在node3查看日志信息，查看显示访问的IP，因为是通过我们的物理机直接访问，所以显示的是物理机IP</span><br><span class="line">172.16.32.0 - - [25/May/2013:20:55:46 +0800] &quot;GET / HTTP/1.1&quot; 200 79 &quot;-&quot; &quot;Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31&quot;</span><br><span class="line">172.16.32.0 - - [25/May/2013:20:55:46 +0800] &quot;GET /favicon.ico HTTP/1.1&quot; 404 287 &quot;-&quot; &quot;Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31&quot;</span><br><span class="line">172.16.32.0 - - [25/May/2013:20:55:46 +0800] &quot;GET / HTTP/1.1&quot; 200 79 &quot;-&quot; &quot;Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31&quot;</span><br><span class="line">172.16.32.0 - - [25/May/2013:20:55:46 +0800] &quot;GET /favicon.ico HTTP/1.1&quot; 404 287 &quot;-&quot; &quot;Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31&quot;</span><br><span class="line">172.16.32.0 - - [25/May/2013:20:55:47 +0800] &quot;GET / HTTP/1.1&quot; 200 79 &quot;-&quot; &quot;Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31&quot;</span><br><span class="line">172.16.32.0 - - [25/May/2013:20:55:47 +0800] &quot;GET /favicon.ico HTTP/1.1&quot; 404 287 &quot;-&quot; &quot;Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31&quot;</span><br><span class="line">172.16.32.0 - - [25/May/2013:20:55:47 +0800] &quot;GET / HTTP/1.1&quot; 200 79 &quot;-&quot; &quot;Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31&quot;</span><br><span class="line">172.16.32.0 - - [25/May/2013:20:55:47 +0800] &quot;GET /favicon.ico HTTP/1.1&quot; 404 287 &quot;-&quot; &quot;Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31&quot;</span><br><span class="line">172.16.32.0 - - [25/May/2013:20:55:47 +0800] &quot;GET / HTTP/1.1&quot; 200 79 &quot;-&quot; &quot;Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31&quot;</span><br><span class="line">172.16.32.0 - - [25/May/2013:20:55:47 +0800] &quot;GET /favicon.ico HTTP/1.1&quot; 404 287 &quot;-&quot; &quot;Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31&quot;</span><br></pre></td></tr></table></figure>
+<p>修改httpd的配置文件，对日志显示格式进行修改。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/httpd/conf/httpd.conf   #修改该文件</span><br><span class="line">LogFormat &quot;%&#123;X-Real-IP&#125;i %l %u %t \&quot;%r\&quot; %&gt;s %b \&quot;%&#123;Referer&#125;i\&quot; \&quot;%&#123;User-Agent&#125;i\&quot;&quot; combined   #找到该项，将第一个%h修改%&#123;X-Real-IP&#125;i，用于当使用代理访问时显示客户端IP，而不是代理IP</span><br><span class="line">service httpd restart   #重启httpd服务</span><br></pre></td></tr></table></figure>
+<p>以上修改需在两台后端服务器主机上都进行。为了看效果，你也可以先不修改后端服务器httpd配置文件中日志格式的显示情况，先启动代理服务，使用物理机访问代理主机，然后在服务器主机上查看访问日志，看显示的客户端IP是否正常，是代理IP还是物理机IP。然后再来修改此选项。这里不再演示。</p>
+<p>后端的两台http服务器已配置完毕。接着去前端的两台代理主机node1和node2上进行相关的配置。</p>
+<p>以下操作在需在node1和node2上都执行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br></pre></td><td class="code"><pre><span class="line">yum -y install pcre-devel</span><br><span class="line">tar xf nginx-1.4.1.tar.gz</span><br><span class="line">cd nginx-1.4.1</span><br><span class="line">./configure \         #执行该命令，各参数相关含义前面博客中已经介绍过，这里就不再介绍了</span><br><span class="line">  --prefix=/usr \</span><br><span class="line">  --sbin-path=/usr/sbin/nginx \</span><br><span class="line">  --conf-path=/etc/nginx/nginx.conf \</span><br><span class="line">  --error-log-path=/var/log/nginx/error.log \</span><br><span class="line">  --http-log-path=/var/log/nginx/access.log \</span><br><span class="line">  --pid-path=/var/run/nginx/nginx.pid  \</span><br><span class="line">  --lock-path=/var/lock/nginx.lock \</span><br><span class="line">  --user=nginx \</span><br><span class="line">  --group=nginx \</span><br><span class="line">  --with-http_ssl_module \</span><br><span class="line">  --with-http_flv_module \</span><br><span class="line">  --with-http_stub_status_module \</span><br><span class="line">  --with-http_gzip_static_module \</span><br><span class="line">  --http-client-body-temp-path=/var/tmp/nginx/client/ \</span><br><span class="line">  --http-proxy-temp-path=/var/tmp/nginx/proxy/ \</span><br><span class="line">  --http-fastcgi-temp-path=/var/tmp/nginx/fcgi/ \</span><br><span class="line">  --http-uwsgi-temp-path=/var/tmp/nginx/uwsgi \</span><br><span class="line">  --http-scgi-temp-path=/var/tmp/nginx/scgi \</span><br><span class="line">  --with-pcre \</span><br><span class="line">  --with-file-aio</span><br><span class="line">提供SysV风格的服务脚本：</span><br><span class="line">vim /etc/init.d/nginx</span><br><span class="line">#!/bin/sh</span><br><span class="line">#</span><br><span class="line"># nginx - this script starts and stops the nginx daemon</span><br><span class="line">#</span><br><span class="line"># chkconfig:   - 85 15</span><br><span class="line"># description:  Nginx is an HTTP(S) server, HTTP(S) reverse \</span><br><span class="line">#               proxy and IMAP/POP3 proxy server</span><br><span class="line"># processname: nginx</span><br><span class="line"># config:      /etc/nginx/nginx.conf</span><br><span class="line"># config:      /etc/sysconfig/nginx</span><br><span class="line"># pidfile:     /var/run/nginx.pid</span><br><span class="line"># Source function library.</span><br><span class="line">. /etc/rc.d/init.d/functions</span><br><span class="line"># Source networking configuration.</span><br><span class="line">. /etc/sysconfig/network</span><br><span class="line"># Check that networking is up.</span><br><span class="line">[ &quot;$NETWORKING&quot; = &quot;no&quot; ] &amp;&amp; exit 0</span><br><span class="line">nginx=&quot;/usr/sbin/nginx&quot;</span><br><span class="line">prog=$(basename $nginx)</span><br><span class="line">NGINX_CONF_FILE=&quot;/etc/nginx/nginx.conf&quot;</span><br><span class="line">[ -f /etc/sysconfig/nginx ] &amp;&amp; . /etc/sysconfig/nginx</span><br><span class="line">lockfile=/var/lock/subsys/nginx</span><br><span class="line">make_dirs() &#123;</span><br><span class="line">   # make required directories</span><br><span class="line">   user=`nginx -V 2&gt;&amp;1 | grep &quot;configure arguments:&quot; | sed &apos;s/[^*]*--user=\([^ ]*\).*/\1/g&apos; -`</span><br><span class="line">   options=`$nginx -V 2&gt;&amp;1 | grep &apos;configure arguments:&apos;`</span><br><span class="line">   for opt in $options; do</span><br><span class="line">       if [ `echo $opt | grep &apos;.*-temp-path&apos;` ]; then</span><br><span class="line">           value=`echo $opt | cut -d &quot;=&quot; -f 2`</span><br><span class="line">           if [ ! -d &quot;$value&quot; ]; then</span><br><span class="line">               # echo &quot;creating&quot; $value</span><br><span class="line">               mkdir -p $value &amp;&amp; chown -R $user $value</span><br><span class="line">           fi</span><br><span class="line">       fi</span><br><span class="line">   done</span><br><span class="line">&#125;</span><br><span class="line">start() &#123;</span><br><span class="line">    [ -x $nginx ] || exit 5</span><br><span class="line">    [ -f $NGINX_CONF_FILE ] || exit 6</span><br><span class="line">    make_dirs</span><br><span class="line">    echo -n $&quot;Starting $prog: &quot;</span><br><span class="line">    daemon $nginx -c $NGINX_CONF_FILE</span><br><span class="line">    retval=$?</span><br><span class="line">    echo</span><br><span class="line">    [ $retval -eq 0 ] &amp;&amp; touch $lockfile</span><br><span class="line">    return $retval</span><br><span class="line">&#125;</span><br><span class="line">stop() &#123;</span><br><span class="line">    echo -n $&quot;Stopping $prog: &quot;</span><br><span class="line">    killproc $prog -QUIT</span><br><span class="line">    retval=$?</span><br><span class="line">    echo</span><br><span class="line">    [ $retval -eq 0 ] &amp;&amp; rm -f $lockfile</span><br><span class="line">    return $retval</span><br><span class="line">&#125;</span><br><span class="line">restart() &#123;</span><br><span class="line">    configtest || return $?</span><br><span class="line">    stop</span><br><span class="line">    sleep 1</span><br><span class="line">    start</span><br><span class="line">&#125;</span><br><span class="line">reload() &#123;</span><br><span class="line">    configtest || return $?</span><br><span class="line">    echo -n $&quot;Reloading $prog: &quot;</span><br><span class="line">    killproc $nginx -HUP</span><br><span class="line">    RETVAL=$?</span><br><span class="line">    echo</span><br><span class="line">&#125;</span><br><span class="line">force_reload() &#123;</span><br><span class="line">    restart</span><br><span class="line">&#125;</span><br><span class="line">configtest() &#123;</span><br><span class="line">  $nginx -t -c $NGINX_CONF_FILE</span><br><span class="line">&#125;</span><br><span class="line">rh_status() &#123;</span><br><span class="line">    status $prog</span><br><span class="line">&#125;</span><br><span class="line">rh_status_q() &#123;</span><br><span class="line">    rh_status &gt;/dev/null 2&gt;&amp;1</span><br><span class="line">&#125;</span><br><span class="line">case &quot;$1&quot; in</span><br><span class="line">    start)</span><br><span class="line">        rh_status_q &amp;&amp; exit 0</span><br><span class="line">        $1</span><br><span class="line">        ;;</span><br><span class="line">    stop)</span><br><span class="line">        rh_status_q || exit 0</span><br><span class="line">        $1</span><br><span class="line">        ;;</span><br><span class="line">    restart|configtest)</span><br><span class="line">        $1</span><br><span class="line">        ;;</span><br><span class="line">    reload)</span><br><span class="line">        rh_status_q || exit 7</span><br><span class="line">        $1</span><br><span class="line">        ;;</span><br><span class="line">    force-reload)</span><br><span class="line">        force_reload</span><br><span class="line">        ;;</span><br><span class="line">    status)</span><br><span class="line">        rh_status</span><br><span class="line">        ;;</span><br><span class="line">    condrestart|try-restart)</span><br><span class="line">        rh_status_q || exit 0</span><br><span class="line">            ;;</span><br><span class="line">    *)</span><br><span class="line">        echo $&quot;Usage: $0 &#123;start|stop|status|restart|condrestart|try-restart|reload|force-reload|configtest&#125;&quot;</span><br><span class="line">        exit 2</span><br><span class="line">esac</span><br><span class="line">赋予其执</span><br><span class="line">行权限：</span><br><span class="line">chmod +x /etc/init.d/nginx</span><br><span class="line">service httpd stop   #如果http服务启动，需先关闭</span><br><span class="line">chkconfig httpd off    #关闭开机自启动</span><br><span class="line">chkconfig --add nginx   #添加到服务列表</span><br><span class="line">chkconfig nginx on   #开机自启动</span><br><span class="line">chkconfig --list nginx</span><br><span class="line">service nginx start   #启动服务</span><br></pre></td></tr></table></figure>
+<p>到此两台主机上的nginx就算是安装好了，我们只需添加相关代理的配置即可。现在直接配置我们的代理，使其能够工作。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/nginx/nginx.conf   #编辑此配置文件，添加与代理相关的配置</span><br><span class="line">    upstream webserver &#123;            #在http段，添加新的上下文</span><br><span class="line">        server 172.16.32.32 weight=1 max_fails=2 fail_timeout=2;   #定义后端服务器，权重为1，最大尝试失败次数为2，失败时两次尝试的超时时长为2</span><br><span class="line">        server 172.16.32.33 weight=1 max_fails=2 fail_timeout=2;</span><br><span class="line">        server 127.0.0.1 backup;      #定义当上边两个都down机后，启用本机的服务，只要有一个还提供服务，就不启用此主机的服务</span><br><span class="line">    &#125;</span><br><span class="line">    server &#123;</span><br><span class="line">        listen       80;</span><br><span class="line">        server_name  localhost;</span><br><span class="line">        #charset koi8-r;</span><br><span class="line">        #access_log  logs/host.access.log  main;</span><br><span class="line">        location / &#123;          #删除根下所有的默认配置，添加如下两行</span><br><span class="line">         proxy_pass http://webserver;        #将所有访问根的都转发的webserver</span><br><span class="line">         proxy_set_header X-Real-IP $remote_addr;        #设置转发的头部，此项可实现让后端服务器记录客户端IP，否则记录的是代理的IP，但后端服务器的记录格式也需要相应修改</span><br><span class="line">        &#125;</span><br><span class="line">同样，将上边配置好的文件发给另一台代理主机：</span><br><span class="line">scp /etc/nginx/nginx.conf node2:/etc/nginx  #将此配置文件传给另一个代理主机，假如你没有实现主机名解析，请写成相应的IP地址</span><br><span class="line">service nginx reload  #重新载入nginx服务</span><br></pre></td></tr></table></figure>
+<p>知识点补充：</p>
+<blockquote>
+<p>upstream模块可定义一个新的上下文，它包含了一组宝岛upstream服务器，这些服务器可能被赋予了不同的权重、不同的类型甚至可以基于维护等原因被标记为down。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">upstream模块常用的指令有：</span><br><span class="line">ip_hash：基于客户端IP地址完成请求的分发，它可以保证来自于同一个客户端的请求始终被转发至同一个upstream服务器；</span><br><span class="line">keepalive：每个worker进程为发送到upstream服务器的连接所缓存的个数；</span><br><span class="line">least_conn：最少连接调度算法；</span><br><span class="line">server：定义一个upstream服务器的地址，还可包括一系列可选参数，如：</span><br><span class="line">     weight：权重；</span><br><span class="line">     max_fails：最大失败连接次数，失败连接的超时时长由fail_timeout指定；</span><br><span class="line">     fail_timeout：等待请求的目标服务器发送响应的时长；</span><br><span class="line">     backup：用于fallback的目的，所有服务均故障时才启动此服务器；</span><br><span class="line">     down：手动标记其不再处理任何请求；</span><br><span class="line">upstream模块的负载均衡算法主要有三种，轮调(round-robin)、ip哈希(ip_hash)和最少连接(least_conn)三种。默认为轮调。</span><br></pre></td></tr></table></figure>
+<p>现在在我们的物理机上在测试下，这次我们在IE浏览器上测试，因为谷歌浏览器有缓存，刷新时看不出来效果。进行测试，看我们的代理能否工作，显示效果如下所示：</p>
+<p><img src="https://i.imgur.com/WSq4mtH.jpg" alt="image"></p>
+<p>同样，启动另一个代理主机的nginx服务，看能否实现代理功能，这里不再演示。</p>
+<p>最后去安装keepalived。keepalived我们采用安装rpm包的方式，不在使用源码包，首先，请下载keepalived的相关rpm包，这里使用的是keepalived-1.2.7-5.el5.i386.rpm。<br>yum -y –nogpgcheck localinstall keepalived-1.2.7-5.el5.i386.rpm</p>
+<p>因前面已经介绍过keepalived配置文件各参数含义，这里不再介绍，直接配置。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/keepalived/keepalived.conf   #修改其配置文件</span><br><span class="line">global_defs &#123;</span><br><span class="line">   notification_email &#123;</span><br><span class="line">     root@localhost</span><br><span class="line">   &#125;</span><br><span class="line">   notification_email_from keepalived@localhost</span><br><span class="line">   smtp_server 127.0.0.1</span><br><span class="line">   smtp_connect_timeout 30</span><br><span class="line">   router_id LVS_DEVEL</span><br><span class="line">&#125;</span><br><span class="line">vrrp_script chk_nginx &#123;    #检查nginx服务是否存在</span><br><span class="line">    script &quot;killall -0 nginx&quot;</span><br><span class="line">    interval 2</span><br><span class="line">    weight -2</span><br><span class="line">    fall 2</span><br><span class="line">    rise 1   </span><br><span class="line">&#125;</span><br><span class="line">vrrp_script chk_schedown &#123;    #用于手动控制keepalived的主从模型</span><br><span class="line">   script &quot;[[ -f /etc/keepalived/down ]] &amp;&amp; exit 1 || exit 0&quot;</span><br><span class="line">   interval 2</span><br><span class="line">   weight -2</span><br><span class="line">&#125;</span><br><span class="line">vrrp_instance VI_1 &#123;      </span><br><span class="line">    state MASTER              #设置其为master，在node2主机上设置该项为backup</span><br><span class="line">    interface eth0</span><br><span class="line">    virtual_router_id 232   #设置虚拟路由组ID</span><br><span class="line">    priority 101                #设置优先级，在node2主机上设置该项为100，因为是backup</span><br><span class="line">    advert_int 1</span><br><span class="line">    authentication &#123;</span><br><span class="line">        auth_type PASS</span><br><span class="line">        auth_pass langdu</span><br><span class="line">    &#125;</span><br><span class="line">    virtual_ipaddress &#123;</span><br><span class="line">        172.16.32.5/16 dev eth0 label eth0:0</span><br><span class="line">    &#125;</span><br><span class="line">    track_script &#123;  </span><br><span class="line">        chk_nginx</span><br><span class="line">        chk_schedown</span><br><span class="line">    &#125;</span><br><span class="line">    notify_master &quot;/etc/keepalived/notify.sh master&quot;    #根据检查结果不同，向同一脚本传递不同的参数</span><br><span class="line">    notify_backup &quot;/etc/keepalived/notify.sh backup&quot;</span><br><span class="line">    notify_fault &quot;/etc/keepalived/notify.sh fault&quot;</span><br><span class="line">&#125;</span><br><span class="line">健康检查脚本如下所示：</span><br><span class="line">vim /etc/keepalived/notify.sh    #健康检查脚本，在node2主机上也添加次脚本</span><br><span class="line">#!/bin/bash</span><br><span class="line"># Author: MageEdu &lt;linuxedu@foxmail.com&gt;</span><br><span class="line"># description: An example of notify script</span><br><span class="line">#</span><br><span class="line">vip=172.16.32.5</span><br><span class="line">contact=&apos;root@localhost&apos;</span><br><span class="line">Notify() &#123;</span><br><span class="line">    mailsubject=&quot;`hostname` to be $1: $vip floating&quot;</span><br><span class="line">    mailbody=&quot;`date &apos;+%F %H:%M:%S&apos;`: vrrp transition, `hostname` changed to be $1&quot;</span><br><span class="line">    echo $mailbody | mail -s &quot;$mailsubject&quot; $contact</span><br><span class="line">&#125;</span><br><span class="line">case &quot;$1&quot; in</span><br><span class="line">    master)</span><br><span class="line">        notify master</span><br><span class="line">        /etc/rc.d/init.d/haproxy start</span><br><span class="line">        exit 0</span><br><span class="line">    ;;</span><br><span class="line">    backup)</span><br><span class="line">        notify backup</span><br><span class="line">        /etc/rc.d/init.d/haproxy restart</span><br><span class="line">        exit 0</span><br><span class="line">    ;;</span><br><span class="line">    fault)</span><br><span class="line">        notify fault</span><br><span class="line">        exit 0</span><br><span class="line">    ;;</span><br><span class="line">    *)</span><br><span class="line">        echo &apos;Usage: `basename $0` &#123;master|backup|fault&#125;&apos;</span><br><span class="line">        exit 1</span><br><span class="line">    ;;</span><br><span class="line">esac</span><br><span class="line">service keepalived start   #启动我们的keepalived服务</span><br><span class="line">先看下主节点上的日志信息</span><br><span class="line">tail /var/log/messages    #查看node1节点上的日志信息</span><br><span class="line">May 25 19:37:03 node1 Keepalived_vrrp[3822]: VRRP_Script(chk_schedown) succeeded</span><br><span class="line">May 25 19:37:04 node1 Keepalived_vrrp[3822]: VRRP_Instance(VI_1) forcing a new MASTER election</span><br><span class="line">May 25 19:37:05 node1 Keepalived_vrrp[3822]: VRRP_Instance(VI_1) Transition to MASTER STATE</span><br><span class="line">May 25 19:37:06 node1 Keepalived_vrrp[3822]: VRRP_Instance(VI_1) Entering MASTER STATE    #进入master状态</span><br><span class="line">May 25 19:37:06 node1 Keepalived_vrrp[3822]: VRRP_Instance(VI_1) setting protocol VIPs.</span><br><span class="line">May 25 19:37:06 node1 Keepalived_vrrp[3822]: VRRP_Instance(VI_1) Sending gratuitous ARPs on eth0 for 172.16.32.5</span><br><span class="line">May 25 19:37:06 node1 Keepalived_vrrp[3822]: Netlink reflector reports IP 172.16.32.5 added   #添加虚拟IP</span><br><span class="line">May 25 19:37:06 node1 Keepalived_healthcheckers[3821]: Netlink reflector reports IP 172.16.32.5 added</span><br><span class="line">May 25 19:37:11 node1 Keepalived_vrrp[3822]: VRRP_Instance(VI_1) Sending gratuitous ARPs on eth0 for 172.16.32.5</span><br><span class="line">ifconfig    #查看node1上各端口的IP配置</span><br><span class="line">eth0      Link encap:Ethernet  HWaddr 00:0C:29:9F:2F:AF</span><br><span class="line">          inet addr:172.16.32.30  Bcast:172.16.255.255  Mask:255.255.0.0</span><br><span class="line">          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1</span><br><span class="line">          RX packets:655564 errors:7 dropped:0 overruns:0 frame:0</span><br><span class="line">          TX packets:66292 errors:0 dropped:0 overruns:0 carrier:0</span><br><span class="line">          collisions:0 txqueuelen:1000</span><br><span class="line">          RX bytes:76104124 (72.5 MiB)  TX bytes:9021082 (8.6 MiB)</span><br><span class="line">          Interrupt:59 Base address:0x2000</span><br><span class="line">eth0:0    Link encap:Ethernet  HWaddr 00:0C:29:9F:2F:AF      #添加有虚拟IP</span><br><span class="line">          inet addr:172.16.32.5  Bcast:0.0.0.0  Mask:255.255.0.0</span><br><span class="line">          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1</span><br><span class="line">          Interrupt:59 Base address:0x2000</span><br><span class="line">lo        Link encap:Local Loopback</span><br><span class="line">          inet addr:127.0.0.1  Mask:255.0.0.0</span><br><span class="line">          UP LOOPBACK RUNNING  MTU:16436  Metric:1</span><br><span class="line">          RX packets:2472 errors:0 dropped:0 overruns:0 frame:0</span><br><span class="line">          TX packets:2472 errors:0 dropped:0 overruns:0 carrier:0</span><br><span class="line">          collisions:0 txqueuelen:0</span><br><span class="line">          RX bytes:227776 (222.4 KiB)  TX bytes:227776 (222.4 KiB)</span><br></pre></td></tr></table></figure>
+<p>为了查看效果，我们依然在IE浏览器上查看。</p>
+<p><img src="https://i.imgur.com/5eVww2B.jpg" alt="image"></p>
+<p>我们知道，配置keepalived就是想实现地址漂移的，那IP到底会不会漂移呢，现在我们去试一下。在keepalived的相关配置文件中，提到，只需在/etc/keepalived目录下创建一个down文件即可实现手动漂移。现在我们创建个文件，尝试一下。</p>
+<p>在master主机上，这里是node1，请查看你的哪台主机是master，创建一个down文件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">touch /etc/keepalived/down   #创建该文件，用以实现手动实现IP地址漂移</span><br><span class="line">tail /var/log/messages     #查看node1的日志信息</span><br><span class="line">May 25 19:37:06 node1 Keepalived_vrrp[3822]: Netlink reflector reports IP 172.16.32.5 added</span><br><span class="line">May 25 19:37:06 node1 Keepalived_healthcheckers[3821]: Netlink reflector reports IP 172.16.32.5 added</span><br><span class="line">May 25 19:37:11 node1 Keepalived_vrrp[3822]: VRRP_Instance(VI_1) Sending gratuitous ARPs on eth0 for 172.16.32.5</span><br><span class="line">May 25 20:41:02 node1 Keepalived_vrrp[3822]: VRRP_Script(chk_schedown) failed</span><br><span class="line">May 25 20:41:03 node1 Keepalived_vrrp[3822]: VRRP_Instance(VI_1) Received higher prio advert</span><br><span class="line">May 25 20:41:03 node1 Keepalived_vrrp[3822]: VRRP_Instance(VI_1) Entering BACKUP STATE    #进入backup状态</span><br><span class="line">May 25 20:41:03 node1 Keepalived_vrrp[3822]: VRRP_Instance(VI_1) removing protocol VIPs.</span><br><span class="line">May 25 20:41:03 node1 Keepalived_vrrp[3822]: Netlink reflector reports IP 172.16.32.5 removed    #实现IP漂移</span><br><span class="line">May 25 20:41:03 node1 Keepalived_healthcheckers[3821]: Netlink reflector reports IP 172.16.32.5 removed</span><br><span class="line">现在去查看下node2主机上的日志信息，看是否是master。</span><br><span class="line">tail /var/log/messages</span><br><span class="line">May 25 19:37:15 node1 Keepalived_vrrp[17601]: Netlink reflector reports IP 172.16.32.5 removed</span><br><span class="line">May 25 20:41:15 node1 Keepalived_vrrp[17601]: VRRP_Instance(VI_1) forcing a new MASTER election</span><br><span class="line">May 25 20:41:16 node1 Keepalived_vrrp[17601]: VRRP_Instance(VI_1) Transition to MASTER STATE</span><br><span class="line">May 25 20:41:17 node1 Keepalived_vrrp[17601]: VRRP_Instance(VI_1) Entering MASTER STATE     #进入master状态</span><br><span class="line">May 25 20:41:17 node1 Keepalived_vrrp[17601]: VRRP_Instance(VI_1) setting protocol VIPs.</span><br><span class="line">May 25 20:41:17 node1 Keepalived_healthcheckers[17600]: Netlink reflector reports IP 172.16.32.5 added   #添加虚拟IP</span><br><span class="line">May 25 20:41:17 node1 avahi-daemon[3375]: Registering new address record for 172.16.32.5 on eth0.</span><br><span class="line">May 25 20:41:17 node1 Keepalived_vrrp[17601]: VRRP_Instance(VI_1) Sending gratuitous ARPs on eth0 for 172.16.32.5</span><br><span class="line">May 25 20:41:17 node1 Keepalived_vrrp[17601]: Netlink reflector reports IP 172.16.32.5 added</span><br><span class="line">May 25 20:41:22 node1 Keepalived_vrrp[17601]: VRRP_Instance(VI_1) Sending gratuitous ARPs on eth0 for 172.16.32.5</span><br></pre></td></tr></table></figure>
+<p>实现IP漂移回来就不在演示了，可自己删除创建的文件，然后查看日志信息。从上面两台主机的日志信息，我们已经看到，可以实现IP地址的漂移，并且在物理机上刷新界面显示也正常。</p>
+<p>到此，keepalived + nginx反向代理 + apache构建Web站点我们已经实现。</p>
+<hr>
+<ol>
+<li>keepalived + haproxy反向代理 + apache提供的http服务构建Web站点</li>
+</ol>
+<p>先看构建的模型图：</p>
+<p><img src="https://i.imgur.com/x0AHbjP.jpg" alt="image"></p>
+<p>还是在我们刚才的主机上进行。但是有一点不好的是，rhel5.8上其yum源里没有自带的haproxy安装包，所以，这里我们采用下载源码包，自己编译安装的方式安装haproxy，本人也是第一次源码编译安装，以前是在rhel6.4上采用rpm包安装的，所以，在源码编译安装的过程中，肯定会遇到各种问题，如果有必要我会将遇到的问题一并贴出来，与大家分享，也好解决当你遇到同样问题时不知如何办才好。好了，废话不多说，开始安装我们的haproxy吧。</p>
+<p>在node1和node2主机上关机keepalived和nginx服务。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">service keepalived stop   #关闭keepalived服务</span><br><span class="line">service nginx stop          #关闭nginx服务</span><br><span class="line">chkconfig nginx off        #关闭开机自启动</span><br><span class="line">然后去下载我们的haproxy，这里采用haproxy-1.4.22版本，下载地址为http://haproxy.1wt.eu/#down</span><br><span class="line">tar xf haproxy-1.4.22.tar.gz</span><br><span class="line">cd haproxy-1.4.22</span><br><span class="line">uname -r    #确定自己的内核版本是多少，这里我的内核是linux-2.6.18-308.el5，所以下边使用linux26</span><br><span class="line">make TARGET=linux26 PREFIX=/usr/local/ </span><br><span class="line">make install PARFIX=/usr/local/</span><br></pre></td></tr></table></figure>
+<p>注：进入该haproxy-1.4.22目录后，你会发现这里并没有我们常见的configure文件，所以不需要执行./configure命令。TARGET用于指定内核版本，PREFIX用于指定安装文件路径，虽然指定了文件路径，但在该目录下并不会生成该文件，此处还有一点需要注意，后边两个选项一定要写成大写，本人试了，小写会报错。</p>
+<p>不管你信不信，反正我是信了。要不你试试.</p>
+<p>为haproxy提供配置文件和服务脚本。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br></pre></td><td class="code"><pre><span class="line">mkdir /etc/haproxy  #创建该目录，用来存放我们的配置文件</span><br><span class="line">cp examples/haproxy.cfg /etc/haproxy/   #复制该文件当我们的配置文件，但是里边好多需要修改</span><br><span class="line">提供SysV风格服务脚本：</span><br><span class="line">vim /etc/init.d/haproxy   #编辑该文件，添加服务脚本</span><br><span class="line">#!/bin/sh</span><br><span class="line">#</span><br><span class="line"># haproxy</span><br><span class="line">#</span><br><span class="line"># chkconfig:   - 85 15</span><br><span class="line"># description:  HAProxy is a free, very fast and reliable solution \</span><br><span class="line">#               offering high availability, load balancing, and \</span><br><span class="line">#               proxying for TCP and  HTTP-based applications</span><br><span class="line"># processname: haproxy</span><br><span class="line"># config:      /etc/haproxy/haproxy.cfg</span><br><span class="line"># pidfile:     /var/run/haproxy.pid</span><br><span class="line"># Source function library.</span><br><span class="line">. /etc/rc.d/init.d/functions</span><br><span class="line"># Source networking configuration.</span><br><span class="line">. /etc/sysconfig/network</span><br><span class="line"># Check that networking is up.</span><br><span class="line">[ &quot;$NETWORKING&quot; = &quot;no&quot; ] &amp;&amp; exit 0</span><br><span class="line">exec=&quot;/usr/local/sbin/haproxy&quot;      #在执行完make install之后，会出现此选项，我们可以直接执行haproxy命令</span><br><span class="line">prog=$(basename $exec)                #说白了，其实就是让取haproxy，不信，待会启动报错时你就会发现了</span><br><span class="line">[ -e /etc/sysconfig/$prog ] &amp;&amp; . /etc/sysconfig/$prog</span><br><span class="line">lockfile=/var/lock/subsys/haproxy        #锁文件</span><br><span class="line">check() &#123;</span><br><span class="line">    $exec -c -V -f /etc/$prog/$prog.cfg      #知道为何创建刚才的那个haproxy目录了，如果不创建此目录，这里就需要修改了。假如你没有创建刚才的目录，请相应修改服务脚本中的选项</span><br><span class="line">&#125;</span><br><span class="line">start() &#123;</span><br><span class="line">    $exec -c -q -f /etc/$prog/$prog.cfg</span><br><span class="line">    if [ $? -ne 0 ]; then</span><br><span class="line">        echo &quot;Errors in configuration file, check with $prog check.&quot;</span><br><span class="line">        return 1</span><br><span class="line">    fi</span><br><span class="line">    echo -n $&quot;Starting $prog: &quot;</span><br><span class="line">    # start it up here, usually something like &quot;daemon $exec&quot;</span><br><span class="line">    daemon $exec -D -f /etc/$prog/$prog.cfg -p /var/run/$prog.pid</span><br><span class="line">    retval=$?</span><br><span class="line">    echo</span><br><span class="line">    [ $retval -eq 0 ] &amp;&amp; touch $lockfile</span><br><span class="line">    return $retval</span><br><span class="line">&#125;</span><br><span class="line">stop() &#123;</span><br><span class="line">    echo -n $&quot;Stopping $prog: &quot;</span><br><span class="line">    # stop it here, often &quot;killproc $prog&quot;</span><br><span class="line">    killproc $prog</span><br><span class="line">    retval=$?</span><br><span class="line">    echo</span><br><span class="line">    [ $retval -eq 0 ] &amp;&amp; rm -f $lockfile</span><br><span class="line">    return $retval</span><br><span class="line">&#125;</span><br><span class="line">restart() &#123;</span><br><span class="line">    $exec -c -q -f /etc/$prog/$prog.cfg</span><br><span class="line">    if [ $? -ne 0 ]; then</span><br><span class="line">        echo &quot;Errors in configuration file, check with $prog check.&quot;</span><br><span class="line">        return 1</span><br><span class="line">    fi</span><br><span class="line">    stop</span><br><span class="line">    start</span><br><span class="line">&#125;</span><br><span class="line">reload() &#123;</span><br><span class="line">    $exec -c -q -f /etc/$prog/$prog.cfg</span><br><span class="line">    if [ $? -ne 0 ]; then</span><br><span class="line">        echo &quot;Errors in configuration file, check with $prog check.&quot;</span><br><span class="line">        return 1</span><br><span class="line">    fi</span><br><span class="line">    echo -n $&quot;Reloading $prog: &quot;</span><br><span class="line">    $exec -D -f /etc/$prog/$prog.cfg -p /var/run/$prog.pid -sf $(cat /var/run/$prog.pid)</span><br><span class="line">    retval=$?</span><br><span class="line">    echo</span><br><span class="line">    return $retval</span><br><span class="line">&#125;</span><br><span class="line">force_reload() &#123;</span><br><span class="line">    restart</span><br><span class="line">&#125;</span><br><span class="line">fdr_status() &#123;</span><br><span class="line">    status $prog</span><br><span class="line">&#125;</span><br><span class="line">case &quot;$1&quot; in</span><br><span class="line">    start|stop|restart|reload)</span><br><span class="line">        $1</span><br><span class="line">        ;;</span><br><span class="line">    force-reload)</span><br><span class="line">        force_reload</span><br><span class="line">        ;;</span><br><span class="line">    check)</span><br><span class="line">        check</span><br><span class="line">        ;;</span><br><span class="line">    status)</span><br><span class="line">        fdr_status</span><br><span class="line">        ;;</span><br><span class="line">    condrestart|try-restart)</span><br><span class="line">       [ ! -f $lockfile ] || restart</span><br><span class="line">     ;;</span><br><span class="line">    *)</span><br><span class="line">        echo $&quot;Usage: $0 &#123;start|stop|status|restart|try-restart|reload|force-reload&#125;&quot;</span><br><span class="line">        exit 2</span><br><span class="line">esac</span><br></pre></td></tr></table></figure>
+<p>此服务脚本是参考rhel6.4上的haproxy的服务脚本，稍加改动而成的。假如你不想源码编译安装haproxy的话，也可以在rhel6.4上进行此实验。但是rhel6.4上有个地方需要修改，待会再说。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">chmod +x /etc/init.d/haproxy</span><br><span class="line">chkconfig --add haproxy</span><br><span class="line">chkconfig haproxy on</span><br></pre></td></tr></table></figure>
+<p>先不要启动haproxy服务，先去修改配置文件，将其修改成我们需要的。先介绍下haproxy配置文件中的选项含义</p>
+<p>haproxy的配置文件中的选项可分为两个类：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">“global”配置段，用于设定全局配置参数；</span><br><span class="line">proxy相关配置段，如“defaults”、“listen”、“frontend”和“backend”；</span><br></pre></td></tr></table></figure>
+<p><a href="http://blog.51cto.com/lq2419/1210851" target="_blank" rel="noopener">原文引自这里</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/keepalived/" rel="tag"># keepalived</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/13/基于keepalived-主从-双主-LVS-DR模型-DNS实现http高可用集群服务/" rel="next" title="基于keepalived(主从+双主) + LVS(DR模型) + DNS实现http高可用集群服务">
+                <i class="fa fa-chevron-left"></i> 基于keepalived(主从+双主) + LVS(DR模型) + DNS实现http高可用集群服务
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/12/16/科学上网精编/" rel="prev" title="科学上网精编">
+                科学上网精编 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="ben wong" />
+            
+              <p class="site-author-name" itemprop="name">ben wong</p>
+              <p class="site-description motion-element" itemprop="description">要么忙着活，要么忙着死</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://imgur.com" title="图床" target="_blank">图床</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#反向代理又有什么用呢？"><span class="nav-number">1.</span> <span class="nav-text"><a href="#&#x53CD;&#x5411;&#x4EE3;&#x7406;&#x53C8;&#x6709;&#x4EC0;&#x4E48;&#x7528;&#x5462;&#xFF1F;" class="headerlink" title="&#x53CD;&#x5411;&#x4EE3;&#x7406;&#x53C8;&#x6709;&#x4EC0;&#x4E48;&#x7528;&#x5462;&#xFF1F;"></a>&#x53CD;&#x5411;&#x4EE3;&#x7406;&#x53C8;&#x6709;&#x4EC0;&#x4E48;&#x7528;&#x5462;&#xFF1F;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#先介绍下haproxy"><span class="nav-number">2.</span> <span class="nav-text"><a href="#&#x5148;&#x4ECB;&#x7ECD;&#x4E0B;haproxy" class="headerlink" title="&#x5148;&#x4ECB;&#x7ECD;&#x4E0B;haproxy"></a>&#x5148;&#x4ECB;&#x7ECD;&#x4E0B;haproxy</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#演示实验"><span class="nav-number">3.</span> <span class="nav-text"><a href="#&#x6F14;&#x793A;&#x5B9E;&#x9A8C;" class="headerlink" title="&#x6F14;&#x793A;&#x5B9E;&#x9A8C;"></a>&#x6F14;&#x793A;&#x5B9E;&#x9A8C;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ben wong</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://louis90.disqus.com/count.js" async></script>
+    
+
+    
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
