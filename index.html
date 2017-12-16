@@ -389,8 +389,7 @@
 
       
         
-          
-            <h2 id="前景"><a href="#前景" class="headerlink" title="前景"></a>前景</h2><blockquote>
+          <h2 id="前景"><a href="#前景" class="headerlink" title="前景"></a>前景</h2><blockquote>
 <p>谁比较需要单独购买VPS科学上网？</p>
 </blockquote>
 <ul>
@@ -417,133 +416,13 @@
 <li>[x] linode更换Linux内核通过锐速加速</li>
 </ul>
 <p>请参看这篇博文</p>
-<hr>
-<h2 id="整合ss-panel"><a href="#整合ss-panel" class="headerlink" title="整合ss-panel"></a>整合ss-panel</h2><p>目前主要是支持了 <strong>VPN 自动开户</strong>，自动销毁，流量计入面板的总流量，以及弄了个公告系统，还有和 DirectAdmin 对接，还有可以支持 PAC 等方式的接入。</p>
-<p>添加一个虚拟主机，同时创建数据库。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lnmp vhost add</span><br></pre></td></tr></table></figure>
-<p>配置好nginx运行环境之后，就是下载mod ss-panel</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cd /home/wwwroot/ss.panel</span><br><span class="line">yum install git -y</span><br><span class="line">git clone https://github.com/glzjin/ss-panel-v3-mod.git tmp -b new_master &amp;&amp; mv tmp/.git . &amp;&amp; rm -rf tmp &amp;&amp; git reset --hard</span><br><span class="line">chown -R root:root *</span><br><span class="line">chmod -R 777 *</span><br><span class="line">chown -R www:www storage</span><br></pre></td></tr></table></figure>
-<p>修改完了之后，到网站目录下进行一些修改</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@vultr vhost]# cd /home/wwwroot/ss.panel/</span><br><span class="line">[root@vultr ss.panel]# chattr -i .user.ini</span><br><span class="line">[root@vultr ss.panel]# mv .user.ini public</span><br><span class="line">[root@vultr ss.panel]# cd public</span><br></pre></td></tr></table></figure>
-<p>然后就是重新添加回权限。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chattr +i .user.ini</span><br></pre></td></tr></table></figure>
-<p>OK，重启一下 nginx</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service nginx restart</span><br></pre></td></tr></table></figure>
-<p>编辑完后重载你的 Web 服务器，然后访问你的站点……于是你得到了一个 500 Internal Server Error（如果你没开启 display_errors 可能看不到详细报错）：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Warning: require(/home/wwwroot/ss.prinzeugen.net/vendor/autoload.php): failed to open stream: No such file or directory in /home/wwwroot/ss.prinzeugen.net/bootstrap.php on line 18</span><br><span class="line"></span><br><span class="line">Fatal error: require(): Failed opening required &apos;/home/wwwroot/ss.prinzeugen.net/vendor/autoload.php&apos; (include_path=&apos;.:/usr/loc</span><br><span class="line">al/php/lib/php&apos;) in /home/wwwroot/ss.prinzeugen.net/bootstrap.php on line 18</span><br></pre></td></tr></table></figure>
-<p>这是我们还未安装 ss-panel 所需的依赖库导致的。遂安装之：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ curl -sS https://getcomposer.org/installer | php</span><br><span class="line">$ php composer.phar install</span><br></pre></td></tr></table></figure>
-<p><img src="https://i.imgur.com/TFlI22P.png" alt="image"></p>
-<p>等待它安装完毕后接着进行配置：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp .env.example .env</span><br></pre></td></tr></table></figure>
-<p>将 .env.example 复制一份重命名为 .env，自行修改其中的数据库等信息。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"># database 数据库配置</span><br><span class="line">db_driver = &apos;mysql&apos;</span><br><span class="line">db_host = &apos;localhost&apos;</span><br><span class="line">db_port = &apos;3306&apos;</span><br><span class="line">db_database = &apos;ss-panel&apos;</span><br><span class="line">db_username = &apos;ss-panel&apos;</span><br><span class="line">db_password = &apos;secret&apos;</span><br><span class="line">db_charset = &apos;utf8&apos;</span><br><span class="line">db_collation = &apos;utf8_general_ci&apos;</span><br><span class="line">db_prefix = &apos;&apos;</span><br></pre></td></tr></table></figure>
-<p>数据库的创建我就不多说了，建站的一般都玩过数据库吧？将根目录下的 db.sql 导入到数据库中即可。其他配置自行修改。</p>
-<p><img src="https://i.imgur.com/vokCI3D.png" alt="image"></p>
-<p>你还需要修改 .env 中的 muKey 字段，修改为任意字符串（最好只包含 ASCII 字符），下面配置后端的时候我们需要使用到这个 muKey：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">muKey = &apos;api_key_just_for_test&apos;</span><br></pre></td></tr></table></figure>
-<p>接下来，确保 storage 目录可写入（否则 Smarty 会报错）：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ chown -R www storage</span><br></pre></td></tr></table></figure>
-<p>现在访问你的站点，就可以看到 ss-panel 的首页啦：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ php xcat createAdmin</span><br></pre></td></tr></table></figure>
-<h2 id="Auth-Driver-认证设置"><a href="#Auth-Driver-认证设置" class="headerlink" title="Auth Driver 认证设置"></a>Auth Driver 认证设置</h2><p>ss-panel v3 配置说明，请根据说明合理选择密码加密方式，认证方式等</p>
-<p>ss-panel v3支持多种存储用户认证信息的方式：</p>
-<ul>
-<li><p>file 使用文件存储sessions。</p>
-</li>
-<li><p>redis 使用Redis存储，推荐此方式。</p>
-</li>
-</ul>
-<p>推荐使用redis</p>
-<h2 id="计划任务"><a href="#计划任务" class="headerlink" title="计划任务"></a>计划任务</h2><p>接下来需要对服务器进行计划任务的设置, 执行 crontab -e命令, 添加以下五段</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">30 22 * * * php /home/wwwroot/站点文件夹/xcat sendDiaryMail </span><br><span class="line">*/1 * * * * php /home/wwwroot/站点文件夹/xcat synclogin</span><br><span class="line">*/1 * * * * php /home/wwwroot/站点文件夹/xcat syncvpn</span><br><span class="line">0 0 * * * php -n /home/wwwroot/站点文件夹/xcat dailyjob</span><br><span class="line">*/1 * * * * php /home/wwwroot/站点文件夹/xcat checkjob    </span><br><span class="line">*/1 * * * * php -n /home/wwwroot/站点文件夹/xcat syncnas</span><br></pre></td></tr></table></figure>
-<p>重启Crontab /etc/init.d/cron restart</p>
-<h3 id="查看防火墙规则"><a href="#查看防火墙规则" class="headerlink" title="查看防火墙规则"></a>查看防火墙规则</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">查看已添加的iptables规则</span><br><span class="line">iptables -L -n --line-numbers</span><br><span class="line">删除已添加的iptables规则</span><br><span class="line">iptables -D INPUT line-numbers</span><br></pre></td></tr></table></figure>
-<h3 id="规则保存"><a href="#规则保存" class="headerlink" title="规则保存"></a>规则保存</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># Ubuntu</span><br><span class="line">iptables-save &gt; /etc/iptables.rules</span><br><span class="line"># CentOS</span><br><span class="line">service iptables save</span><br></pre></td></tr></table></figure>
-<hr>
-<h2 id="部署并配置-shadowsocks-manyuser-后端"><a href="#部署并配置-shadowsocks-manyuser-后端" class="headerlink" title="部署并配置 shadowsocks-manyuser(后端)"></a>部署并配置 shadowsocks-manyuser(后端)</h2><p>连接上 shadowsocks 试试看能不能翻墙了？八成不能。</p>
-<p>虽然你成功的把 servers.py 跑起来了，但还可能有各种神奇的错误阻止你翻出伟大的墙。</p>
-<p>首先国际惯例查看连接：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ netstat -anp | grep 你的端口</span><br></pre></td></tr></table></figure>
-<p>正常的话，应该是这样的：</p>
-<p><img src="https://i.imgur.com/xhKeY4e.jpg" alt="image"></p>
-<p>如果没有来自你的 IP 的 TCP 连接的话，那八成就是防火墙的锅了，执行 iptables 放行你的端口：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ iptables -I INPUT -p tcp -m tcp --dport 你的端口 -j ACCEPT</span><br><span class="line">$ iptables-save</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python server.py</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>这句运行代码主要用于调试，关闭ssh后ss后端自动关闭，所以正式使用请使用下面的脚本运行！如果需要停止请按Ctrl+C键终止程序。<br>这时可查看有运行情况，检查有没有错误。如果服务端没有错误，而连接不上，需要检查iptables或firewall(ubuntu)的防火墙配置</p>
-<p>ss-panel 新注册的用户所分配的端口均为其 id-1 的用户的端口号 + 1。比如说你把 admin 用户（uid 为1）的端口改为 12450（ss-panel 中不能改，去数据库改），那么后面注册的新用户的端口就会是 12451, 12452 这样递增的。</p>
-</blockquote>
-<p>所以如果你要开放注册，就要这样配置你的 iptables：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 注意是半角冒号，意为允许 12450 及以上的端口</span><br><span class="line"># 也可以指定 12450:15550 这样的范围</span><br><span class="line">$ iptables -I INPUT -p tcp -m tcp --dport 12450: -j ACCEPT</span><br></pre></td></tr></table></figure>
-<p>现在再连接 shadowsocks 就应该可以看到 TCP 连接信息了。并且你可以在 ss-mu 后端的输出信息中看到详细的连接日志：</p>
-<hr>
-<h2 id="使用supervisor监控ss-manyuser后端运行"><a href="#使用supervisor监控ss-manyuser后端运行" class="headerlink" title="使用supervisor监控ss-manyuser后端运行"></a>使用supervisor监控ss-manyuser后端运行</h2><p>安装 supervisor （用的是上面安装过的 pip）：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 先安装 pip 包管理器</span><br><span class="line">$ sudo apt-get install python-pip  # For Debian/Ubuntu</span><br><span class="line">$ sudo yum install python-pip      # For CentOS</span><br><span class="line"></span><br><span class="line">$ pip install supervisor</span><br></pre></td></tr></table></figure>
-<p>创建 supervisor 配置文件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 输出至 supervisor 的默认配置路径</span><br><span class="line">$ echo_supervisord_conf &gt; /etc/supervisord.conf</span><br></pre></td></tr></table></figure>
-<p>运行 supervisor 服务</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ supervisord</span><br></pre></td></tr></table></figure>
-<p>配置 supervisor 以监控 ss-manyuser 运行</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ vim /etc/supervisord.conf</span><br></pre></td></tr></table></figure>
-<p>在文件尾部（当然也可以新建配置文件，不过这样比较方便）添加如下内容并酌情修改：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[program:ss-manyuser]</span><br><span class="line">command = python /root/shadowsocks-py-mu/shadowsocks/servers.py</span><br><span class="line">user = root</span><br><span class="line">autostart = true</span><br><span class="line">autorestart = true</span><br></pre></td></tr></table></figure>
-<p>其中 command 里的目录请自行修改为你的 servers.py 所在的绝对路径。</p>
-<p>重启 supervisor 服务以加载配置</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ killall -HUP supervisord</span><br></pre></td></tr></table></figure>
-<p>查看 shadowsocks-manyuser 是否已经运行：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ps -ef | grep servers.py</span><br><span class="line">root       952   739  0 15:40 ?        00:00:00 python /root/shadowsocks-rm/shadowsocks/servers.py</span><br></pre></td></tr></table></figure>
-<p>可以通过以下命令管理 shadowsock-manyuser 的状态</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ supervisorctl &#123;start|stop|restart&#125; ss-manyuser</span><br></pre></td></tr></table></figure>
-<h2 id="ss-panel-的多节点配置"><a href="#ss-panel-的多节点配置" class="headerlink" title="ss-panel 的多节点配置"></a>ss-panel 的多节点配置</h2><p>其实多节点也没咋玄乎，说白了就是多个后端共用一个前端而已。而且我们的后端是使用 Mu API 来与前端进行交互的，所以多节点的配置就更简单了：只要把所有后端的 config.py 中的 API_URL 和 API_PASS 都改成一样即可（记得 API_ENABLED = True）。</p>
-<hr>
-<blockquote>
-<p>Linux chattr命令<br>Linux chattr命令用于改变文件属性。<br>这项指令可改变存放在ext2文件系统上的文件或目录属性，这些属性共有以下8种模式：</p>
-</blockquote>
-<p>用chattr命令防止系统中某个关键文件被修改：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chattr +i /etc/resolv.conf</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lsattr /etc/resolv.conf</span><br></pre></td></tr></table></figure>
-<p>会显示如下属性</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">----i-------- /etc/resolv.conf</span><br></pre></td></tr></table></figure>
-<p>让某个文件只能往里面追加数据，但不能删除，适用于各种日志文件：</p>
-<p>Step 4</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Nginx Config example:</span><br><span class="line"></span><br><span class="line">if you download ss-panel on path /home/www/ss-panel</span><br><span class="line"></span><br><span class="line">root /home/www/ss-panel/public;</span><br><span class="line"></span><br><span class="line">location / &#123;</span><br><span class="line">    try_files $uri $uri/ /index.php$is_args$args;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><img src="https://i.imgur.com/UDBW6NB.png" alt="image"></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chattr +a /var/log/messages</span><br></pre></td></tr></table></figure>
-<p><a href="http://www.runoob.com/linux/linux-comm-chattr.html" target="_blank" rel="noopener">参考文档在这里</a></p>
-<p>报错：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt; PHP Warning:  require(/home/wwwroot/mod-ss-panel/vendor/autoload.php): failed to open stream: No such file or directory in /home/wwwroot/mod-ss-panel/bootstrap.php on line 17</span><br><span class="line">PHP Fatal error:  require(): Failed opening required &apos;/home/wwwroot/mod-ss-panel/vendor/autoload.php&apos; (include_path=&apos;.:/usr/local/php/lib/php&apos;) in /home/wwwroot/mod-ss-panel/bootstrap.php on line 17</span><br><span class="line"></span><br><span class="line">&gt; Failed opening required &apos;vendor/autoload.php&apos; after update</span><br></pre></td></tr></table></figure>
-<p>解决方法</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Try to run &quot;composer install&quot; in the project root, since the master branch does not automatically include all dependencies (opposing to stable releases).</span><br></pre></td></tr></table></figure>
-<p><a href="https://github.com/kanboard/kanboard/issues/418" target="_blank" rel="noopener">原文在这里</a></p>
-<p>报错</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ss-panel-v3-mod  No input file specified</span><br></pre></td></tr></table></figure>
-<p>解决方法</p>
-<ol>
-<li>更改php.ini<br>首先php.ini的配置中把<br>;cgi.fix_pathinfo=0   改为<br>cgi.fix_pathinfo=1</li>
-</ol>
-<p><a href="https://www.612459.com/fuwuq/1968.html" target="_blank" rel="noopener">原文在这里</a></p>
-<p><a href="https://github.com/esdeathlove/ss-panel-v3-mod/wiki/%E5%AE%89%E8%A3%85%E8%AF%B4%E6%98%8E" target="_blank" rel="noopener">mod版官方wiki</a></p>
-<p>报错</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ImportError: No module named cymysql</span><br></pre></td></tr></table></figure>
-<p>解决方法</p>
-<p>安装cymysql</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install cymysql</span><br></pre></td></tr></table></figure>
-<p><a href="https://github.com/breakwa11/shadowsocks-rss/issues/171" target="_blank" rel="noopener">原文在这里</a></p>
-<p>报错</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">The server quit without updating PID file (/var/run/mysqld/mysqld.pid).</span><br></pre></td></tr></table></figure>
-<p>解决方法</p>
-<p>/usr/local/var/目录下面也确实生成了mysql目录，但是还是无法启动MySql，每个目录该给的权限都给了，所有者以及所有组都改成mysql了，但是还是不行，网上各种方法也都试了，最后无果，就在CSDN上面提出了问题，有个热心网友回答了我的问题，他给了一个链接，其实那个链接的文章我看过了，但是看到删除my.cnf的时候我突然想到/etc/mysql/下面也有个my.cnf文件，于是删除了那个文件，启动MySql服务，成功了！</p>
-<p><a href="http://blog.csdn.net/aa464971/article/details/52976230" target="_blank" rel="noopener">原文在这里</a></p>
-<hr>
-<p>参考文档：</p>
-<p><a href="https://blessing.studio/build-shadowsocks-sharing-site-with-ss-panel/" target="_blank" rel="noopener">可能是最好的ss-panel部署教程</a></p>
-<p><a href="http://bitzhi.com/2016/03/install-ss-go-mu-and-ss-panel-v3/" target="_blank" rel="noopener">安装ss-go-mu版本和ss-panel v3</a></p>
-<p><a href="https://doub.io/ss-jc14/comment-page-1/" target="_blank" rel="noopener">ShadowsocksR多用户版服务端安装教程</a></p>
-<p><a href="https://note.youdao.com/" target="_blank" rel="noopener">shadowsocks-py-mu</a></p>
-<p><a href="https://github.com/iMeiji/shadowsocks_install/wiki/%E6%90%AD%E5%BB%BA-sspanel-v3-%E9%AD%94%E6%94%B9%E7%89%88%E8%AE%B0%E5%BD%95" target="_blank" rel="noopener">搭建 sspanel v3 魔改版记录</a></p>
-
-          
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/12/16/科学上网精编/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
