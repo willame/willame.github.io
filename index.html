@@ -389,8 +389,7 @@
 
       
         
-          
-            <h3 id="基本结构"><a href="#基本结构" class="headerlink" title="基本结构"></a>基本结构</h3><p>Dockerfile 由一行行命令语句组成，并且支持以# 开头的注释行。</p>
+          <h3 id="基本结构"><a href="#基本结构" class="headerlink" title="基本结构"></a>基本结构</h3><p>Dockerfile 由一行行命令语句组成，并且支持以# 开头的注释行。</p>
 <p>一般的，Dockerfile 分为四部分：</p>
 <ul>
 <li>基础镜像信息</li>
@@ -404,93 +403,13 @@
 <p>后面则是镜像操作指令，例如RUN 指令， RUN 指令将对镜像执行跟随的命令。每运行一条RUN 指令，镜像添加新的一层，并提交。</p>
 <p>最后是CMD 指令，来指定运行容器时的操作命令。</p>
 <p>下面是一个更复杂的例子</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"># Nginx</span><br><span class="line">#</span><br><span class="line"># VERSION 0.0.1</span><br><span class="line">FROM ubuntu</span><br><span class="line">MAINTAINER Victor Vieux &lt;victor@docker.com&gt;</span><br><span class="line"></span><br><span class="line">RUN apt-get update &amp;&amp; apt-get install -y inotify-tools nginx apache2 openssh-server</span><br><span class="line"># Firefox over VNC</span><br><span class="line">#</span><br><span class="line"># VERSION 0.3</span><br><span class="line">FROM ubuntu</span><br><span class="line"># Install vnc, xvfb in order to create a &apos;fake&apos; display and firefox</span><br><span class="line">RUN apt-get update &amp;&amp; apt-get install -y x11vnc xvfb firefox</span><br><span class="line">RUN mkdir /.vnc</span><br><span class="line"># Setup a password</span><br><span class="line">RUN x11vnc -storepasswd 1234 ~/.vnc/passwd</span><br><span class="line"># Autostart firefox (might not be the best way, but it does the trick)</span><br><span class="line">RUN bash -c &apos;echo &quot;firefox&quot; &gt;&gt; /.bashrc&apos;</span><br><span class="line">EXPOSE 5900</span><br><span class="line">CMD [&quot;x11vnc&quot;, &quot;-forever&quot;, &quot;-usepw&quot;, &quot;-create&quot;]</span><br><span class="line"># Multiple images example</span><br><span class="line">#</span><br><span class="line"># VERSION 0.1</span><br><span class="line">FROM ubuntu</span><br><span class="line">RUN echo foo &gt; bar</span><br><span class="line"># Will output something like ===&gt; 907ad6c2736f</span><br><span class="line">FROM ubuntu</span><br><span class="line">RUN echo moo &gt; oink</span><br><span class="line"># Will output something like ===&gt; 695d7793cbe4</span><br><span class="line"># You᾿ll now have two images, 907ad6c2736f with /bar, and 695d7793cbe4 with</span><br><span class="line"># /oink.</span><br></pre></td></tr></table></figure>
-<hr>
-<h3 id="指令"><a href="#指令" class="headerlink" title="指令"></a>指令</h3><p>指令的一般格式为 INSTRUCTION arguments ，指令包括FROM 、MAINTAINER 、RUN 等。</p>
-<blockquote>
-<p>FROM</p>
-</blockquote>
-<p>格式为FROM <image> 或 FROM <image>:<tag> 。</tag></image></image></p>
-<p>第一条指令必须为FROM 指令。并且，如果在同一个Dockerfile中创建多个镜像时，可以使用多个FROM 指令（每个镜像一次）。</p>
-<blockquote>
-<p>MAINTAINER</p>
-</blockquote>
-<p>格式为 MAINTAINER <name> ，指定维护者信息。</name></p>
-<blockquote>
-<p>RUN</p>
-</blockquote>
-<p>格式为 RUN <command> 或 RUN [“executable”, “param1”, “param2”] 。</p>
-<p>前者将在 shell 终端中运行命令，即/bin/sh -c ；<br>后者则使用exec 执行。指定使用其它终端可以通过第二种方式实现，例如RUN [“/bin/bash”, “-c”, “echo hello”] 。</p>
-<p>每条RUN 指令将在当前镜像基础上执行指定命令，并提交为新的镜像。当命令较长时可以使用\ 来换行。</p>
-<blockquote>
-<p>CMD</p>
-</blockquote>
-<p>支持三种格式:</p>
-<ul>
-<li>CMD [“executable”,”param1”,”param2”] 使用exec 执行，推荐方式；  </li>
-<li>CMD command param1 param2 在/bin/sh 中执行，提供给需要交互的应用；  </li>
-<li>CMD [“param1”,”param2”] 提供给ENTRYPOINT 的默认参数；  </li>
-</ul>
-<p>指定启动容器时执行的命令，每个 Dockerfile 只能有一条CMD 命令。如果指定了多条命令，只有最后一条会被执行。</p>
-<blockquote>
-<p>EXPOSE</p>
-</blockquote>
-<p>格式为EXPOSE <port> [<port>…]<br>告诉 Docker 服务端容器暴露的端口号，供互联系统使用。在启动容器时需要通过 -P，Docker 主机会自动分配一个端口转发到指定的端口。</port></port></p>
-<blockquote>
-<p>ENV</p>
-</blockquote>
-<p>格式为ENV <key> <value> 。 指定一个环境变量，会被后续RUN 指令使用，并在容器运行时保持。</value></key></p>
-<p>例如</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ENV PG_MAJOR 9.3</span><br><span class="line">ENV PG_VERSION 9.3.4</span><br><span class="line">RUN curl -SL http://example.com/postgres-$PG_VERSION.tar.xz | tar -xJC /usr/src/postgress &amp;&amp; …</span><br><span class="line">ENV PATH /usr/local/postgres-$PG_MAJOR/bin:$PATH</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>ADD</p>
-</blockquote>
-<p>格式为ADD <src>  <dest> </dest></src></p>
-<p>该命令将复制指定的 <src> 到容器中的 <dest> 。 其中 <src> 可以是Dockerfile所在目录的一个相对路径；也可以是一个 URL；还可以是一个 tar 文件（自动解压为目录）。</src></dest></src></p>
-<blockquote>
-<p>COPY</p>
-</blockquote>
-<p>格式为COPY <src> <dest> 。</dest></src></p>
-<p>复制本地主机的 <src> （为 Dockerfile 所在目录的相对路径）到容器中的 <dest> 。</dest></src></p>
-<p>当使用本地目录为源目录时，推荐使用 COPY 。</p>
-<blockquote>
-<p>ENTRYPOINT</p>
-</blockquote>
-<p>两种格式：</p>
-<ul>
-<li>ENTRYPOINT [“executable”, “param1”, “param2”]</li>
-<li>ENTRYPOINT command param1 param2 （shell中执行）。</li>
-</ul>
-<p>配置容器启动后执行的命令，并且不可被docker run 提供的参数覆盖。<br>每个 Dockerfile 中只能有一个ENTRYPOINT ，当指定多个时，只有最后一个起效。  </p>
-<blockquote>
-<p>VOLUME</p>
-</blockquote>
-<p>格式为VOLUME [“/data”] 。<br>创建一个可以从本地主机或其他容器挂载的挂载点，一般用来存放数据库和需要保持的数据等。  </p>
-<blockquote>
-<p>USER</p>
-</blockquote>
-<p>格式为USER daemon 。<br>指定运行容器时的用户名或 UID，后续的RUN 也会使用指定用户。<br>当服务不需要管理员权限时，可以通过该命令指定运行用户。并且可以在之前创建所需要的用户，例如： RUN groupadd -r postgres &amp;&amp; useradd -r -g postgres postgres 。要临时获取管理员权限可以使用gosu ，而不推<br>荐sudo 。</p>
-<blockquote>
-<p>WORKDIR</p>
-</blockquote>
-<p>格式为WORKDIR /path/to/workdir 。<br>为后续的RUN 、CMD 、ENTRYPOINT 指令配置工作目录。<br>可以使用多个WORKDIR 指令，后续命令如果参数是相对路径，则会基于之前命令指定的路径。例如  </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">WORKDIR /a</span><br><span class="line">WORKDIR b</span><br><span class="line">WORKDIR c</span><br><span class="line">RUN pwd</span><br></pre></td></tr></table></figure>
-<p>则最终路径为/a/b/c 。</p>
-<blockquote>
-<p>ONBUILD</p>
-</blockquote>
-<p>格式为ONBUILD [INSTRUCTION] 。<br>配置当所创建的镜像作为其它新创建镜像的基础镜像时，所执行的操作指令。<br>例如，Dockerfile 使用如下的内容创建了镜像image-A 。  </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[...]</span><br><span class="line">ONBUILD ADD . /app/src</span><br><span class="line">ONBUILD RUN /usr/local/bin/python-build --dir /app/src</span><br><span class="line">[...]</span><br></pre></td></tr></table></figure>
-<p>如果基于 image-A 创建新的镜像时，新的Dockerfile中使用FROM image-A 指定基础镜像时，会自动执行ONBUILD 指令内容，等价于在后面添加了两条指令。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">FROM image-A</span><br><span class="line">#Automatically run the following</span><br><span class="line">ADD . /app/src</span><br><span class="line">RUN /usr/local/bin/python-build --dir /app/src</span><br></pre></td></tr></table></figure>
-<p>使用ONBUILD 指令的镜像，推荐在标签中注明，例如ruby:1.9-onbuild 。</p>
-<hr>
-<h3 id="创建镜像"><a href="#创建镜像" class="headerlink" title="创建镜像"></a>创建镜像</h3><p>编写完成 Dockerfile 之后，可以通过docker build 命令来创建镜像。   </p>
-<p>基本的格式为 ==docker build== [选项] 路径，该命令将读取指定路径下（包括子目录）的 Dockerfile，并将该路径下所有内容发送给 Docker 服务端，由服务端来创建镜像。<br>因此一般建议放置 Dockerfile 的目录为空目录。<br>也可以通过.dockerignore 文件（每一行添加一条匹配模式）来让 Docker 忽略路径下的目录和文件。<br>要指定镜像的标签信息，可以通过-t 选项，   </p>
-<p>例如</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo docker build -t myrepo/myapp /tmp/test1/</span><br></pre></td></tr></table></figure>
-
-          
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/12/16/Dockerfile详解/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
