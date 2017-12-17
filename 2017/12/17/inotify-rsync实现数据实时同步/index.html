@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="rsync," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="数据实时同步介绍什么是实时同步：如何实现实时同步A. 要利用监控服务（inotify），监控同步数据服务器目录中信息的变化 B. 发现目录中数据产生变化，就利用rsync服务推送到备份服务器上 实现实时同步的方法inotify+rsync 方式实现数据同步 sersync 方式实现实时数据同步 实时同步原理介绍">
+<meta name="keywords" content="rsync">
+<meta property="og:type" content="article">
+<meta property="og:title" content="inotify+rsync实现数据实时同步">
+<meta property="og:url" content="http://code.meirenji.info/2017/12/17/inotify-rsync实现数据实时同步/index.html">
+<meta property="og:site_name" content="奶爸的天空">
+<meta property="og:description" content="数据实时同步介绍什么是实时同步：如何实现实时同步A. 要利用监控服务（inotify），监控同步数据服务器目录中信息的变化 B. 发现目录中数据产生变化，就利用rsync服务推送到备份服务器上 实现实时同步的方法inotify+rsync 方式实现数据同步 sersync 方式实现实时数据同步 实时同步原理介绍">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://i.imgur.com/eKIJeFK.jpg">
+<meta property="og:image" content="https://i.imgur.com/uVV9t6j.jpg">
+<meta property="og:image" content="https://i.imgur.com/LSNhAHn.png">
+<meta property="og:image" content="https://i.imgur.com/8CzigmJ.png">
+<meta property="og:updated_time" content="2017-12-17T09:08:53.784Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="inotify+rsync实现数据实时同步">
+<meta name="twitter:description" content="数据实时同步介绍什么是实时同步：如何实现实时同步A. 要利用监控服务（inotify），监控同步数据服务器目录中信息的变化 B. 发现目录中数据产生变化，就利用rsync服务推送到备份服务器上 实现实时同步的方法inotify+rsync 方式实现数据同步 sersync 方式实现实时数据同步 实时同步原理介绍">
+<meta name="twitter:image" content="https://i.imgur.com/eKIJeFK.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://code.meirenji.info/2017/12/17/inotify-rsync实现数据实时同步/"/>
+
+
+
+
+
+  <title>inotify+rsync实现数据实时同步 | 奶爸的天空</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">奶爸的天空</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://code.meirenji.info/2017/12/17/inotify-rsync实现数据实时同步/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ben wong">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="奶爸的天空">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">inotify+rsync实现数据实时同步</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-17T17:06:30+09:00">
+                2017-12-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全运维/" itemprop="url" rel="index">
+                    <span itemprop="name">安全运维</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/12/17/inotify-rsync实现数据实时同步/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/12/17/inotify-rsync实现数据实时同步/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="数据实时同步介绍"><a href="#数据实时同步介绍" class="headerlink" title="数据实时同步介绍"></a>数据实时同步介绍</h2><h3 id="什么是实时同步：如何实现实时同步"><a href="#什么是实时同步：如何实现实时同步" class="headerlink" title="什么是实时同步：如何实现实时同步"></a>什么是实时同步：如何实现实时同步</h3><p>A. 要利用监控服务（inotify），监控同步数据服务器目录中信息的变化</p>
+<p>B. 发现目录中数据产生变化，就利用rsync服务推送到备份服务器上</p>
+<h3 id="实现实时同步的方法"><a href="#实现实时同步的方法" class="headerlink" title="实现实时同步的方法"></a>实现实时同步的方法</h3><p>inotify+rsync 方式实现数据同步</p>
+<p>sersync 方式实现实时数据同步</p>
+<h3 id="实时同步原理介绍"><a href="#实时同步原理介绍" class="headerlink" title="实时同步原理介绍"></a>实时同步原理介绍</h3><p><img src="https://i.imgur.com/eKIJeFK.jpg" alt="image"></p>
+<a id="more"></a>
+<h3 id="inotify-rsync-方式实现数据同步"><a href="#inotify-rsync-方式实现数据同步" class="headerlink" title="inotify+rsync 方式实现数据同步"></a>inotify+rsync 方式实现数据同步</h3><h4 id="Inotify简介"><a href="#Inotify简介" class="headerlink" title="Inotify简介"></a>Inotify简介</h4><p><strong>Inotify</strong>是一种强大的，细粒度的。异步的文件系统事件监控机制，linux内核从2.6.13起，加入了Inotify支持，通过Inotify可以<strong>监控文件系统中添加、删除，修改、移动等各种事件</strong>,利用这个内核接口，第三方软件就可以监控文件系统下文件的各种变化情况，而 inotify-tools 正是实施这样监控的软件。</p>
+<p>国人周洋在金山公司也开发了类似的实时同步软件sersync。</p>
+<blockquote>
+<p>提示信息：</p>
+<p>sersync软件实际上就是在 inotify软件基础上进行开发的，功能要更加强大些 ，多了定时重传机制，过滤机制了提供接口做 CDN，支持多线程橾作。</p>
+</blockquote>
+<p>Inotify实际是一种事件驱动机制，它为应用程序监控文件系统事件提供了实时响应事件的机制，而无须通过诸如cron等的轮询机制来获取事件。</p>
+<p>cron等机制不仅无法做到实时性，而且消耗大量系统资源。相比之下，inotify基于事件驱动，可以做到对事件处理的实时响应，也没有轮询造成的系统资源消耗，是非常自然的事件通知接口，也与自然世界事件机制相符合。</p>
+<p>inotify的实现有几款软件：</p>
+<p>inotify-tools，sersync，lrsyncd</p>
+<h4 id="inotify-rsync使用方式"><a href="#inotify-rsync使用方式" class="headerlink" title="inotify+rsync使用方式"></a>inotify+rsync使用方式</h4><p>inotify 对同步数据目录信息的监控</p>
+<p>rsync 完成对数据信息的实时同步</p>
+<p>利用脚本进行结合</p>
+<h2 id="部署inotify软件的前提"><a href="#部署inotify软件的前提" class="headerlink" title="部署inotify软件的前提"></a>部署inotify软件的前提</h2><p>需要2.6.13以后内核版本才能支持inotify软件。2.6.13内核之后版本，在没有安装inotify软件之前，应该有这三个文件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@backup ~]# ll /proc/sys/fs/inotify/</span><br><span class="line"></span><br><span class="line">total 0</span><br><span class="line"></span><br><span class="line">-rw-r--r-- 1 root root 0 Oct 17 10:12 max_queued_events</span><br><span class="line"></span><br><span class="line">-rw-r--r-- 1 root root 0 Oct 17 10:12 max_user_instances</span><br><span class="line"></span><br><span class="line">-rw-r--r-- 1 root root 0 Oct 17 10:12 max_user_watches</span><br></pre></td></tr></table></figure>
+<h3 id="三个重要文件的说明"><a href="#三个重要文件的说明" class="headerlink" title="三个重要文件的说明"></a>三个重要文件的说明</h3><p><img src="https://i.imgur.com/uVV9t6j.jpg" alt="image"></p>
+<h3 id="【服务优化】"><a href="#【服务优化】" class="headerlink" title="【服务优化】"></a>【服务优化】</h3><blockquote>
+<p>可以将三个文件的数值调大，监听更大的范围</p>
+</blockquote>
+<h2 id="inotify软件介绍及参数说明"><a href="#inotify软件介绍及参数说明" class="headerlink" title="inotify软件介绍及参数说明"></a>inotify软件介绍及参数说明</h2><h3 id="两种安装方式"><a href="#两种安装方式" class="headerlink" title="两种安装方式"></a>两种安装方式</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- yum install -y inotify-tools</span><br><span class="line"></span><br><span class="line">- 手工编译安装</span><br></pre></td></tr></table></figure>
+<p>手工编译安装方式需要到github上进行下载软件包</p>
+<p>inotify软件的参考资料链接：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://github.com/rvoicilas/inotify-tools/wiki</span><br></pre></td></tr></table></figure>
+<h3 id="inotify主要安装的两个软件"><a href="#inotify主要安装的两个软件" class="headerlink" title="inotify主要安装的两个软件"></a>inotify主要安装的两个软件</h3><p>inotifywait： （主要）</p>
+<blockquote>
+<p>在被监控的文件或目录上等待特定文件系统事件（open close delete等）发生，执行后处于阻塞状态，适合在shell脚本中使用</p>
+</blockquote>
+<p>inotifywatch：</p>
+<blockquote>
+<p>收集被监控的文件系统使用的统计数据，指文件系统事件发生的次数统计。</p>
+</blockquote>
+<p>说明：在实时实时同步的时候，主要是利用inotifywait对目录进行监控</p>
+<h3 id="inotifywait命令参数说明"><a href="#inotifywait命令参数说明" class="headerlink" title="inotifywait命令参数说明"></a>inotifywait命令参数说明</h3><p><img src="https://i.imgur.com/LSNhAHn.png" alt="image"></p>
+<h3 id="e-参数-可以指定的事件类型"><a href="#e-参数-可以指定的事件类型" class="headerlink" title="-e[参数] 可以指定的事件类型"></a>-e[参数] 可以指定的事件类型</h3><h3 id="inotifywait监控中的事件测试"><a href="#inotifywait监控中的事件测试" class="headerlink" title="inotifywait监控中的事件测试"></a>inotifywait监控中的事件测试</h3><ul>
+<li>创建事件</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@nfs01 data]# touch test2.txt</span><br><span class="line"></span><br><span class="line">[root@nfs01 ~]# inotifywait -mrq  /data --timefmt &quot;%d-%m-%y %H:%M&quot; --format &quot;%T %w%f 事件信息: %e&quot; -e create</span><br><span class="line"></span><br><span class="line">17-10-17 11:19 /data/test2.txt 事件信息: CREATE</span><br></pre></td></tr></table></figure>
+<ul>
+<li>删除事件</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@nfs01 data]# \rm -f test1.txt</span><br><span class="line"></span><br><span class="line">[root@nfs01 ~]# inotifywait -mrq  /data --timefmt &quot;%d-%m-%y %H:%M&quot; --format &quot;%T %w%f 事件信息: %e&quot; -e delete</span><br><span class="line"></span><br><span class="line">17-10-17 11:28 /data/test1.txt 事件信息: DELETE</span><br></pre></td></tr></table></figure>
+<ul>
+<li>修改事件</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@nfs01 data]# echo &quot;132&quot; &gt; test.txt</span><br><span class="line"></span><br><span class="line">[root@nfs01 ~]# inotifywait -mrq  /data --timefmt &quot;%d-%m-%y %H:%M&quot; --format &quot;%T %w%f 事件信息: %e&quot; -e close_write</span><br><span class="line"></span><br><span class="line">17-10-17 11:30 /data/test.txt 事件信息: CLOSE_WRITE,CLOSE</span><br></pre></td></tr></table></figure>
+<ul>
+<li>移动事件 moved_to</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@nfs01 data]# mv /etc/hosts .</span><br><span class="line"></span><br><span class="line">[root@nfs01 ~]# inotifywait -mrq  /data --timefmt &quot;%d-%m-%y %H:%M&quot; --format &quot;%T %w%f 事件信息: %e&quot; -e moved_to</span><br><span class="line"></span><br><span class="line">17-10-17 11:33 /data/hosts 事件信息: MOVED_TO</span><br></pre></td></tr></table></figure>
+<ul>
+<li>移动事件 moved_from</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@nfs01 data]# mv ./hosts  /tmp/</span><br><span class="line"></span><br><span class="line">[root@nfs01 ~]# inotifywait -mrq  /data --timefmt &quot;%d-%m-%y %H:%M&quot; --format &quot;%T %w%f 事件信息: %e&quot; -e moved_from</span><br><span class="line"></span><br><span class="line">17-10-17 11:34 /data/hosts 事件信息: MOVED_FROM</span><br></pre></td></tr></table></figure>
+<h3 id="修改输出的日期格式"><a href="#修改输出的日期格式" class="headerlink" title="修改输出的日期格式"></a>修改输出的日期格式</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@nfs01 ~]# inotifywait -mrq  /data --timefmt &quot;%d/%m/%y %H:%M&quot; --format &quot;%T %w%f&quot;</span><br><span class="line"></span><br><span class="line">17/10/17 11:12 /data/test1.txt</span><br></pre></td></tr></table></figure>
+<h2 id="对inotifywait命令的测试"><a href="#对inotifywait命令的测试" class="headerlink" title="对inotifywait命令的测试"></a>对inotifywait命令的测试</h2><p>对inotifywait命令测试的说明：</p>
+<p>需要打开两个连接窗口</p>
+<ul>
+<li><p>窗口运行inotifywait</p>
+</li>
+<li><p>窗口对文件夹进行操作，可在一窗口中查看出inotifywait的监控记录</p>
+</li>
+</ul>
+<h3 id="创建文件的逻辑"><a href="#创建文件的逻辑" class="headerlink" title="创建文件的逻辑"></a>创建文件的逻辑</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">[root@nfs01 ~]# inotifywait /data</span><br><span class="line"></span><br><span class="line">Setting up watches.</span><br><span class="line"></span><br><span class="line">Watches established.</span><br><span class="line"></span><br><span class="line">/data/ CREATE test1.txt</span><br><span class="line"></span><br><span class="line">/data/ OPEN test1.txt</span><br><span class="line"></span><br><span class="line">/data/ ATTRIB test1.txt</span><br><span class="line"></span><br><span class="line">/data/ CLOSE_WRITE,CLOSE test1.txt</span><br><span class="line"></span><br><span class="line">创建文件，inotifywait显示创建文件的过程↑</span><br><span class="line"></span><br><span class="line">[root@nfs01 data]# touch test1.txt</span><br></pre></td></tr></table></figure>
+<h3 id="创建目录逻辑"><a href="#创建目录逻辑" class="headerlink" title="创建目录逻辑"></a>创建目录逻辑</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@nfs01 data]# mkdir testdir</span><br><span class="line"></span><br><span class="line">[root@nfs01 ~]#</span><br><span class="line"></span><br><span class="line">/data/ CREATE,ISDIR testdir</span><br></pre></td></tr></table></figure>
+<h3 id="监控子目录下的文件"><a href="#监控子目录下的文件" class="headerlink" title="监控子目录下的文件"></a>监控子目录下的文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@nfs01 data]# touch  testdir/test01.txt</span><br><span class="line"></span><br><span class="line">[root@nfs01 ~]# inotifywait -mrq  /data</span><br><span class="line"></span><br><span class="line">/data/testdir/ OPEN test01.txt</span><br><span class="line"></span><br><span class="line">/data/testdir/ ATTRIB test01.txt</span><br><span class="line"></span><br><span class="line">/data/testdir/ CLOSE_WRITE,CLOSE test01.txt</span><br></pre></td></tr></table></figure>
+<h3 id="sed命令修改逻辑"><a href="#sed命令修改逻辑" class="headerlink" title="sed命令修改逻辑"></a>sed命令修改逻辑</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">[root@nfs01 data]# sed &apos;s#132#123#g&apos; test.txt -i</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@nfs01 ~]# inotifywait -mrq  /data --timefmt &quot;%d-%m-%y %H:%M&quot; --format &quot;%T %w%f 事件信息: %e&quot; -e moved_from</span><br><span class="line"></span><br><span class="line"> /data/test.txt 事件信息: OPEN</span><br><span class="line"></span><br><span class="line"> /data/sedDh5R8v 事件信息: CREATE</span><br><span class="line"></span><br><span class="line"> /data/sedDh5R8v 事件信息: OPEN</span><br><span class="line"></span><br><span class="line"> /data/test.txt 事件信息: ACCESS</span><br><span class="line"></span><br><span class="line"> /data/sedDh5R8v 事件信息: MODIFY</span><br><span class="line"></span><br><span class="line"> /data/sedDh5R8v 事件信息: ATTRIB</span><br><span class="line"></span><br><span class="line"> /data/sedDh5R8v 事件信息: ATTRIB</span><br><span class="line"></span><br><span class="line"> /data/test.txt 事件信息: CLOSE_NOWRITE,CLOSE</span><br><span class="line"></span><br><span class="line"> /data/sedDh5R8v 事件信息: CLOSE_WRITE,CLOSE</span><br><span class="line"></span><br><span class="line"> /data/sedDh5R8v 事件信息: MOVED_FROM</span><br><span class="line"></span><br><span class="line"> /data/test.txt 事件信息: MOVED_TO</span><br></pre></td></tr></table></figure>
+<h2 id="实时同步命令参数示意图"><a href="#实时同步命令参数示意图" class="headerlink" title="实时同步命令参数示意图"></a>实时同步命令参数示意图</h2><p><img src="https://i.imgur.com/8CzigmJ.png" alt="image"></p>
+<hr>
+<h2 id="inotify-rsync实时同步服务部署"><a href="#inotify-rsync实时同步服务部署" class="headerlink" title="inotify+rsync实时同步服务部署"></a>inotify+rsync实时同步服务部署</h2><h3 id="第一个里程碑：部署rsync服务"><a href="#第一个里程碑：部署rsync服务" class="headerlink" title="第一个里程碑：部署rsync服务"></a>第一个里程碑：部署rsync服务</h3><h4 id="rsync服务端部署"><a href="#rsync服务端部署" class="headerlink" title="rsync服务端部署"></a><strong>rsync服务端</strong>部署</h4><ul>
+<li>软件是否存在</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@backup ~]# rpm -qa |grep rsync</span><br><span class="line"></span><br><span class="line">rsync-3.0.6-12.el6.x86_64</span><br></pre></td></tr></table></figure>
+<p>需求：查询到某个命令非常有用。但是不知道属于哪个软件包</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yum  provides  rysnc</span><br><span class="line"></span><br><span class="line">provides  Find what package provides the given value</span><br></pre></td></tr></table></figure>
+<ul>
+<li>进行软件服务配置</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">[root@backup ~]# vim /etc/rsyncd.conf</span><br><span class="line"></span><br><span class="line">uid = rsync</span><br><span class="line"></span><br><span class="line">gid = rsync</span><br><span class="line"></span><br><span class="line">use chroot = no</span><br><span class="line"></span><br><span class="line">max connections = 200</span><br><span class="line"></span><br><span class="line">timeout = 300</span><br><span class="line"></span><br><span class="line">pid file = /var/run/rsyncd.pid</span><br><span class="line"></span><br><span class="line">lock file = /var/run/rsync.lock</span><br><span class="line"></span><br><span class="line">log file = /var/log/rsyncd.log</span><br><span class="line"></span><br><span class="line">ignore errors</span><br><span class="line"></span><br><span class="line">read only = false</span><br><span class="line"></span><br><span class="line">list = false</span><br><span class="line"></span><br><span class="line">hosts allow = 172.16.1.0/24</span><br><span class="line"></span><br><span class="line">auth users = rsync_backup</span><br><span class="line"></span><br><span class="line">secrets file = /etc/rsync.password</span><br><span class="line"></span><br><span class="line">[backup]</span><br><span class="line"></span><br><span class="line">comment = &quot;backup dir by oldboy&quot;</span><br><span class="line"></span><br><span class="line">path = /backup</span><br><span class="line"></span><br><span class="line">[nfsbackup]</span><br><span class="line"></span><br><span class="line">comment = &quot;nfsbackup dir by hzs&quot;</span><br><span class="line"></span><br><span class="line">path = /nfsbackup</span><br></pre></td></tr></table></figure>
+<ul>
+<li>创建rsync管理用户</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@backup ~]# useradd -s /sbin/nologin -M rsync</span><br></pre></td></tr></table></figure>
+<ul>
+<li>创建数据备份储存目录,目录修改属主</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@backup ~]# mkdir /nfsbackup/</span><br><span class="line"></span><br><span class="line">[root@backup ~]# chown -R rsync.rsync /nfsbackup/</span><br></pre></td></tr></table></figure>
+<ul>
+<li>创建认证用户密码文件并进行授权600</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;rsync_backup:oldboy123&quot; &gt;&gt;/etc/rsync.password</span><br><span class="line"></span><br><span class="line">chmod 600 /etc/rsync.password</span><br></pre></td></tr></table></figure>
+<ul>
+<li>启动rsync服务</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rsync --daemon</span><br></pre></td></tr></table></figure>
+<ul>
+<li>至此服务端配置完成</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@backup ~]# ps -ef |grep rsync</span><br><span class="line"></span><br><span class="line">root      2076      1  0 17:05 ?        00:00:00 rsync --daemon</span><br><span class="line"></span><br><span class="line">root      2163  1817  0 17:38 pts/1    00:00:00 grep --color=auto rsync</span><br></pre></td></tr></table></figure>
+<h3 id="rsync客户端配置"><a href="#rsync客户端配置" class="headerlink" title="rsync客户端配置"></a>rsync客户端配置</h3><ul>
+<li>软件是否存在</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@backup ~]# rpm -qa |grep rsync</span><br><span class="line"></span><br><span class="line">rsync-3.0.6-12.el6.x86_64</span><br></pre></td></tr></table></figure>
+<ul>
+<li>创建安全认证文件，并进行修改权限600</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;oldboy123&quot; &gt;&gt;/etc/rsync.password</span><br><span class="line"></span><br><span class="line">chmod 600 /etc/rsync.password</span><br></pre></td></tr></table></figure>
+<ul>
+<li>测试数据传输</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@nfs01 sersync]# rsync -avz /data  rsync_backup@172.16.1.41::nfsbackup  --password-file=/etc/rsync.password</span><br><span class="line"></span><br><span class="line">sending incremental file list</span><br><span class="line"></span><br><span class="line">data/</span><br><span class="line"></span><br><span class="line">data/.hzs</span><br><span class="line"></span><br><span class="line">data/.tar.gz</span><br><span class="line"></span><br><span class="line">data/.txt</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="第二个里程碑：部署inotify服务"><a href="#第二个里程碑：部署inotify服务" class="headerlink" title="第二个里程碑：部署inotify服务"></a>第二个里程碑：部署inotify服务</h2><h3 id="安装inotify软件"><a href="#安装inotify软件" class="headerlink" title="安装inotify软件"></a>安装inotify软件</h3><p>两种安装方式</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">- yum install -y inotify-tools</span><br><span class="line"></span><br><span class="line">- 手工编译安装</span><br></pre></td></tr></table></figure>
+<p>注： </p>
+<blockquote>
+<p>手工编译安装方式需要到github上进行下载软件包</p>
+<p>inotify软件的参考资料链接：</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://github.com/rvoicilas/inotify-tools/wiki</span><br></pre></td></tr></table></figure>
+<h3 id="查看inotify安装上的两个命令"><a href="#查看inotify安装上的两个命令" class="headerlink" title="查看inotify安装上的两个命令"></a>查看inotify安装上的两个命令</h3><ul>
+<li><p>inotifywait</p>
+</li>
+<li><p>inotifywatch</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@nfs01 ~]# rpm -ql inotify-tools</span><br><span class="line"></span><br><span class="line">/usr/bin/inotifywait      #主要</span><br><span class="line"></span><br><span class="line">/usr/bin/inotifywatch</span><br></pre></td></tr></table></figure>
+<h3 id="inotifywait和inotifywatch的作用"><a href="#inotifywait和inotifywatch的作用" class="headerlink" title="inotifywait和inotifywatch的作用"></a>inotifywait和inotifywatch的作用</h3><blockquote>
+<p>inotifywait : 在被监控的文件或目录上等待特定文件系统事件（open close delete等）发生,执行后处于阻塞状态，适合在shell脚本中使用</p>
+<p>inotifywatch :收集被监控的文件系统使用的统计数据,指文件系统事件发生的次数统计。</p>
+</blockquote>
+<h3 id="第三个里程碑：编写脚本，实现rsync-inotify软件功能结合"><a href="#第三个里程碑：编写脚本，实现rsync-inotify软件功能结合" class="headerlink" title="第三个里程碑：编写脚本，实现rsync+inotify软件功能结合"></a>第三个里程碑：编写脚本，实现rsync+inotify软件功能结合</h3><ul>
+<li>rsync服务命令</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rsync -avz --delete /data/ rsync_backup@172.16.1.41::nfsbackup --password-file=/etc/rsync.password</span><br></pre></td></tr></table></figure>
+<ul>
+<li>inotify服务命令：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">inotifywait -mrq /data -format &quot;%w%f&quot;  -e create,delete,move_to,close_write</span><br></pre></td></tr></table></figure>
+<ul>
+<li>编写脚本</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@nfs01 sersync]# vim /server/scripts/inotify.sh</span><br><span class="line">#!/bin/bash</span><br><span class="line">inotifywait -mrq /data --format &quot;%w%f&quot; -e create,delete,moved_to,close_write|\</span><br><span class="line">while read line</span><br><span class="line">do</span><br><span class="line">        rsync -az --delete /data/ rsync_backup@172.16.1.41::nfsbackup --password-</span><br><span class="line">file=/etc/rsync.password</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+<p>脚本说明：</p>
+<p>for循环会定义一个条件，当条件不满足时停止循环</p>
+<p>while循环：只要条件满足就一直循环下去</p>
+<ul>
+<li>对脚本进行优化</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/bash</span><br><span class="line"></span><br><span class="line">Path=/data</span><br><span class="line">backup_Server=172.16.1.41</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">/usr/bin/inotifywait -mrq --format &apos;%w%f&apos; -e create,close_write,delete /data  | while read line  </span><br><span class="line">do</span><br><span class="line">    if [ -f $line ];then</span><br><span class="line">        rsync -az $line --delete rsync_backup@$backup_Server::nfsbackup --password-file=/etc/rsync.password</span><br><span class="line">    else</span><br><span class="line">        cd $Path &amp;&amp;\</span><br><span class="line">        rsync -az ./ --delete rsync_backup@$backup_Server::nfsbackup --password-file=/etc/rsync.password</span><br><span class="line">    fi</span><br><span class="line"></span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+<h2 id="第四个里程碑：测试编写的脚本"><a href="#第四个里程碑：测试编写的脚本" class="headerlink" title="第四个里程碑：测试编写的脚本"></a>第四个里程碑：测试编写的脚本</h2><p>让脚本在后台运行</p>
+<p>在/data 目录先创建6个文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@nfs01 data]# sh  /server/scripts/inotify.sh &amp;</span><br><span class="line"></span><br><span class="line">[root@nfs01 data]# touch &#123;1..6&#125;.txt</span><br></pre></td></tr></table></figure>
+<p>在backup服务器上，已经时候同步过去了6个文件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">root@backup ~]# ll /nfsbackup/</span><br><span class="line"></span><br><span class="line">total 8</span><br><span class="line"></span><br><span class="line">-rw-r--r-- 1 rsync rsync 0 Oct 17 12:06 1.txt</span><br><span class="line"></span><br><span class="line">-rw-r--r-- 1 rsync rsync 0 Oct 17 12:06 2.txt</span><br><span class="line"></span><br><span class="line">-rw-r--r-- 1 rsync rsync 0 Oct 17 12:06 3.txt</span><br><span class="line"></span><br><span class="line">-rw-r--r-- 1 rsync rsync 0 Oct 17 12:06 4.txt</span><br><span class="line"></span><br><span class="line">-rw-r--r-- 1 rsync rsync 0 Oct 17 12:06 5.txt</span><br><span class="line"></span><br><span class="line">-rw-r--r-- 1 rsync rsync 0 Oct 17 12:06 6.txt</span><br></pre></td></tr></table></figure>
+<h2 id="利用while循环语句编写的脚本停止方法（kill）"><a href="#利用while循环语句编写的脚本停止方法（kill）" class="headerlink" title="利用while循环语句编写的脚本停止方法（kill）"></a>利用while循环语句编写的脚本停止方法（kill）</h2><p>ctrl+z暂停程序运行，kill -9杀死</p>
+<p>不要暂停程序，直接利用杀手三剑客进行杀进程</p>
+<p>说明：</p>
+<blockquote>
+<p>kill三个杀手不是万能的，在进程暂停时，无法杀死；kill -9 （危险）</p>
+</blockquote>
+<h3 id="查看后台都要哪些程序在运行"><a href="#查看后台都要哪些程序在运行" class="headerlink" title="查看后台都要哪些程序在运行"></a>查看后台都要哪些程序在运行</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@nfs01 data]# jobs</span><br><span class="line"></span><br><span class="line">[1]+  Running                sh /server/scripts/inotify.sh &amp;</span><br></pre></td></tr></table></figure>
+<h3 id="fg将后台的程序调到前台来"><a href="#fg将后台的程序调到前台来" class="headerlink" title="fg将后台的程序调到前台来"></a>fg将后台的程序调到前台来</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@nfs01 data]# fg 1</span><br><span class="line"></span><br><span class="line">sh /server/scripts/inotify.sh</span><br></pre></td></tr></table></figure>
+<h2 id="进程的前台和后台运行方法："><a href="#进程的前台和后台运行方法：" class="headerlink" title="进程的前台和后台运行方法："></a>进程的前台和后台运行方法：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">fg    -- 前台</span><br><span class="line"></span><br><span class="line">bg    -- 后台</span><br></pre></td></tr></table></figure>
+<h3 id="脚本后台运行方法"><a href="#脚本后台运行方法" class="headerlink" title="脚本后台运行方法"></a>脚本后台运行方法</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">01. sh inotify.sh &amp;</span><br><span class="line"></span><br><span class="line">02. nohup sh inotify.sh &amp;</span><br><span class="line"></span><br><span class="line">03. screen实现脚本程序后台运行</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sh /server/scripts/inotify.sh &amp;</span><br></pre></td></tr></table></figure>
+<h3 id="nohup"><a href="#nohup" class="headerlink" title="nohup"></a>nohup</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nohup sh inotify.sh &amp;</span><br></pre></td></tr></table></figure>
+<p><a href="https://www.centos.bz/2017/10/inotifyrsync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5/" target="_blank" rel="noopener">原文引自这里</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/rsync/" rel="tag"># rsync</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/16/Dockerfile详解/" rel="next" title="Dockerfile详解">
+                <i class="fa fa-chevron-left"></i> Dockerfile详解
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="ben wong" />
+            
+              <p class="site-author-name" itemprop="name">ben wong</p>
+              <p class="site-description motion-element" itemprop="description">要么忙着活，要么忙着死</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://imgur.com" title="图床" target="_blank">图床</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#数据实时同步介绍"><span class="nav-number">1.</span> <span class="nav-text"><a href="#&#x6570;&#x636E;&#x5B9E;&#x65F6;&#x540C;&#x6B65;&#x4ECB;&#x7ECD;" class="headerlink" title="&#x6570;&#x636E;&#x5B9E;&#x65F6;&#x540C;&#x6B65;&#x4ECB;&#x7ECD;"></a>&#x6570;&#x636E;&#x5B9E;&#x65F6;&#x540C;&#x6B65;&#x4ECB;&#x7ECD;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是实时同步：如何实现实时同步"><span class="nav-number">1.1.</span> <span class="nav-text"><a href="#&#x4EC0;&#x4E48;&#x662F;&#x5B9E;&#x65F6;&#x540C;&#x6B65;&#xFF1A;&#x5982;&#x4F55;&#x5B9E;&#x73B0;&#x5B9E;&#x65F6;&#x540C;&#x6B65;" class="headerlink" title="&#x4EC0;&#x4E48;&#x662F;&#x5B9E;&#x65F6;&#x540C;&#x6B65;&#xFF1A;&#x5982;&#x4F55;&#x5B9E;&#x73B0;&#x5B9E;&#x65F6;&#x540C;&#x6B65;"></a>&#x4EC0;&#x4E48;&#x662F;&#x5B9E;&#x65F6;&#x540C;&#x6B65;&#xFF1A;&#x5982;&#x4F55;&#x5B9E;&#x73B0;&#x5B9E;&#x65F6;&#x540C;&#x6B65;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现实时同步的方法"><span class="nav-number">1.2.</span> <span class="nav-text"><a href="#&#x5B9E;&#x73B0;&#x5B9E;&#x65F6;&#x540C;&#x6B65;&#x7684;&#x65B9;&#x6CD5;" class="headerlink" title="&#x5B9E;&#x73B0;&#x5B9E;&#x65F6;&#x540C;&#x6B65;&#x7684;&#x65B9;&#x6CD5;"></a>&#x5B9E;&#x73B0;&#x5B9E;&#x65F6;&#x540C;&#x6B65;&#x7684;&#x65B9;&#x6CD5;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实时同步原理介绍"><span class="nav-number">1.3.</span> <span class="nav-text"><a href="#&#x5B9E;&#x65F6;&#x540C;&#x6B65;&#x539F;&#x7406;&#x4ECB;&#x7ECD;" class="headerlink" title="&#x5B9E;&#x65F6;&#x540C;&#x6B65;&#x539F;&#x7406;&#x4ECB;&#x7ECD;"></a>&#x5B9E;&#x65F6;&#x540C;&#x6B65;&#x539F;&#x7406;&#x4ECB;&#x7ECD;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#inotify-rsync-方式实现数据同步"><span class="nav-number">1.4.</span> <span class="nav-text"><a href="#inotify-rsync-&#x65B9;&#x5F0F;&#x5B9E;&#x73B0;&#x6570;&#x636E;&#x540C;&#x6B65;" class="headerlink" title="inotify+rsync &#x65B9;&#x5F0F;&#x5B9E;&#x73B0;&#x6570;&#x636E;&#x540C;&#x6B65;"></a>inotify+rsync &#x65B9;&#x5F0F;&#x5B9E;&#x73B0;&#x6570;&#x636E;&#x540C;&#x6B65;</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Inotify简介"><span class="nav-number">1.4.1.</span> <span class="nav-text"><a href="#Inotify&#x7B80;&#x4ECB;" class="headerlink" title="Inotify&#x7B80;&#x4ECB;"></a>Inotify&#x7B80;&#x4ECB;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#inotify-rsync使用方式"><span class="nav-number">1.4.2.</span> <span class="nav-text"><a href="#inotify-rsync&#x4F7F;&#x7528;&#x65B9;&#x5F0F;" class="headerlink" title="inotify+rsync&#x4F7F;&#x7528;&#x65B9;&#x5F0F;"></a>inotify+rsync&#x4F7F;&#x7528;&#x65B9;&#x5F0F;</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#部署inotify软件的前提"><span class="nav-number">2.</span> <span class="nav-text"><a href="#&#x90E8;&#x7F72;inotify&#x8F6F;&#x4EF6;&#x7684;&#x524D;&#x63D0;" class="headerlink" title="&#x90E8;&#x7F72;inotify&#x8F6F;&#x4EF6;&#x7684;&#x524D;&#x63D0;"></a>&#x90E8;&#x7F72;inotify&#x8F6F;&#x4EF6;&#x7684;&#x524D;&#x63D0;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#三个重要文件的说明"><span class="nav-number">2.1.</span> <span class="nav-text"><a href="#&#x4E09;&#x4E2A;&#x91CD;&#x8981;&#x6587;&#x4EF6;&#x7684;&#x8BF4;&#x660E;" class="headerlink" title="&#x4E09;&#x4E2A;&#x91CD;&#x8981;&#x6587;&#x4EF6;&#x7684;&#x8BF4;&#x660E;"></a>&#x4E09;&#x4E2A;&#x91CD;&#x8981;&#x6587;&#x4EF6;&#x7684;&#x8BF4;&#x660E;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#【服务优化】"><span class="nav-number">2.2.</span> <span class="nav-text"><a href="#&#x3010;&#x670D;&#x52A1;&#x4F18;&#x5316;&#x3011;" class="headerlink" title="&#x3010;&#x670D;&#x52A1;&#x4F18;&#x5316;&#x3011;"></a>&#x3010;&#x670D;&#x52A1;&#x4F18;&#x5316;&#x3011;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#inotify软件介绍及参数说明"><span class="nav-number">3.</span> <span class="nav-text"><a href="#inotify&#x8F6F;&#x4EF6;&#x4ECB;&#x7ECD;&#x53CA;&#x53C2;&#x6570;&#x8BF4;&#x660E;" class="headerlink" title="inotify&#x8F6F;&#x4EF6;&#x4ECB;&#x7ECD;&#x53CA;&#x53C2;&#x6570;&#x8BF4;&#x660E;"></a>inotify&#x8F6F;&#x4EF6;&#x4ECB;&#x7ECD;&#x53CA;&#x53C2;&#x6570;&#x8BF4;&#x660E;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#两种安装方式"><span class="nav-number">3.1.</span> <span class="nav-text"><a href="#&#x4E24;&#x79CD;&#x5B89;&#x88C5;&#x65B9;&#x5F0F;" class="headerlink" title="&#x4E24;&#x79CD;&#x5B89;&#x88C5;&#x65B9;&#x5F0F;"></a>&#x4E24;&#x79CD;&#x5B89;&#x88C5;&#x65B9;&#x5F0F;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#inotify主要安装的两个软件"><span class="nav-number">3.2.</span> <span class="nav-text"><a href="#inotify&#x4E3B;&#x8981;&#x5B89;&#x88C5;&#x7684;&#x4E24;&#x4E2A;&#x8F6F;&#x4EF6;" class="headerlink" title="inotify&#x4E3B;&#x8981;&#x5B89;&#x88C5;&#x7684;&#x4E24;&#x4E2A;&#x8F6F;&#x4EF6;"></a>inotify&#x4E3B;&#x8981;&#x5B89;&#x88C5;&#x7684;&#x4E24;&#x4E2A;&#x8F6F;&#x4EF6;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#inotifywait命令参数说明"><span class="nav-number">3.3.</span> <span class="nav-text"><a href="#inotifywait&#x547D;&#x4EE4;&#x53C2;&#x6570;&#x8BF4;&#x660E;" class="headerlink" title="inotifywait&#x547D;&#x4EE4;&#x53C2;&#x6570;&#x8BF4;&#x660E;"></a>inotifywait&#x547D;&#x4EE4;&#x53C2;&#x6570;&#x8BF4;&#x660E;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#e-参数-可以指定的事件类型"><span class="nav-number">3.4.</span> <span class="nav-text"><a href="#e-&#x53C2;&#x6570;-&#x53EF;&#x4EE5;&#x6307;&#x5B9A;&#x7684;&#x4E8B;&#x4EF6;&#x7C7B;&#x578B;" class="headerlink" title="-e[&#x53C2;&#x6570;] &#x53EF;&#x4EE5;&#x6307;&#x5B9A;&#x7684;&#x4E8B;&#x4EF6;&#x7C7B;&#x578B;"></a>-e[&#x53C2;&#x6570;] &#x53EF;&#x4EE5;&#x6307;&#x5B9A;&#x7684;&#x4E8B;&#x4EF6;&#x7C7B;&#x578B;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#inotifywait监控中的事件测试"><span class="nav-number">3.5.</span> <span class="nav-text"><a href="#inotifywait&#x76D1;&#x63A7;&#x4E2D;&#x7684;&#x4E8B;&#x4EF6;&#x6D4B;&#x8BD5;" class="headerlink" title="inotifywait&#x76D1;&#x63A7;&#x4E2D;&#x7684;&#x4E8B;&#x4EF6;&#x6D4B;&#x8BD5;"></a>inotifywait&#x76D1;&#x63A7;&#x4E2D;&#x7684;&#x4E8B;&#x4EF6;&#x6D4B;&#x8BD5;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#修改输出的日期格式"><span class="nav-number">3.6.</span> <span class="nav-text"><a href="#&#x4FEE;&#x6539;&#x8F93;&#x51FA;&#x7684;&#x65E5;&#x671F;&#x683C;&#x5F0F;" class="headerlink" title="&#x4FEE;&#x6539;&#x8F93;&#x51FA;&#x7684;&#x65E5;&#x671F;&#x683C;&#x5F0F;"></a>&#x4FEE;&#x6539;&#x8F93;&#x51FA;&#x7684;&#x65E5;&#x671F;&#x683C;&#x5F0F;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对inotifywait命令的测试"><span class="nav-number">4.</span> <span class="nav-text"><a href="#&#x5BF9;inotifywait&#x547D;&#x4EE4;&#x7684;&#x6D4B;&#x8BD5;" class="headerlink" title="&#x5BF9;inotifywait&#x547D;&#x4EE4;&#x7684;&#x6D4B;&#x8BD5;"></a>&#x5BF9;inotifywait&#x547D;&#x4EE4;&#x7684;&#x6D4B;&#x8BD5;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#创建文件的逻辑"><span class="nav-number">4.1.</span> <span class="nav-text"><a href="#&#x521B;&#x5EFA;&#x6587;&#x4EF6;&#x7684;&#x903B;&#x8F91;" class="headerlink" title="&#x521B;&#x5EFA;&#x6587;&#x4EF6;&#x7684;&#x903B;&#x8F91;"></a>&#x521B;&#x5EFA;&#x6587;&#x4EF6;&#x7684;&#x903B;&#x8F91;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建目录逻辑"><span class="nav-number">4.2.</span> <span class="nav-text"><a href="#&#x521B;&#x5EFA;&#x76EE;&#x5F55;&#x903B;&#x8F91;" class="headerlink" title="&#x521B;&#x5EFA;&#x76EE;&#x5F55;&#x903B;&#x8F91;"></a>&#x521B;&#x5EFA;&#x76EE;&#x5F55;&#x903B;&#x8F91;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#监控子目录下的文件"><span class="nav-number">4.3.</span> <span class="nav-text"><a href="#&#x76D1;&#x63A7;&#x5B50;&#x76EE;&#x5F55;&#x4E0B;&#x7684;&#x6587;&#x4EF6;" class="headerlink" title="&#x76D1;&#x63A7;&#x5B50;&#x76EE;&#x5F55;&#x4E0B;&#x7684;&#x6587;&#x4EF6;"></a>&#x76D1;&#x63A7;&#x5B50;&#x76EE;&#x5F55;&#x4E0B;&#x7684;&#x6587;&#x4EF6;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sed命令修改逻辑"><span class="nav-number">4.4.</span> <span class="nav-text"><a href="#sed&#x547D;&#x4EE4;&#x4FEE;&#x6539;&#x903B;&#x8F91;" class="headerlink" title="sed&#x547D;&#x4EE4;&#x4FEE;&#x6539;&#x903B;&#x8F91;"></a>sed&#x547D;&#x4EE4;&#x4FEE;&#x6539;&#x903B;&#x8F91;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实时同步命令参数示意图"><span class="nav-number">5.</span> <span class="nav-text"><a href="#&#x5B9E;&#x65F6;&#x540C;&#x6B65;&#x547D;&#x4EE4;&#x53C2;&#x6570;&#x793A;&#x610F;&#x56FE;" class="headerlink" title="&#x5B9E;&#x65F6;&#x540C;&#x6B65;&#x547D;&#x4EE4;&#x53C2;&#x6570;&#x793A;&#x610F;&#x56FE;"></a>&#x5B9E;&#x65F6;&#x540C;&#x6B65;&#x547D;&#x4EE4;&#x53C2;&#x6570;&#x793A;&#x610F;&#x56FE;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#inotify-rsync实时同步服务部署"><span class="nav-number">6.</span> <span class="nav-text"><a href="#inotify-rsync&#x5B9E;&#x65F6;&#x540C;&#x6B65;&#x670D;&#x52A1;&#x90E8;&#x7F72;" class="headerlink" title="inotify+rsync&#x5B9E;&#x65F6;&#x540C;&#x6B65;&#x670D;&#x52A1;&#x90E8;&#x7F72;"></a>inotify+rsync&#x5B9E;&#x65F6;&#x540C;&#x6B65;&#x670D;&#x52A1;&#x90E8;&#x7F72;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#第一个里程碑：部署rsync服务"><span class="nav-number">6.1.</span> <span class="nav-text"><a href="#&#x7B2C;&#x4E00;&#x4E2A;&#x91CC;&#x7A0B;&#x7891;&#xFF1A;&#x90E8;&#x7F72;rsync&#x670D;&#x52A1;" class="headerlink" title="&#x7B2C;&#x4E00;&#x4E2A;&#x91CC;&#x7A0B;&#x7891;&#xFF1A;&#x90E8;&#x7F72;rsync&#x670D;&#x52A1;"></a>&#x7B2C;&#x4E00;&#x4E2A;&#x91CC;&#x7A0B;&#x7891;&#xFF1A;&#x90E8;&#x7F72;rsync&#x670D;&#x52A1;</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#rsync服务端部署"><span class="nav-number">6.1.1.</span> <span class="nav-text"><a href="#rsync&#x670D;&#x52A1;&#x7AEF;&#x90E8;&#x7F72;" class="headerlink" title="rsync&#x670D;&#x52A1;&#x7AEF;&#x90E8;&#x7F72;"></a><strong>rsync&#x670D;&#x52A1;&#x7AEF;</strong>&#x90E8;&#x7F72;</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#rsync客户端配置"><span class="nav-number">6.2.</span> <span class="nav-text"><a href="#rsync&#x5BA2;&#x6237;&#x7AEF;&#x914D;&#x7F6E;" class="headerlink" title="rsync&#x5BA2;&#x6237;&#x7AEF;&#x914D;&#x7F6E;"></a>rsync&#x5BA2;&#x6237;&#x7AEF;&#x914D;&#x7F6E;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二个里程碑：部署inotify服务"><span class="nav-number">7.</span> <span class="nav-text"><a href="#&#x7B2C;&#x4E8C;&#x4E2A;&#x91CC;&#x7A0B;&#x7891;&#xFF1A;&#x90E8;&#x7F72;inotify&#x670D;&#x52A1;" class="headerlink" title="&#x7B2C;&#x4E8C;&#x4E2A;&#x91CC;&#x7A0B;&#x7891;&#xFF1A;&#x90E8;&#x7F72;inotify&#x670D;&#x52A1;"></a>&#x7B2C;&#x4E8C;&#x4E2A;&#x91CC;&#x7A0B;&#x7891;&#xFF1A;&#x90E8;&#x7F72;inotify&#x670D;&#x52A1;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装inotify软件"><span class="nav-number">7.1.</span> <span class="nav-text"><a href="#&#x5B89;&#x88C5;inotify&#x8F6F;&#x4EF6;" class="headerlink" title="&#x5B89;&#x88C5;inotify&#x8F6F;&#x4EF6;"></a>&#x5B89;&#x88C5;inotify&#x8F6F;&#x4EF6;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查看inotify安装上的两个命令"><span class="nav-number">7.2.</span> <span class="nav-text"><a href="#&#x67E5;&#x770B;inotify&#x5B89;&#x88C5;&#x4E0A;&#x7684;&#x4E24;&#x4E2A;&#x547D;&#x4EE4;" class="headerlink" title="&#x67E5;&#x770B;inotify&#x5B89;&#x88C5;&#x4E0A;&#x7684;&#x4E24;&#x4E2A;&#x547D;&#x4EE4;"></a>&#x67E5;&#x770B;inotify&#x5B89;&#x88C5;&#x4E0A;&#x7684;&#x4E24;&#x4E2A;&#x547D;&#x4EE4;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#inotifywait和inotifywatch的作用"><span class="nav-number">7.3.</span> <span class="nav-text"><a href="#inotifywait&#x548C;inotifywatch&#x7684;&#x4F5C;&#x7528;" class="headerlink" title="inotifywait&#x548C;inotifywatch&#x7684;&#x4F5C;&#x7528;"></a>inotifywait&#x548C;inotifywatch&#x7684;&#x4F5C;&#x7528;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第三个里程碑：编写脚本，实现rsync-inotify软件功能结合"><span class="nav-number">7.4.</span> <span class="nav-text"><a href="#&#x7B2C;&#x4E09;&#x4E2A;&#x91CC;&#x7A0B;&#x7891;&#xFF1A;&#x7F16;&#x5199;&#x811A;&#x672C;&#xFF0C;&#x5B9E;&#x73B0;rsync-inotify&#x8F6F;&#x4EF6;&#x529F;&#x80FD;&#x7ED3;&#x5408;" class="headerlink" title="&#x7B2C;&#x4E09;&#x4E2A;&#x91CC;&#x7A0B;&#x7891;&#xFF1A;&#x7F16;&#x5199;&#x811A;&#x672C;&#xFF0C;&#x5B9E;&#x73B0;rsync+inotify&#x8F6F;&#x4EF6;&#x529F;&#x80FD;&#x7ED3;&#x5408;"></a>&#x7B2C;&#x4E09;&#x4E2A;&#x91CC;&#x7A0B;&#x7891;&#xFF1A;&#x7F16;&#x5199;&#x811A;&#x672C;&#xFF0C;&#x5B9E;&#x73B0;rsync+inotify&#x8F6F;&#x4EF6;&#x529F;&#x80FD;&#x7ED3;&#x5408;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第四个里程碑：测试编写的脚本"><span class="nav-number">8.</span> <span class="nav-text"><a href="#&#x7B2C;&#x56DB;&#x4E2A;&#x91CC;&#x7A0B;&#x7891;&#xFF1A;&#x6D4B;&#x8BD5;&#x7F16;&#x5199;&#x7684;&#x811A;&#x672C;" class="headerlink" title="&#x7B2C;&#x56DB;&#x4E2A;&#x91CC;&#x7A0B;&#x7891;&#xFF1A;&#x6D4B;&#x8BD5;&#x7F16;&#x5199;&#x7684;&#x811A;&#x672C;"></a>&#x7B2C;&#x56DB;&#x4E2A;&#x91CC;&#x7A0B;&#x7891;&#xFF1A;&#x6D4B;&#x8BD5;&#x7F16;&#x5199;&#x7684;&#x811A;&#x672C;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#利用while循环语句编写的脚本停止方法（kill）"><span class="nav-number">9.</span> <span class="nav-text"><a href="#&#x5229;&#x7528;while&#x5FAA;&#x73AF;&#x8BED;&#x53E5;&#x7F16;&#x5199;&#x7684;&#x811A;&#x672C;&#x505C;&#x6B62;&#x65B9;&#x6CD5;&#xFF08;kill&#xFF09;" class="headerlink" title="&#x5229;&#x7528;while&#x5FAA;&#x73AF;&#x8BED;&#x53E5;&#x7F16;&#x5199;&#x7684;&#x811A;&#x672C;&#x505C;&#x6B62;&#x65B9;&#x6CD5;&#xFF08;kill&#xFF09;"></a>&#x5229;&#x7528;while&#x5FAA;&#x73AF;&#x8BED;&#x53E5;&#x7F16;&#x5199;&#x7684;&#x811A;&#x672C;&#x505C;&#x6B62;&#x65B9;&#x6CD5;&#xFF08;kill&#xFF09;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#查看后台都要哪些程序在运行"><span class="nav-number">9.1.</span> <span class="nav-text"><a href="#&#x67E5;&#x770B;&#x540E;&#x53F0;&#x90FD;&#x8981;&#x54EA;&#x4E9B;&#x7A0B;&#x5E8F;&#x5728;&#x8FD0;&#x884C;" class="headerlink" title="&#x67E5;&#x770B;&#x540E;&#x53F0;&#x90FD;&#x8981;&#x54EA;&#x4E9B;&#x7A0B;&#x5E8F;&#x5728;&#x8FD0;&#x884C;"></a>&#x67E5;&#x770B;&#x540E;&#x53F0;&#x90FD;&#x8981;&#x54EA;&#x4E9B;&#x7A0B;&#x5E8F;&#x5728;&#x8FD0;&#x884C;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#fg将后台的程序调到前台来"><span class="nav-number">9.2.</span> <span class="nav-text"><a href="#fg&#x5C06;&#x540E;&#x53F0;&#x7684;&#x7A0B;&#x5E8F;&#x8C03;&#x5230;&#x524D;&#x53F0;&#x6765;" class="headerlink" title="fg&#x5C06;&#x540E;&#x53F0;&#x7684;&#x7A0B;&#x5E8F;&#x8C03;&#x5230;&#x524D;&#x53F0;&#x6765;"></a>fg&#x5C06;&#x540E;&#x53F0;&#x7684;&#x7A0B;&#x5E8F;&#x8C03;&#x5230;&#x524D;&#x53F0;&#x6765;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#进程的前台和后台运行方法："><span class="nav-number">10.</span> <span class="nav-text"><a href="#&#x8FDB;&#x7A0B;&#x7684;&#x524D;&#x53F0;&#x548C;&#x540E;&#x53F0;&#x8FD0;&#x884C;&#x65B9;&#x6CD5;&#xFF1A;" class="headerlink" title="&#x8FDB;&#x7A0B;&#x7684;&#x524D;&#x53F0;&#x548C;&#x540E;&#x53F0;&#x8FD0;&#x884C;&#x65B9;&#x6CD5;&#xFF1A;"></a>&#x8FDB;&#x7A0B;&#x7684;&#x524D;&#x53F0;&#x548C;&#x540E;&#x53F0;&#x8FD0;&#x884C;&#x65B9;&#x6CD5;&#xFF1A;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#脚本后台运行方法"><span class="nav-number">10.1.</span> <span class="nav-text"><a href="#&#x811A;&#x672C;&#x540E;&#x53F0;&#x8FD0;&#x884C;&#x65B9;&#x6CD5;" class="headerlink" title="&#x811A;&#x672C;&#x540E;&#x53F0;&#x8FD0;&#x884C;&#x65B9;&#x6CD5;"></a>&#x811A;&#x672C;&#x540E;&#x53F0;&#x8FD0;&#x884C;&#x65B9;&#x6CD5;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nohup"><span class="nav-number">10.2.</span> <span class="nav-text"><a href="#nohup" class="headerlink" title="nohup"></a>nohup</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ben wong</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://louis90.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://code.meirenji.info/2017/12/17/inotify-rsync实现数据实时同步/';
+          this.page.identifier = '2017/12/17/inotify-rsync实现数据实时同步/';
+          this.page.title = 'inotify+rsync实现数据实时同步';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://louis90.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
