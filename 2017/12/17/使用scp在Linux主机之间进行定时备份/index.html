@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="mysql," />
+  <meta name="keywords" content="scp," />
 
 
 
@@ -79,22 +79,18 @@
 
 
 
-<meta name="description" content="概念 主从复制可以使MySQL数据库主服务器的主数据库，复制到一个或多个MySQL从服务器从数据库，默认情况下，复制异步; 根据配置，可以复制数据库中的所有数据库，选定的数据库或甚至选定的表。    MySQL中主从复制的优点横向扩展解决方案在多个从库之间扩展负载以提高性能。在这种环境中，所有写入和更新在主库上进行。但是，读取可能发生在一个或多个从库上。该模型可以提高写入的性能（由于主库专用于更新">
-<meta name="keywords" content="mysql">
+<meta name="description" content="如果只是小部分备份，比如只是备份MySQL数据库，就没有必要使用rsync软件备份了。而之前的lftp增量备份似乎也不适合这种备份。 在两台Linux主机，而且都是ssh权限，那就建议使用scp命令备份了，这种备份速度快且是加密传输，安全性高。  运行环境   本地linux(10.1.1.1)主机 远程linux主机(10.1.1.2)  添加ssh公匙scp在建立连接中是需要密码认证的，所以我">
+<meta name="keywords" content="scp">
 <meta property="og:type" content="article">
-<meta property="og:title" content="MySQL搭建主从复制实现细节分析">
-<meta property="og:url" content="http://code.meirenji.info/2017/12/09/MySQL搭建主从复制实现细节分析/index.html">
+<meta property="og:title" content="使用scp在Linux主机之间进行定时备份">
+<meta property="og:url" content="http://code.meirenji.info/2017/12/17/使用scp在Linux主机之间进行定时备份/index.html">
 <meta property="og:site_name" content="奶爸的天空">
-<meta property="og:description" content="概念 主从复制可以使MySQL数据库主服务器的主数据库，复制到一个或多个MySQL从服务器从数据库，默认情况下，复制异步; 根据配置，可以复制数据库中的所有数据库，选定的数据库或甚至选定的表。    MySQL中主从复制的优点横向扩展解决方案在多个从库之间扩展负载以提高性能。在这种环境中，所有写入和更新在主库上进行。但是，读取可能发生在一个或多个从库上。该模型可以提高写入的性能（由于主库专用于更新">
+<meta property="og:description" content="如果只是小部分备份，比如只是备份MySQL数据库，就没有必要使用rsync软件备份了。而之前的lftp增量备份似乎也不适合这种备份。 在两台Linux主机，而且都是ssh权限，那就建议使用scp命令备份了，这种备份速度快且是加密传输，安全性高。  运行环境   本地linux(10.1.1.1)主机 远程linux主机(10.1.1.2)  添加ssh公匙scp在建立连接中是需要密码认证的，所以我">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://i.imgur.com/Vxcgv6S.jpg">
-<meta property="og:image" content="https://i.imgur.com/cuDZr0Y.jpg">
-<meta property="og:image" content="https://i.imgur.com/AGVg7ga.jpg">
-<meta property="og:updated_time" content="2017-12-17T10:26:23.994Z">
+<meta property="og:updated_time" content="2017-12-17T13:43:49.578Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="MySQL搭建主从复制实现细节分析">
-<meta name="twitter:description" content="概念 主从复制可以使MySQL数据库主服务器的主数据库，复制到一个或多个MySQL从服务器从数据库，默认情况下，复制异步; 根据配置，可以复制数据库中的所有数据库，选定的数据库或甚至选定的表。    MySQL中主从复制的优点横向扩展解决方案在多个从库之间扩展负载以提高性能。在这种环境中，所有写入和更新在主库上进行。但是，读取可能发生在一个或多个从库上。该模型可以提高写入的性能（由于主库专用于更新">
-<meta name="twitter:image" content="https://i.imgur.com/Vxcgv6S.jpg">
+<meta name="twitter:title" content="使用scp在Linux主机之间进行定时备份">
+<meta name="twitter:description" content="如果只是小部分备份，比如只是备份MySQL数据库，就没有必要使用rsync软件备份了。而之前的lftp增量备份似乎也不适合这种备份。 在两台Linux主机，而且都是ssh权限，那就建议使用scp命令备份了，这种备份速度快且是加密传输，安全性高。  运行环境   本地linux(10.1.1.1)主机 远程linux主机(10.1.1.2)  添加ssh公匙scp在建立连接中是需要密码认证的，所以我">
 
 
 
@@ -124,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://code.meirenji.info/2017/12/09/MySQL搭建主从复制实现细节分析/"/>
+  <link rel="canonical" href="http://code.meirenji.info/2017/12/17/使用scp在Linux主机之间进行定时备份/"/>
 
 
 
 
 
-  <title>MySQL搭建主从复制实现细节分析 | 奶爸的天空</title>
+  <title>使用scp在Linux主机之间进行定时备份 | 奶爸的天空</title>
   
 
 
@@ -291,7 +287,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://code.meirenji.info/2017/12/09/MySQL搭建主从复制实现细节分析/">
+    <link itemprop="mainEntityOfPage" href="http://code.meirenji.info/2017/12/17/使用scp在Linux主机之间进行定时备份/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="ben wong">
@@ -308,7 +304,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">MySQL搭建主从复制实现细节分析</h1>
+          <h1 class="post-title" itemprop="name headline">使用scp在Linux主机之间进行定时备份</h1>
         
 
         <div class="post-meta">
@@ -320,8 +316,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-09T18:18:58+08:00">
-                2017-12-09
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-17T21:41:28+09:00">
+                2017-12-17
               </time>
             
 
@@ -361,9 +357,9 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2017/12/09/MySQL搭建主从复制实现细节分析/#comments" itemprop="discussionUrl">
+                <a href="/2017/12/17/使用scp在Linux主机之间进行定时备份/#comments" itemprop="discussionUrl">
                   <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="2017/12/09/MySQL搭建主从复制实现细节分析/" itemprop="commentCount"></span>
+                        data-disqus-identifier="2017/12/17/使用scp在Linux主机之间进行定时备份/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -391,95 +387,142 @@
       
 
       
-        <h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><ul>
-<li>主从复制可以使MySQL数据库主服务器的主数据库，复制到一个或多个MySQL从服务器从数据库，默认情况下，复制异步;</li>
-<li>根据配置，可以复制数据库中的所有数据库，选定的数据库或甚至选定的表。</li>
-</ul>
-<p><img src="https://i.imgur.com/Vxcgv6S.jpg" alt="image"></p>
-<p><img src="https://i.imgur.com/cuDZr0Y.jpg" alt="image"></p>
-<h2 id="MySQL中主从复制的优点"><a href="#MySQL中主从复制的优点" class="headerlink" title="MySQL中主从复制的优点"></a>MySQL中主从复制的优点</h2><h5 id="横向扩展解决方案"><a href="#横向扩展解决方案" class="headerlink" title="横向扩展解决方案"></a>横向扩展解决方案</h5><p>在多个从库之间扩展负载以提高性能。在这种环境中，所有写入和更新在主库上进行。但是，读取可能发生在一个或多个从库上。该模型可以提高写入的性能（由于主库专用于更新），同时在多个从库上读取，可以大大提高读取速度。</p>
-<h5 id="数据安全性"><a href="#数据安全性" class="headerlink" title="数据安全性"></a>数据安全性</h5><p>由于主库数据被复制到从库，从库可以暂停复制过程，可以在从库上运行备份服务，而不会破坏对应的主库数据。</p>
-<h5 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h5><p>可以在主库上创建实时数据，而信息分析可以在从库上进行，而不会影响主服务器的性能。</p>
-<h5 id="长距离数据分发"><a href="#长距离数据分发" class="headerlink" title="长距离数据分发"></a>长距离数据分发</h5><p>可以使用复制创建远程站点使用的数据的本地副本，而无需永久访问主库。</p>
-<h2 id=""><a href="#" class="headerlink" title=""></a><a id="more"></a></h2><h2 id="1-准备工作"><a href="#1-准备工作" class="headerlink" title="1.准备工作"></a>1.准备工作</h2><p>Mysql版本：MySQL 5.7.11<br>Master-Server : 192.168.252.123<br>Slave-Server : 192.168.252.124</p>
+        <p>如果只是小部分备份，比如只是备份MySQL数据库，就没有必要使用rsync软件备份了。而之前的lftp增量备份似乎也不适合这种备份。</p>
+<p>在两台Linux主机，而且都是ssh权限，那就建议使用scp命令备份了，这种备份速度快且是加密传输，安全性高。</p>
+<blockquote>
+<p>运行环境</p>
+</blockquote>
 <ul>
-<li>关闭防火墙</li>
+<li>本地linux(10.1.1.1)主机</li>
+<li>远程linux主机(10.1.1.2)</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl stop firewalld.service</span><br></pre></td></tr></table></figure>
+<h2 id="添加ssh公匙"><a href="#添加ssh公匙" class="headerlink" title="添加ssh公匙"></a>添加ssh公匙</h2><p>scp在建立连接中是需要密码认证的，所以我们第一步就是添加ssh公匙。</p>
+<blockquote>
+<p>ssh终端运行:</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>结果如下:</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Generating public/private rsa key pair.</span><br><span class="line">　　Enter file in which to save the key (/home/.username/ssh/id_rsa):#回车</span><br><span class="line">　　Enter passphrase (empty for no passphrase):#回车</span><br><span class="line">　　Enter same passphrase again:#回车</span><br><span class="line">　　Your identification has been saved in /home/.username /.ssh/id_rsa.</span><br><span class="line">　　Your public key has been saved in /home/.username /.ssh/id_rsa.pub.</span><br><span class="line">　　The key fingerprint is:</span><br><span class="line">　　38:25:c1:4d:5d:d3:89:bb:46:67:bf:52:af:c3:17:0c username@localhost</span><br><span class="line">　　Generating RSA keys:</span><br><span class="line">　　Key generation complete.</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>　　</p>
+<blockquote>
+<p>会在用户目录~/.ssh/产生两个文件，id_rsa，id_rsa.pub</p>
+</blockquote>
+<hr>
+<h2 id="配置远程主机"><a href="#配置远程主机" class="headerlink" title="配置远程主机"></a>配置远程主机</h2><p>第二是把本地(10.1.1.1)主机上的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">id_rsa.pub文件拷贝到远程linux(10.1.1.2)主机的root用户主目录下的.ssh目录下,并且改名为authorized_keys</span><br></pre></td></tr></table></figure>
+<p>即：
+　　</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scp /root/.ssh/id_rsa.pub root@10.1.1.2:/root/.ssh/authorized_keys</span><br></pre></td></tr></table></figure>
+<p>这样在本地linux(10.1.1.1)主机上使用scp命令复制文件到远程linux主机(10.1.1.2)上将不提示输入密码了，直接复制了。</p>
+<p>反之亦然！</p>
+<hr>
+<h2 id="使用scp命令"><a href="#使用scp命令" class="headerlink" title="使用scp命令"></a>使用scp命令</h2><p>我们在管理服务器或vps的时候，经常要上传和下载数据。</p>
+<p>比如当我们需要把数据从一个服务器搬到另一个服务器的时候，通常是从第一个服务器下载数据到我们电脑，再到ftp工具上传下载好的数据到远程服务器。</p>
+<p>但这样即浪费时间，又浪费精力。我们何不先在第一台服务器打包好，就直接传输数据到另一台服务器呢？</p>
+<p>而Linux scp命令则刚好能实现两台服务器之间传输数据的作用。</p>
+<h3 id="什么是scp"><a href="#什么是scp" class="headerlink" title="什么是scp?"></a>什么是scp?</h3><blockquote>
+<p>scp就是secure copy，是用来进行远程文件拷贝的。数据传输使用 ssh，并且和ssh 使用相同的认证方式，提供相同的安全保证 。<br>与rcp 不同的是，scp 在需要进行验证时会要求你输入密码或口令。</p>
+</blockquote>
+<h3 id="scp的用法"><a href="#scp的用法" class="headerlink" title="scp的用法"></a>scp的用法</h3><p>从 本地 复制到 远程</p>
+<p>命令基本格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scp [可选参数] 本地文件名 远程用户名@远程地址:远程文件或目录</span><br></pre></td></tr></table></figure>
+<p>复制文件例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">scp /home/backup.zip root@www.example.com:/home/others/backup</span><br><span class="line">scp /home/backup.zip root@www.example.com:/home/others/otherbackup.zip</span><br></pre></td></tr></table></figure>
 <ul>
-<li>安装 MySQL</li>
+<li>第一个是本地文件backup.zip发送到远程backup目录下。</li>
+<li>第二个是本地文件backup.zip发送到远程otherbackup.zip文件。</li>
 </ul>
-<p>首先在两台机器上装上，保证正常启动，可以使用</p>
-<h2 id="Master-Server-配置"><a href="#Master-Server-配置" class="headerlink" title="Master-Server 配置"></a>Master-Server 配置</h2><p>修改 my.cnf</p>
-<p>配置 Master 以使用<strong>基于二进制日志文件位置</strong>的复制，必须启用二进制日志记录并建立唯一的服务器ID,否则则无法进行主从复制。</p>
-<p>停止MySQL服务。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service mysql.server stop</span><br></pre></td></tr></table></figure>
-<p>开启binlog ，每台设置不同的 server-id</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ cat /etc/my.cnf</span><br><span class="line">[mysqld]</span><br><span class="line">log-bin=mysql-bin</span><br><span class="line">server-id=1</span><br></pre></td></tr></table></figure>
-<p>启动MySQL服务</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service mysql.server start</span><br></pre></td></tr></table></figure>
-<p>登录MySQL</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/local/mysql/bin/mysql -uroot -p</span><br></pre></td></tr></table></figure>
-<hr>
-<h2 id="创建用户"><a href="#创建用户" class="headerlink" title="创建用户"></a>创建用户</h2><p>每个从库使用MySQL用户名和密码连接到主库，因此主库上必须有用户帐户，从库可以连接。任何帐户都可以用于此操作，只要它已被授予 REPLICATION SLAVE权限。可以选择为每个从库创建不同的帐户，或者每个从库使用相同帐户连接到主库</p>
-<p>虽然不必专门为复制创建帐户，但应注意，复制用到的用户名和密码会以纯文本格式存储在主信息存储库文件或表中 。因此，需要创建一个单独的帐户，该帐户只具有复制过程的权限，以尽可能减少对其他帐户的危害。</p>
-<p>登录MySQL</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/local/mysql/bin/mysql -uroot -p</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; CREATE USER &apos;replication&apos;@&apos;192.168.252.124&apos; IDENTIFIED BY &apos;mima&apos;;</span><br><span class="line">mysql&gt; GRANT REPLICATION SLAVE ON *.* TO &apos;replication&apos;@&apos;192.168.252.124&apos;;</span><br></pre></td></tr></table></figure>
-<hr>
-<h2 id="Slave-Server-配置"><a href="#Slave-Server-配置" class="headerlink" title="Slave-Server 配置"></a>Slave-Server 配置</h2><p>修改 my.cnf</p>
-<p>停止MySQL服务。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service mysql.server stop</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ cat /etc/my.cnf</span><br><span class="line">[mysqld]</span><br><span class="line">server-id=2</span><br></pre></td></tr></table></figure>
-<p>如果要设置多个从库，则每个从库的server-id与主库和其他从库设置不同的唯一值。</p>
-<p>启动MySQL服务</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service mysql.server start</span><br></pre></td></tr></table></figure>
-<p>登录MySQL</p>
-<p>配置主库通信</p>
-<p>查看 Master-Server ， binlog File 文件名称和 Position值位置 并且记下来</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt;  show master status;</span><br></pre></td></tr></table></figure>
-<p>要设置从库与主库进行通信，进行复制，使用必要的连接信息配置从库在从库上执行以下语句<br>将选项值替换为与系统相关的实际值</p>
-<p>参数格式，请勿执行</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; CHANGE MASTER TO</span><br><span class="line">    -&gt;     MASTER_HOST=&apos;master_host_name&apos;,</span><br><span class="line">    -&gt;     MASTER_USER=&apos;replication_user_name&apos;,</span><br><span class="line">    -&gt;     MASTER_PASSWORD=&apos;replication_password&apos;,</span><br><span class="line">    -&gt;     MASTER_LOG_FILE=&apos;recorded_log_file_name&apos;,</span><br><span class="line">    -&gt;     MASTER_LOG_POS=recorded_log_position;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; CHANGE MASTER TO</span><br><span class="line">    -&gt; MASTER_HOST=&apos;192.168.252.123&apos;,</span><br><span class="line">    -&gt; MASTER_USER=&apos;replication&apos;,</span><br><span class="line">    -&gt; MASTER_PASSWORD=&apos;mima&apos;,</span><br><span class="line">    -&gt; MASTER_LOG_FILE=&apos;mysql-bin.000001&apos;,</span><br><span class="line">    -&gt; MASTER_LOG_POS=629;</span><br><span class="line">Query OK, 0 rows affected, 2 warnings (0.02 sec)</span><br></pre></td></tr></table></figure>
-<p>MASTER_LOG_POS=0 写成0 也是可以的</p>
-<p>放在一行执行方便</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CHANGE MASTER TO MASTER_HOST=&apos;192.168.252.123&apos;, MASTER_USER=&apos;replication&apos;, MASTER_PASSWORD=&apos;mima&apos;, MASTER_LOG_FILE=&apos;mysql-bin.000001&apos;, MASTER_LOG_POS=629;</span><br></pre></td></tr></table></figure>
-<p>启动从服务器复制线程</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; START SLAVE;</span><br><span class="line">Query OK, 0 rows affected (0.00 sec)</span><br></pre></td></tr></table></figure>
-<p>查看复制状态</p>
-<p>检查主从复制通信状态</p>
-<p>Slave_IO_State #从站的当前状态<br>Slave_IO_Running： Yes #读取主程序二进制日志的I/O线程是否正在运行<br>Slave_SQL_Running： Yes #执行读取主服务器中二进制日志事件的SQL线程是否正在运行。与I/O线程一样<br>Seconds_Behind_Master #是否为0，0就是已经同步了</p>
-<p>必须都是 Yes</p>
-<p>在mysql5.0以后的版本，mysql主从已经相当的成熟了，可以只监控Slave_IO_Running，Slave_SQL_Running，Seconds_Behind_Master状态就可以了，这里不再做说明。</p>
-<p><img src="https://i.imgur.com/AGVg7ga.jpg" alt="image"></p>
-<hr>
-<h2 id="测试主从复制"><a href="#测试主从复制" class="headerlink" title="测试主从复制"></a>测试主从复制</h2><ul>
-<li>启动MySQL服务</li>
-<li>登录MySQL</li>
+<p>复制目录例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scp -r /home/backup root@www.example.com:/home/others/</span><br></pre></td></tr></table></figure>
+<p>复制本地目录backup到远程目录others</p>
+<h3 id="从-远程-复制到-本地"><a href="#从-远程-复制到-本地" class="headerlink" title="从 远程 复制到 本地"></a>从 远程 复制到 本地</h3><p>命令基本格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scp [可选参数] 远程用户名@远程地址:远程文件或目录 本地文件名</span><br></pre></td></tr></table></figure>
+<p>例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">scp root@www.example.com:/home/others/bakcup.zip /home/newbackup.zip</span><br><span class="line">scp -r root@www.example.com:/home/backup /home/other/</span><br></pre></td></tr></table></figure>
+<ul>
+<li>第一个是下载远程文件backup.zip到本地文件newbackup.zip。</li>
+<li>第二个是下载远程目录bakcup到本地目录other。</li>
 </ul>
-<p>在 Master-Server 创建测试库</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; CREATE DATABASE `replication_wwww.ymq.io`;</span><br><span class="line">mysql&gt; use `replication_wwww.ymq.io`;</span><br><span class="line">mysql&gt; CREATE TABLE `sync_test` (`id` int(11) NOT NULL AUTO_INCREMENT, `name` varchar(255) NOT NULL, PRIMARY KEY (`id`) ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;</span><br></pre></td></tr></table></figure>
-<p>在 Slave-Server 查看是否同步过来</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show databases;</span><br><span class="line">mysql&gt; use replication_wwww.ymq.io</span><br><span class="line">mysql&gt; show tables;</span><br></pre></td></tr></table></figure>
-<h2 id="需要注意的问题"><a href="#需要注意的问题" class="headerlink" title="需要注意的问题"></a>需要注意的问题</h2><p>主服务器与从服务器的时区必须一致，否则mysql执行与时间相关的函数将会导致数据不一致。</p>
+<p>scp可选参数：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-v</td>
+<td>和大多数 linux 命令中的 -v 意思一样 , 用来显示进度 . 可以用来查看连接 , 认证 , 或是配置错误</td>
+</tr>
+<tr>
+<td>-C</td>
+<td>使能压缩选项</td>
+</tr>
+<tr>
+<td>-P</td>
+<td>选择端口 . 注意 -p 已经被 rcp 使用</td>
+</tr>
+<tr>
+<td>-4</td>
+<td>强行使用 IPV4 地址</td>
+</tr>
+<tr>
+<td>-6</td>
+<td>强行使用 IPV6 地址</td>
+</tr>
+</tbody>
+</table>
 <hr>
-<p>一些坑</p>
-<p>Last_IO_Errno: 1045错误：</p>
-<p><a href="http://blog.csdn.net/mchdba/article/details/12994151" target="_blank" rel="noopener">解决方案</a></p>
-<p>Connecting and Last_IO_Errno: 2003 错误</p>
-<p><a href="http://blog.csdn.net/mchdba/article/details/8771325" target="_blank" rel="noopener">解决方案2</a></p>
-<p>Last_Errno: 1008<br><a href="http://blog.51cto.com/guoxh/1922691" target="_blank" rel="noopener">解决方案3</a></p>
-<p>MySQL错误处理–1146错误</p>
-<p><a href="http://blog.csdn.net/geekcoder/article/details/9717333" target="_blank" rel="noopener">解决方案</a></p>
-<p>Last_SQL_Errno：1062</p>
-<p><a href="http://blog.csdn.net/billfanggs/article/details/8910509" target="_blank" rel="noopener">解决方案</a></p>
+<h2 id="把命令放入脚本，如以下的脚本事例（请根据自己的具体情况修改）"><a href="#把命令放入脚本，如以下的脚本事例（请根据自己的具体情况修改）" class="headerlink" title="把命令放入脚本，如以下的脚本事例（请根据自己的具体情况修改）"></a>把命令放入脚本，如以下的脚本事例（请根据自己的具体情况修改）</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/sh</span><br><span class="line">backpath=/var/ftp/backup/</span><br><span class="line">date=`date +%y%m%d`</span><br><span class="line">site=sitename</span><br><span class="line">tar zcf $&#123;backpath&#125;$&#123;site&#125;&quot;-&quot;$&#123;date&#125;.tar.gz /var/www/$&#123;site&#125;</span><br><span class="line">scp $&#123;backpath&#125;$&#123;site&#125;&quot;-&quot;$&#123;date&#125;.tar.gz root@backupserver:/var/backup</span><br><span class="line">find $&#123;backpath&#125; -mtime +30 -exec rm &#123;&#125; \;</span><br></pre></td></tr></table></figure>
 <hr>
-<p><a href="https://segmentfault.com/a/1190000010867488#articleHeader9" target="_blank" rel="noopener">参考文档1</a></p>
-<p><a href="http://www.cnblogs.com/tangr206/p/3252315.html" target="_blank" rel="noopener">mysql主主和主主集群</a></p>
-<p><a href="http://blog.51cto.com/chenhao6/1325247" target="_blank" rel="noopener">双主同步，如果服务器意外挂机</a></p>
-<p><a href="http://blog.jobbole.com/110934/" target="_blank" rel="noopener">MySQL基于日志（binlog）主从复制搭建</a></p>
-<p><a href="http://blog.csdn.net/mycwq/article/details/17136001" target="_blank" rel="noopener">MySQL数据库设置主从同步</a></p>
+<h2 id="使用crontab命令定时运行脚本"><a href="#使用crontab命令定时运行脚本" class="headerlink" title="使用crontab命令定时运行脚本"></a>使用crontab命令定时运行脚本</h2><p>每个操作系统都有它的自动定时启动程序的功能，Windows有它的任务计划，而Linux对应的功能是crontab.</p>
+<h3 id="crontab-简介"><a href="#crontab-简介" class="headerlink" title="crontab 简介"></a>crontab 简介</h3><p>crontab命令常见于Unix和类Unix的操作系统之中，用于设置周期性被执行的指令。</p>
+<p>该命令从标准输入设备读取指令，并将其存放于“crontab”文件中，以供之后读取和执行。</p>
+<p>该词来源于希腊语 chronos(χρόνος)，原意是时间。　　</p>
+<p>通常，crontab储存的指令被守护进程激活， crond常常在后台运行，每一分钟检查是否有预定的作业需要执行。这类作业一般称为cron jobs。</p>
+<h3 id="crontab用法"><a href="#crontab用法" class="headerlink" title="crontab用法"></a>crontab用法</h3><p>crontab的格式如下面：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">f1 f2 f3 f4 f5 program</span><br></pre></td></tr></table></figure>
+<p>其中 f1 是表示分钟，f2 表示小时，f3 表示一个月份中的第几日，f4 表示月份，f5 表示一个星期中的第几天。program 表示要执行程式的路径。</p>
+<ul>
+<li><p>当 f1 为 <em> 时表示每分钟都要执行 program，f2 为 </em> 时表示每小时都要执行程式，其余类推</p>
+</li>
+<li><p>当 f1 为 a-b 时表示从第 a 分钟到第 b 分钟这段时间内要执行，f2 为 a-b 时表示从第 a 到第 b 小时都要执行，其余类推</p>
+</li>
+<li>当 f1 为 <em>/n 时表示每 n 分钟个时间间隔执行一次，f2 为 </em>/n 表示每 n 小时个时间间隔执行一次，其余类推</li>
+<li>当 f1 为 a, b, c,… 时表示第 a, b, c,… 分钟要执行，f2 为 a, b, c,… 时表示第 a, b, c…个小时要执行，其余类推</li>
+</ul>
+<p>管理员登录SSH,输入命令crontab -e编辑crontab文件，根据上面的格式输入并保存。</p>
+<h3 id="crontab例子"><a href="#crontab例子" class="headerlink" title="crontab例子"></a>crontab例子</h3><ul>
+<li>每月每天每小时的第 0 分钟执行一次 /bin/ls :</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0 * * * * /bin/ls</span><br></pre></td></tr></table></figure>
+<ul>
+<li>在 12 月内, 每天的早上 6 点到 12 点中，每隔 20 分钟执行一次 /usr/bin/backup :</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">*/20 6-12 * 12 * /usr/bin/backup</span><br></pre></td></tr></table></figure>
+<ul>
+<li>周一到周五每天下午 5:00 寄一封信给 alex@domain.name :</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0 17 * * 1-5 mail -s &quot;hi&quot; alex@domain.name &lt; /tmp/maildata</span><br></pre></td></tr></table></figure>
+<ul>
+<li>每月每天的午夜 0 点 20 分, 2 点 20 分, 4 点 20 分….执行 echo “haha”</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">20 0-23/2 * * * echo &quot;haha&quot;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>晚上11点到早上8点之间每两个小时，早上8点</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0 23-7/2，8 * * * date</span><br></pre></td></tr></table></figure>
+<p>在hp unix,中，每20分钟执行一次，表示为：0,20,40 <em> </em> <em> </em> 而不能采用*/n方式，否则出现语法错误</p>
+<p>crontab用法其实很容易掌握，懂得使用crontab，对网站和服务器维护起到很大的帮助，比如定时备份，定时优化服务器等。</p>
+<hr>
+<p>参考文档：</p>
+<p><a href="https://www.centos.bz/2011/03/linux-scp-transfer-data-between-two-servers-command/" target="_blank" rel="noopener">使用SCP命令</a></p>
+<p><a href="https://www.centos.bz/2011/03/auto-run-task-crontab/" target="_blank" rel="noopener">crontab详解</a></p>
 
       
     </div>
@@ -497,7 +540,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/mysql/" rel="tag"># mysql</a>
+            <a href="/tags/scp/" rel="tag"># scp</a>
           
         </div>
       
@@ -510,8 +553,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/12/09/Ubuntu配置Shadowsocks实现终端代理/" rel="next" title="Ubuntu配置Shadowsocks实现终端代理">
-                <i class="fa fa-chevron-left"></i> Ubuntu配置Shadowsocks实现终端代理
+              <a href="/2017/12/17/rsync服务器架设-数据同步文件增量备份/" rel="next" title="rsync服务器架设(数据同步文件增量备份)">
+                <i class="fa fa-chevron-left"></i> rsync服务器架设(数据同步文件增量备份)
               </a>
             
           </div>
@@ -519,10 +562,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/12/10/puppet系统配置自动化解决方案-转/" rel="prev" title="puppet系统配置自动化解决方案(转)">
-                puppet系统配置自动化解决方案(转) <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -684,7 +723,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概念"><span class="nav-number">1.</span> <span class="nav-text"><a href="#&#x6982;&#x5FF5;" class="headerlink" title="&#x6982;&#x5FF5;"></a>&#x6982;&#x5FF5;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL中主从复制的优点"><span class="nav-number">2.</span> <span class="nav-text"><a href="#MySQL&#x4E2D;&#x4E3B;&#x4ECE;&#x590D;&#x5236;&#x7684;&#x4F18;&#x70B9;" class="headerlink" title="MySQL&#x4E2D;&#x4E3B;&#x4ECE;&#x590D;&#x5236;&#x7684;&#x4F18;&#x70B9;"></a>MySQL&#x4E2D;&#x4E3B;&#x4ECE;&#x590D;&#x5236;&#x7684;&#x4F18;&#x70B9;</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#横向扩展解决方案"><span class="nav-number">2.0.0.1.</span> <span class="nav-text"><a href="#&#x6A2A;&#x5411;&#x6269;&#x5C55;&#x89E3;&#x51B3;&#x65B9;&#x6848;" class="headerlink" title="&#x6A2A;&#x5411;&#x6269;&#x5C55;&#x89E3;&#x51B3;&#x65B9;&#x6848;"></a>&#x6A2A;&#x5411;&#x6269;&#x5C55;&#x89E3;&#x51B3;&#x65B9;&#x6848;</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#数据安全性"><span class="nav-number">2.0.0.2.</span> <span class="nav-text"><a href="#&#x6570;&#x636E;&#x5B89;&#x5168;&#x6027;" class="headerlink" title="&#x6570;&#x636E;&#x5B89;&#x5168;&#x6027;"></a>&#x6570;&#x636E;&#x5B89;&#x5168;&#x6027;</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#分析"><span class="nav-number">2.0.0.3.</span> <span class="nav-text"><a href="#&#x5206;&#x6790;" class="headerlink" title="&#x5206;&#x6790;"></a>&#x5206;&#x6790;</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#长距离数据分发"><span class="nav-number">2.0.0.4.</span> <span class="nav-text"><a href="#&#x957F;&#x8DDD;&#x79BB;&#x6570;&#x636E;&#x5206;&#x53D1;" class="headerlink" title="&#x957F;&#x8DDD;&#x79BB;&#x6570;&#x636E;&#x5206;&#x53D1;"></a>&#x957F;&#x8DDD;&#x79BB;&#x6570;&#x636E;&#x5206;&#x53D1;</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#"><span class="nav-number">3.</span> <span class="nav-text"><a href="#" class="headerlink" title=""></a><a id="more"></a></span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-准备工作"><span class="nav-number">4.</span> <span class="nav-text"><a href="#1-&#x51C6;&#x5907;&#x5DE5;&#x4F5C;" class="headerlink" title="1.&#x51C6;&#x5907;&#x5DE5;&#x4F5C;"></a>1.&#x51C6;&#x5907;&#x5DE5;&#x4F5C;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Master-Server-配置"><span class="nav-number">5.</span> <span class="nav-text"><a href="#Master-Server-&#x914D;&#x7F6E;" class="headerlink" title="Master-Server &#x914D;&#x7F6E;"></a>Master-Server &#x914D;&#x7F6E;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建用户"><span class="nav-number">6.</span> <span class="nav-text"><a href="#&#x521B;&#x5EFA;&#x7528;&#x6237;" class="headerlink" title="&#x521B;&#x5EFA;&#x7528;&#x6237;"></a>&#x521B;&#x5EFA;&#x7528;&#x6237;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Slave-Server-配置"><span class="nav-number">7.</span> <span class="nav-text"><a href="#Slave-Server-&#x914D;&#x7F6E;" class="headerlink" title="Slave-Server &#x914D;&#x7F6E;"></a>Slave-Server &#x914D;&#x7F6E;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#测试主从复制"><span class="nav-number">8.</span> <span class="nav-text"><a href="#&#x6D4B;&#x8BD5;&#x4E3B;&#x4ECE;&#x590D;&#x5236;" class="headerlink" title="&#x6D4B;&#x8BD5;&#x4E3B;&#x4ECE;&#x590D;&#x5236;"></a>&#x6D4B;&#x8BD5;&#x4E3B;&#x4ECE;&#x590D;&#x5236;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#需要注意的问题"><span class="nav-number">9.</span> <span class="nav-text"><a href="#&#x9700;&#x8981;&#x6CE8;&#x610F;&#x7684;&#x95EE;&#x9898;" class="headerlink" title="&#x9700;&#x8981;&#x6CE8;&#x610F;&#x7684;&#x95EE;&#x9898;"></a>&#x9700;&#x8981;&#x6CE8;&#x610F;&#x7684;&#x95EE;&#x9898;</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#添加ssh公匙"><span class="nav-number">1.</span> <span class="nav-text"><a href="#&#x6DFB;&#x52A0;ssh&#x516C;&#x5319;" class="headerlink" title="&#x6DFB;&#x52A0;ssh&#x516C;&#x5319;"></a>&#x6DFB;&#x52A0;ssh&#x516C;&#x5319;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#配置远程主机"><span class="nav-number">2.</span> <span class="nav-text"><a href="#&#x914D;&#x7F6E;&#x8FDC;&#x7A0B;&#x4E3B;&#x673A;" class="headerlink" title="&#x914D;&#x7F6E;&#x8FDC;&#x7A0B;&#x4E3B;&#x673A;"></a>&#x914D;&#x7F6E;&#x8FDC;&#x7A0B;&#x4E3B;&#x673A;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用scp命令"><span class="nav-number">3.</span> <span class="nav-text"><a href="#&#x4F7F;&#x7528;scp&#x547D;&#x4EE4;" class="headerlink" title="&#x4F7F;&#x7528;scp&#x547D;&#x4EE4;"></a>&#x4F7F;&#x7528;scp&#x547D;&#x4EE4;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是scp"><span class="nav-number">3.1.</span> <span class="nav-text"><a href="#&#x4EC0;&#x4E48;&#x662F;scp" class="headerlink" title="&#x4EC0;&#x4E48;&#x662F;scp?"></a>&#x4EC0;&#x4E48;&#x662F;scp?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#scp的用法"><span class="nav-number">3.2.</span> <span class="nav-text"><a href="#scp&#x7684;&#x7528;&#x6CD5;" class="headerlink" title="scp&#x7684;&#x7528;&#x6CD5;"></a>scp&#x7684;&#x7528;&#x6CD5;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#从-远程-复制到-本地"><span class="nav-number">3.3.</span> <span class="nav-text"><a href="#&#x4ECE;-&#x8FDC;&#x7A0B;-&#x590D;&#x5236;&#x5230;-&#x672C;&#x5730;" class="headerlink" title="&#x4ECE; &#x8FDC;&#x7A0B; &#x590D;&#x5236;&#x5230; &#x672C;&#x5730;"></a>&#x4ECE; &#x8FDC;&#x7A0B; &#x590D;&#x5236;&#x5230; &#x672C;&#x5730;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#把命令放入脚本，如以下的脚本事例（请根据自己的具体情况修改）"><span class="nav-number">4.</span> <span class="nav-text"><a href="#&#x628A;&#x547D;&#x4EE4;&#x653E;&#x5165;&#x811A;&#x672C;&#xFF0C;&#x5982;&#x4EE5;&#x4E0B;&#x7684;&#x811A;&#x672C;&#x4E8B;&#x4F8B;&#xFF08;&#x8BF7;&#x6839;&#x636E;&#x81EA;&#x5DF1;&#x7684;&#x5177;&#x4F53;&#x60C5;&#x51B5;&#x4FEE;&#x6539;&#xFF09;" class="headerlink" title="&#x628A;&#x547D;&#x4EE4;&#x653E;&#x5165;&#x811A;&#x672C;&#xFF0C;&#x5982;&#x4EE5;&#x4E0B;&#x7684;&#x811A;&#x672C;&#x4E8B;&#x4F8B;&#xFF08;&#x8BF7;&#x6839;&#x636E;&#x81EA;&#x5DF1;&#x7684;&#x5177;&#x4F53;&#x60C5;&#x51B5;&#x4FEE;&#x6539;&#xFF09;"></a>&#x628A;&#x547D;&#x4EE4;&#x653E;&#x5165;&#x811A;&#x672C;&#xFF0C;&#x5982;&#x4EE5;&#x4E0B;&#x7684;&#x811A;&#x672C;&#x4E8B;&#x4F8B;&#xFF08;&#x8BF7;&#x6839;&#x636E;&#x81EA;&#x5DF1;&#x7684;&#x5177;&#x4F53;&#x60C5;&#x51B5;&#x4FEE;&#x6539;&#xFF09;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用crontab命令定时运行脚本"><span class="nav-number">5.</span> <span class="nav-text"><a href="#&#x4F7F;&#x7528;crontab&#x547D;&#x4EE4;&#x5B9A;&#x65F6;&#x8FD0;&#x884C;&#x811A;&#x672C;" class="headerlink" title="&#x4F7F;&#x7528;crontab&#x547D;&#x4EE4;&#x5B9A;&#x65F6;&#x8FD0;&#x884C;&#x811A;&#x672C;"></a>&#x4F7F;&#x7528;crontab&#x547D;&#x4EE4;&#x5B9A;&#x65F6;&#x8FD0;&#x884C;&#x811A;&#x672C;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#crontab-简介"><span class="nav-number">5.1.</span> <span class="nav-text"><a href="#crontab-&#x7B80;&#x4ECB;" class="headerlink" title="crontab &#x7B80;&#x4ECB;"></a>crontab &#x7B80;&#x4ECB;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#crontab用法"><span class="nav-number">5.2.</span> <span class="nav-text"><a href="#crontab&#x7528;&#x6CD5;" class="headerlink" title="crontab&#x7528;&#x6CD5;"></a>crontab&#x7528;&#x6CD5;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#crontab例子"><span class="nav-number">5.3.</span> <span class="nav-text"><a href="#crontab&#x4F8B;&#x5B50;" class="headerlink" title="crontab&#x4F8B;&#x5B50;"></a>crontab&#x4F8B;&#x5B50;</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -854,9 +893,9 @@
     
       <script type="text/javascript">
         var disqus_config = function () {
-          this.page.url = 'http://code.meirenji.info/2017/12/09/MySQL搭建主从复制实现细节分析/';
-          this.page.identifier = '2017/12/09/MySQL搭建主从复制实现细节分析/';
-          this.page.title = 'MySQL搭建主从复制实现细节分析';
+          this.page.url = 'http://code.meirenji.info/2017/12/17/使用scp在Linux主机之间进行定时备份/';
+          this.page.identifier = '2017/12/17/使用scp在Linux主机之间进行定时备份/';
+          this.page.title = '使用scp在Linux主机之间进行定时备份';
         };
         var d = document, s = d.createElement('script');
         s.src = 'https://louis90.disqus.com/embed.js';
