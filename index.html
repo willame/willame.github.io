@@ -286,6 +286,171 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://code.meirenji.info/2017/12/17/rsync服务器架设-数据同步文件增量备份/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ben wong">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="奶爸的天空">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/12/17/rsync服务器架设-数据同步文件增量备份/" itemprop="url">rsync服务器架设(数据同步文件增量备份)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-17T20:03:52+09:00">
+                2017-12-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全运维/" itemprop="url" rel="index">
+                    <span itemprop="name">安全运维</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/12/17/rsync服务器架设-数据同步文件增量备份/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/12/17/rsync服务器架设-数据同步文件增量备份/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>我们在使用服务器发布我们的网站的时候，通常要考虑到文件的备份，而<strong>文件的备份比较高效的备份是增加备份</strong>，rsync软件就是这样的一个工具。</p>
+<p>为了实现多个服务器负载均衡，我们需<em>要这几个服务器之间进行数据同步</em>，而rsync软件也能胜任.</p>
+<p>下面我们来介绍如何架设rsync服务器来达到文件增量备份和数据同步的功能。</p>
+<h2 id="什么是rsync"><a href="#什么是rsync" class="headerlink" title="什么是rsync"></a>什么是rsync</h2><p>rsync 是一个<strong>快速增量文件传输工具</strong>，它可以用于在同一主机备份内部的备分，我们还可以把它作为不同主机网络备份工具之用。</p>
+<p>本文主要讲述的是如何自架rsync服务器，以实现文件传输、备份和镜像。相对tar和wget来说，rsync 也有其自身的优点，比如<strong>速度快、安全、高效</strong>。</p>
+<h2 id="rsync的安装"><a href="#rsync的安装" class="headerlink" title="rsync的安装"></a>rsync的安装</h2><p>我们可以执行以下命令安装</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get  install  rsync</span><br></pre></td></tr></table></figure>
+<h2 id="rsync服务器的配置文件rsyncd-conf"><a href="#rsync服务器的配置文件rsyncd-conf" class="headerlink" title="rsync服务器的配置文件rsyncd.conf"></a>rsync服务器的配置文件rsyncd.conf</h2><p>下面我们将涉及到三个文件 rsyncd.conf，rsyncd.secrets 和rsyncd.motd。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">rsyncd.conf 是rsync服务器主要配置文件。</span><br><span class="line"></span><br><span class="line">rsyncd.secrets是登录rsync服务器的密码文件。</span><br><span class="line"></span><br><span class="line">rsyncd.motd是定义rysnc 服务器信息的，也就是用户登录信息。</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/12/17/rsync服务器架设-数据同步文件增量备份/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://code.meirenji.info/2017/12/17/inotify-rsync实现数据实时同步/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1896,162 +2061,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://code.meirenji.info/2017/12/10/puppet系统配置自动化解决方案-转/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="ben wong">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="奶爸的天空">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/12/10/puppet系统配置自动化解决方案-转/" itemprop="url">puppet系统配置自动化解决方案(转)</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-10T14:01:25+09:00">
-                2017-12-10
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/安全运维/" itemprop="url" rel="index">
-                    <span itemprop="name">安全运维</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>相信做过运维的朋友都会有这样的体会：把一个新的服务器从刚装好系统的状态配置到可以运行应用程序，是个挺麻烦的过程。</p>
-<blockquote>
-<p>就拿一个运行 nginx + php 的 web 服务器为例，可能需要部署 ssh 公钥，设置用户 sudo 权限，关闭密码登录、root 远程登录，配置 iptables 规则。然后安装所需版本的 nginx、 php 到规范的路径，不能搞错版本，以免缺失所需特性或者造成冲突，还要安装应用所需要的 php 扩展比如 gd 之类。</p>
-<p>然后是用于监控的客户端程序，比如 nagios 的 nrpe ，或者 zabbix_agent，用于日志轮转的 cronolog 等等。最后还得记得修改 ulimits 、tcp 相关的内核参数。然后还得一一验证所有的设置是否正确。如果是部署了新的东西或者更新了配置，还得写一下安装文档，这样下回安装的时候才不会遗漏什么编译 选项、软件包，或者少设置了系统参数导致故障。</p>
-<p>有人请假或则离职的时候，别人也才能接替。需要部署的还不会仅仅是 web 服务器，还有 lvs 、mysql、memcache，也许还会有 redis、sphinx 等等等等。有软件包需要升级，也得对所有用到的机器都升级一遍。更要命的是，往往需要配置的还不是一台机器，而是十几台乃至上百台。</p>
-</blockquote>
-<p>这里可以看出，系统配置本身是件很繁琐的事情。</p>
-<p>需要考虑到很多方面的事情，任何一个地方出了纰漏就可能导致故障或者埋下隐患。手动来做很容易出错，也很不够敏 捷高效，难以快速响应需求。为了解决这些问题，我也曾经用 bash 做过一些脚本，来实现部署和系统设置的自动化，但是受到 bash 的表达能力的限制，脚本的编写测试维护并不轻松。</p>
-<p>我们碰到的麻烦别人也会碰到。所以就有了自动化好在现在有了一个好用的工具来解决这些问题。</p>
-<blockquote>
-<p>puppet就是这样一个功能强大的系统配置集群管理工具。puppet分为 master端和agent 端，可以实现分布式分发，有强大的配置管理功能，可以实现自动化分发文件、安装软件包、执行命令、添加系统用户、设置 crontab 等等。它的配置文件是一种表达能力强的 DSL，可读性好、容易复用，且本身就可以作为很好的文档，这就免除了维护文档的负担，也避免了文档过时的问题。</p>
-<p>puppet还使用了ssl 来保证通讯的安全性，防止敏感的配置信息泄露。支持集群化，以实现大批量主机并行更新维护。引入的 factor 还实现了针对不同系统、不同发行版、不同环境的针对性设置。以及很多方便强大的功能。</p>
-</blockquote>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/12/10/puppet系统配置自动化解决方案-转/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2106,7 +2115,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-count">15</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
