@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="v2ray," />
 
 
 
@@ -79,16 +79,20 @@
 
 
 
-<meta name="description" content="要么忙着活，要么忙着死">
-<meta property="og:type" content="website">
-<meta property="og:title" content="奶爸的天空">
-<meta property="og:url" content="http://code.meirenji.info/archives/2017/index.html">
+<meta name="description" content="首先，V2Ray 是什么？ V2Ray 是一个网络代理工具。什么是代理？代理是当 A 和 B 想说话但不能直接对话时，要找 C 来传话，这时 C 就是代理。那么在这个过程中，C 有哪些职责？很简单，把话传到，把话传对，并且不泄露给除 A、B 之外的人。  看似这个描述很简单，把它应用到代理软件中，可以表述为下面的内容：  开放网络连接，使得 A 和 B 可以间接地进行正常通信； 通信内容不能被第">
+<meta name="keywords" content="v2ray">
+<meta property="og:type" content="article">
+<meta property="og:title" content="v2ray设计理念">
+<meta property="og:url" content="http://code.meirenji.info/2017/12/22/v2ray设计理念/index.html">
 <meta property="og:site_name" content="奶爸的天空">
-<meta property="og:description" content="要么忙着活，要么忙着死">
+<meta property="og:description" content="首先，V2Ray 是什么？ V2Ray 是一个网络代理工具。什么是代理？代理是当 A 和 B 想说话但不能直接对话时，要找 C 来传话，这时 C 就是代理。那么在这个过程中，C 有哪些职责？很简单，把话传到，把话传对，并且不泄露给除 A、B 之外的人。  看似这个描述很简单，把它应用到代理软件中，可以表述为下面的内容：  开放网络连接，使得 A 和 B 可以间接地进行正常通信； 通信内容不能被第">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://i.imgur.com/l2TDEFy.png">
+<meta property="og:updated_time" content="2017-12-22T04:17:33.403Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="奶爸的天空">
-<meta name="twitter:description" content="要么忙着活，要么忙着死">
+<meta name="twitter:title" content="v2ray设计理念">
+<meta name="twitter:description" content="首先，V2Ray 是什么？ V2Ray 是一个网络代理工具。什么是代理？代理是当 A 和 B 想说话但不能直接对话时，要找 C 来传话，这时 C 就是代理。那么在这个过程中，C 有哪些职责？很简单，把话传到，把话传对，并且不泄露给除 A、B 之外的人。  看似这个描述很简单，把它应用到代理软件中，可以表述为下面的内容：  开放网络连接，使得 A 和 B 可以间接地进行正常通信； 通信内容不能被第">
+<meta name="twitter:image" content="https://i.imgur.com/l2TDEFy.png">
 
 
 
@@ -118,13 +122,13 @@
 
 
 
-  <link rel="canonical" href="http://code.meirenji.info/archives/2017/"/>
+  <link rel="canonical" href="http://code.meirenji.info/2017/12/22/v2ray设计理念/"/>
 
 
 
 
 
-  <title>归档 | 奶爸的天空</title>
+  <title>v2ray设计理念 | 奶爸的天空</title>
   
 
 
@@ -143,7 +147,7 @@
     
   
 
-  <div class="container sidebar-position-left page-archive">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -271,411 +275,225 @@
           <div id="content" class="content">
             
 
-  
-  
-  
-  <div class="post-block archive">
-    <div id="posts" class="posts-collapse">
-      <span class="archive-move-on"></span>
+  <div id="posts" class="posts-expand">
+    
 
-      <span class="archive-page-counter">
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://code.meirenji.info/2017/12/22/v2ray设计理念/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ben wong">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="奶爸的天空">
+    </span>
+
+    
+      <header class="post-header">
+
         
         
+          <h1 class="post-title" itemprop="name headline">v2ray设计理念</h1>
         
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-22T12:15:46+09:00">
+                2017-12-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
           
-        
-        嗯..! 目前共计 16 篇日志。 继续努力。
-      </span>
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/科学上网/" itemprop="url" rel="index">
+                    <span itemprop="name">科学上网</span>
+                  </a>
+                </span>
 
-      
-
-        
-        
-        
-
-        
+                
+                
+              
+            </span>
           
-          <div class="collection-title">
-            <h1 class="archive-year" id="archive-year-2017">2017</h1>
-          </div>
-        
-        
 
-        
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/12/22/v2ray设计理念/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/12/22/v2ray设计理念/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
 
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+          
+          
 
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/12/22/v2ray设计理念/" itemprop="url">
-              
-                <span itemprop="name">v2ray设计理念</span>
-              
-            </a>
-        
-      </h2>
+          
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-12-22T12:15:46+09:00"
-              content="2017-12-22" >
-          12-22
-        </time>
-      </div>
+          
 
-    </header>
-  </article>
+          
 
+        </div>
+      </header>
+    
 
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/12/17/使用scp在Linux主机之间进行定时备份/" itemprop="url">
-              
-                <span itemprop="name">使用scp在Linux主机之间进行定时备份</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-12-17T21:41:28+09:00"
-              content="2017-12-17" >
-          12-17
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/12/17/rsync服务器架设-数据同步文件增量备份/" itemprop="url">
-              
-                <span itemprop="name">rsync服务器架设(数据同步文件增量备份)</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-12-17T20:03:52+09:00"
-              content="2017-12-17" >
-          12-17
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
       
 
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/12/17/inotify-rsync实现数据实时同步/" itemprop="url">
-              
-                <span itemprop="name">inotify+rsync实现数据实时同步</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-12-17T17:06:30+09:00"
-              content="2017-12-17" >
-          12-17
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
+      
+        <p><img src="https://i.imgur.com/l2TDEFy.png" alt="image"></p>
+<h2 id="首先，V2Ray-是什么？"><a href="#首先，V2Ray-是什么？" class="headerlink" title="首先，V2Ray 是什么？"></a>首先，V2Ray 是什么？</h2><blockquote>
+<p>V2Ray 是一个网络代理工具。<br>什么是代理？代理是当 A 和 B 想说话但不能直接对话时，要找 C 来传话，这时 C 就是代理。<br>那么在这个过程中，C 有哪些职责？很简单，把话传到，把话传对，并且不泄露给除 A、B 之外的人。</p>
+</blockquote>
+<p>看似这个描述很简单，把它应用到代理软件中，可以表述为下面的内容：</p>
+<ul>
+<li>开放网络连接，使得 A 和 B 可以间接地进行正常通信；</li>
+<li>通信内容不能被第三方知晓；</li>
+<li>网络连接要稳定，不能间歇或永久地失效；</li>
+</ul>
+<p>之所以没有写成一二三条，是因为上述三条的优先级，在不同的人看来是不一样的。</p>
+<hr>
+<p>大多数人的选择应该会是“正常通信”。毕竟翻墙工具诞生的意义就是让用户访问被墙的网站，比如 Google 被墙了，我架设一个 Shadowsocks 服务器就又可以访问 Google 。至于我在 Google 上搜索了什么，都是一些人畜无害的内容，我想别人也没兴趣知道。只要这个工具能让我爽快地访问 Google，它就是一个好工具。<strong>这种情况我们称为“速度优先”</strong>。</p>
+<hr>
+<p>另外一些人可能就比较注重私密性，不管我在搜索一些什么内容，可能也就是一些网红八卦，但我就是不想让别人知道，被别人知道了我就不爽。<strong>这种情况我们称为“隐私优先”</strong>。</p>
+<hr>
+<p>还有一些人对服务器的稳定性有需求，平时我不怎么翻墙，而一旦需要的时候，就一定要可以及时翻出去。几百万的大单，谈不成这个月就要喝西北风了。这些人对翻墙服务（或服务器）的稳定性要求很高，服务不能断线。而断线的情况有很多种，比如翻墙协议被识别了，或者服务器被探测了，都可以造成翻墙服务失效。<strong>这种情况我们称为“稳定优先”。</strong></p>
+<hr>
+<p>上述的三种情况在翻墙工具中都有相应的功能，比如“速度优先”可能的问题是 ISP 的 QoS 限制，应对方式是<strong>流量混淆</strong>。</p>
+<p>又比如“隐私优先”可能需要工具<strong>提供完美的加密方式</strong>。</p>
+<p>而“稳定优先”需要翻墙服务器不被探测，翻墙协议需要<strong>减少特征</strong>。</p>
+<a id="more"></a>
+<p>正是由于这些纷繁复杂的功能，引起了大量的讨论。观众不明就里，而开发人员则忙于推销自己的产品。有些问题呢，就越讨论越看不懂了。</p>
+<p>从 V2Ray 的角度来看，这是一个不可调和的矛盾。每个人的需求不同，适合自己的才是最好的。不能因为开发人员觉得一项功能好，就强加给用户。</p>
+<p>用户用着没效果，也不会感谢开发者。</p>
+<blockquote>
+<p>举个例子，Shadowsocks 最近的一次协议升级，使用 AEAD 算法取代了 OTA，提供了更好的加密特性。这个升级在“速度优先”的用户看来是完全没有意义的。因为 AEAD 只是加强了数据完整性，对于 QoS 和可被探测性没有任何改进。</p>
+</blockquote>
+<p>也就是说，在客观环境不变的情况下，升级到 AEAD 不会在翻墙速度上有任何提升。于是很多人就会问，到底要不要升级 AEAD，升完对我有什么好处。由于惰性，在没有明显优势的情况下，AEAD 的推广有着很大的阻力。</p>
+<p>V2Ray 则尝试从另一个角度来解决这样的问题：提供很多功能，让用户根据自己的需求自由组合。虽然各种组合并不一定能满足所有人的需求，但总比只有一个选择来得好。</p>
+<p>对于上述的三个需求，V2Ray 分别提供了不同的特性：</p>
+<ul>
+<li><p>速度优先：VMess 协议、mKCP 协议、Mux.Cool 协议，内部路由分流</p>
+</li>
+<li><p>隐私优先：TLS (完整实现，非伪装)</p>
+</li>
+<li><p>稳定优先：HTTP 伪装、BT 伪装等，以及 Mux.Cool 协议。</p>
+</li>
+</ul>
+<blockquote>
+<p>V2Ray 在设计时已考虑到多个功能相互组合的使用，比如你可以使用 VMess + TLS 来达到隐私和速度的双重保证，或者使用 VMess + Mux 来提升速度和稳定性。</p>
+</blockquote>
+<p>也考虑到不同的用户的需求不同，V2Ray 的所有功能都可以选择打开或关闭，不会把任何一个功能强加给用户。不同的配置可以达到不同的效果，而在 V2Ray 中，你只需要一个配置文件就可以应对这些不同的需求。</p>
+<p>当然 V2Ray 的功能远不止上述这些，如果你现在的翻墙工具已不能满足你的日常需求，何不试一下新的轮子呢？</p>
+<p><a href="https://steemit.com/cn/@v2ray/47wumq" target="_blank" rel="noopener">原文引自这里</a></p>
+<p><a href="https://www.v2ray.com/" target="_blank" rel="noopener">v2ray官网</a></p>
 
       
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/12/16/Dockerfile详解/" itemprop="url">
-              
-                <span itemprop="name">Dockerfile详解</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-12-16T23:55:24+09:00"
-              content="2017-12-16" >
-          12-16
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/12/16/Ubuntu14-04更换内核以安装锐速/" itemprop="url">
-              
-                <span itemprop="name">Ubuntu14.04更换内核以安装锐速</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-12-16T14:24:57+09:00"
-              content="2017-12-16" >
-          12-16
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/12/16/科学上网精编/" itemprop="url">
-              
-                <span itemprop="name">科学上网精编</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-12-16T12:38:20+09:00"
-              content="2017-12-16" >
-          12-16
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/12/13/keepalived-反向代理-http服务构建实用性Web站点/" itemprop="url">
-              
-                <span itemprop="name">keepalived + 反向代理 + http服务构建实用性Web站点</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-12-13T21:05:06+09:00"
-              content="2017-12-13" >
-          12-13
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/12/13/基于keepalived-主从-双主-LVS-DR模型-DNS实现http高可用集群服务/" itemprop="url">
-              
-                <span itemprop="name">基于keepalived(主从+双主) + LVS(DR模型) + DNS实现http高可用集群服务</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-12-13T20:33:06+09:00"
-              content="2017-12-13" >
-          12-13
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/12/13/shell脚本替换文件中某个字符串/" itemprop="url">
-              
-                <span itemprop="name">shell脚本替换文件中某个字符串</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-12-13T18:33:14+09:00"
-              content="2017-12-13" >
-          12-13
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
     </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/v2ray/" rel="tag"># v2ray</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/17/使用scp在Linux主机之间进行定时备份/" rel="next" title="使用scp在Linux主机之间进行定时备份">
+                <i class="fa fa-chevron-left"></i> 使用scp在Linux主机之间进行定时备份
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
-
-  
-  <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/archives/2017/page/2/">2</a><a class="extend next" rel="next" href="/archives/2017/page/2/"><i class="fa fa-angle-right"></i></a>
-  </nav>
+  </article>
 
 
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -683,6 +501,20 @@
 
 
           
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
 
         </div>
         
@@ -703,8 +535,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -784,6 +625,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#首先，V2Ray-是什么？"><span class="nav-number">1.</span> <span class="nav-text"><a href="#&#x9996;&#x5148;&#xFF0C;V2Ray-&#x662F;&#x4EC0;&#x4E48;&#xFF1F;" class="headerlink" title="&#x9996;&#x5148;&#xFF0C;V2Ray &#x662F;&#x4EC0;&#x4E48;&#xFF1F;"></a>&#x9996;&#x5148;&#xFF0C;V2Ray &#x662F;&#x4EC0;&#x4E48;&#xFF1F;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -924,6 +781,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
 
   
 
@@ -941,6 +802,18 @@
       <script id="dsq-count-scr" src="https://louis90.disqus.com/count.js" async></script>
     
 
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://code.meirenji.info/2017/12/22/v2ray设计理念/';
+          this.page.identifier = '2017/12/22/v2ray设计理念/';
+          this.page.title = 'v2ray设计理念';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://louis90.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
     
 
   

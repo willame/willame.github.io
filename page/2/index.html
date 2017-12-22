@@ -286,6 +286,278 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://code.meirenji.info/2017/12/13/三大文本处理工具grep与sed及awk简介-转/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ben wong">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="奶爸的天空">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/12/13/三大文本处理工具grep与sed及awk简介-转/" itemprop="url">三大文本处理工具grep与sed及awk简介(转)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-13T14:21:59+09:00">
+                2017-12-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/善用佳软/" itemprop="url" rel="index">
+                    <span itemprop="name">善用佳软</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>grep、sed和awk都是文本处理工具，虽然都是文本处理工具单却都有各自的优缺点，一种文本处理命令是不能被另一个完全替换的，否则也不会出现三个文本处理命令了。只不过，相比较而言，sed和awk功能更强大而已，且已独立成一种语言来介绍。</p>
+<p>grep：==文本过滤器==，如果仅仅是 <strong>过滤文本</strong>，可使用grep，其效率要比其他的高很多；</p>
+<p>sed：Stream EDitor，==流编辑器==，默认只处理模式空间，<del>不处理原数据</del>，如果你处理的数据是 <strong>针对行进行处理的</strong>，可以使用sed；</p>
+<p>awk：==报告生成器==，格式化以后显示。如果对处理的数据需要生成报告之类的信息，或者 <strong>你处理的数据是按列进行处理的</strong> ，最好使用awk。</p>
+<hr>
+<h2 id="grep"><a href="#grep" class="headerlink" title="grep"></a>grep</h2><p>grep是一个最初用于Unix操作系统的命令行工具。在给出文件列表或标准输入后，grep会对匹配一个或多个正则表达式的文本进行搜索，并只输出匹配（或者不匹配）的行或文本。</p>
+<p>Unix的grep家族包括grep、egrep和fgrep。</p>
+<p>egrep和fgrep的命令只跟grep有很小不同。egrep是grep的扩展，支持更多的re元字符，fgrep就是fixed</p>
+<p>grep或fastgrep，它们把所有的字母都看作单词，也就是说，正则表达式中的元字符表示回其自身的字面意义，不再特殊。</p>
+<p>linux使用GNU版本的grep。它功能更强，可以通过-E、-F命令行选项来使用egrep和fgrep的功能。</p>
+<p>grep的工作方式是这样的，它在一个或多个文件中搜索字符串模板。如果模板包括空格，则必须被引用，模板后的所有字符串被看作文件名。<strong>搜索的结果被送到屏幕，不影响原文件内容。</strong></p>
+<p><strong>grep可用于shell脚本</strong>，因为grep通过返回一个状态值来说明搜索的状态，如果模板搜索成功，则返回0，如果搜索不成功，则返回1，如果搜索的文件不存在，则返回2。我们利用这些返回值就可进行一些自动化的文本处理工作。</p>
+<p>grep：根据模式搜索文本，并将符合模式的文本行显示出来。 </p>
+<p>Pattern：文本字符和正则表达式的元字符组合而成匹配条件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">使用格式：</span><br><span class="line"></span><br><span class="line">grep [options] PATTERN [FILE...]</span><br><span class="line">    -i：忽略大小写    </span><br><span class="line">    --color：匹配到字符用其他颜色显示出来，默认是红色</span><br><span class="line">    -v：显示没有被模式匹配到的行</span><br><span class="line">    -o：只显示被模式匹配到的字符串，不显示行</span><br><span class="line">    -E：使用扩展正则表达式</span><br><span class="line">    -A n：表示显示该行及其后n行</span><br><span class="line">    -B n：表示显示该行及其前n行</span><br><span class="line">    -C n：表示显示该行及其前后各n行</span><br><span class="line">    </span><br><span class="line">正则表达式：REGular EXPression，REGEXP</span><br><span class="line"></span><br><span class="line">元字符：</span><br><span class="line"></span><br><span class="line">.：匹配任意单个字符</span><br><span class="line">[]：匹配指定范围内的任意单个字符</span><br><span class="line">[^]：匹配指定范围外的任意单个字符</span><br><span class="line">   字符集和：[:digit:]，[:lower:]，[:upper:]，[:punct:]，[:space:]，[:alpha:]，[:alnum:]</span><br><span class="line">    对应上边：数字  ，小写字母，大写字母，标点符号，空白字符，所有字母，所有数字和字母</span><br><span class="line"></span><br><span class="line">匹配次数（贪婪模式，即尽可能长的匹配）：</span><br><span class="line">*：匹配其前面的字符任意次</span><br></pre></td></tr></table></figure>
+<p>匹配.b和.*b，看二者有什么区别，命令和显示效果如下：</p>
+<p><img src="https://i.imgur.com/QFiBSS6.jpg" alt="image"></p>
+<p>grep练习：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">1. 显示/proc/meminfo文件中以不区分大小的s开头的行；</span><br><span class="line">     grep -i &apos;^s&apos; /proc/meminfo    或者</span><br><span class="line">     grep &apos;^[sS]&apos; /proc/meminfo   #[]表示匹配指定范围内的单个字符，因此也可实现不区分大小写</span><br><span class="line">     </span><br><span class="line">2. 显示/etc/passwd中以nologin结尾的行;</span><br><span class="line">     grep &apos;nologin$&apos; /etc/passwd</span><br><span class="line">     扩展一：取出默认shell为/sbin/nologin的用户列表</span><br><span class="line">           grep &apos;/sbin/nologin&apos; /etc/passwd | cut -d: -f1    或者</span><br><span class="line">           grep &apos;/sbin/nologin&apos; /etc/passwd | awk -F: &apos;&#123;print $1&#125;&apos;     或者直接使用awk</span><br><span class="line">           awk -F: &apos;$7 ~ /nologin/&#123;print $1&#125;&apos; /etc/passwd</span><br><span class="line">     扩展二：取出默认shell为bash，且其用户ID号最小的用户的用户名</span><br><span class="line">           grep &apos;bash$&apos; /etc/passwd | sort -n -t: -k3 | head -1 | cut -d: -f1   或者</span><br><span class="line">           awk -F: &apos;$7 ~ /bash/&#123;print $3,$1&#125;&apos; /etc/passwd | sort -n | head -1 | awk &apos;&#123;print $2&#125;&apos;</span><br><span class="line">3. 显示/etc/inittab中以#开头，且后面跟一个或多个空白字符，而后又跟了任意非空白字符的行；</span><br><span class="line">      grep &apos;^#[[:space:]]\&#123;1,\&#125;[^[:space:]]&apos; /etc/inittab</span><br><span class="line">4. 显示/etc/inittab中包含了:一个数字:(即两个冒号中间一个数字)的行；</span><br><span class="line">      grep &apos;:[0-9]:&apos; /etc/inittab</span><br><span class="line">5. 显示/boot/grub/grub.conf文件中以一个或多个空白字符开 头的行；</span><br><span class="line">      grep &apos;^[[:space:]]\&#123;1,\&#125;&apos; /boot/grub/grub.conf</span><br><span class="line">6. 显示/etc/inittab文件中以一个数字开头并以一个与开头数字相同的数字结尾的行；</span><br><span class="line">      grep &apos;\(^[0-9]\).*\1$&apos; /etc/inittab     #在RHEL5.8以前的版本中可查看到效果</span><br><span class="line">7. 找出某文件中的，1位数，或2位数；</span><br><span class="line">      grep &apos;\&lt;[[:digit:]][[:digit:]]\?\&gt;&apos; /etc/inittab  或者</span><br><span class="line">      grep &apos;\&lt;[0-9]\&#123;1,2\&#125;\&gt;&apos; /etc/inittab</span><br><span class="line">8. 查找当前系统上名字为student(必须出现在行首)的用户的帐号的相关信息, 文件为/etc/passwd</span><br><span class="line">      grep &apos;^student:&apos; /etc/passwd</span><br><span class="line">      扩展：若存在该用户，找出该用户的ID号：</span><br><span class="line">    grep &apos;^student:&apos; /etc/passwd | cut -d: -f3  或者# id -u student</span><br><span class="line">            </span><br><span class="line">```   </span><br><span class="line"></span><br><span class="line">思考题：用多种方法找出本地的IP地址，这里给出三种方法，如果你还有其他方法可以一起分享下：</span><br><span class="line"></span><br><span class="line">```   </span><br><span class="line">ifconfig eth0|grep -oE &apos;([0-9]&#123;1,3&#125;\.?)&#123;4&#125;&apos;|head -n 1</span><br><span class="line">ifconfig eth0|awk -F: &apos;/inet addr/&#123;split($2,a,&quot; &quot;);print a[1];exit&#125;&apos;     #这里使用了awk的内置函数，如果不懂可在看完awk的介绍后再来做此题</span><br><span class="line">ifconfig |grep &quot;inet addr&quot;|grep -v &quot;127.0.0.1&quot; |awk -F: &apos;&#123;print $2&#125;&apos; |awk &apos;&#123;print $1&#125;&apos;</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="sed"><a href="#sed" class="headerlink" title="sed"></a>sed</h2><p>sed（意为流编辑器，源自英语“stream editor”的缩写）是Unix常见的命令行程序。</p>
+<p>sed 用来把文档或字符串里面的文字经过一系列编辑命令转换为另一种格式输出。</p>
+<p>sed 通常用来匹配一个或多个正则表达式的文本进行处理。sed是一种在线编辑器，它一次处理一行内容。处理时，把当前处理的行存储在临时缓冲区中，称为“模式空间”（pattern space），接着用sed命令处理缓冲区中的内容，处理完成后，把缓冲区的内容送往屏幕。接着处理下一行，这样不断重复，直到文件末尾。文件内容并没有改变，除非你使用重定向存储输出。</p>
+<p><strong>Sed主要用来自动编辑一个或多个文件；简化对文件的反复操作；编写转换程序等</strong></p>
+<p>sed是一个精简的、非交互式的编辑器。它能执行与编辑vi和emacs相同的编辑任务，但sed编辑器不提供交互使用方式，只能在命令行下输入编辑命令。</p>
+<p>作为编辑器，当然少不了插入（a/、i/）、删除（d）、查找替换(s)等命令。</p>
+<h2 id="sed练习"><a href="#sed练习" class="headerlink" title="sed练习"></a>sed练习</h2><ol>
+<li>删除/etc/grub.conf文件中行首的空白符；</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed  -r &apos;s/^[[:space:]]+//&apos; /etc/grub.conf</span><br></pre></td></tr></table></figure>
+<ol>
+<li>替换/etc/inittab文件中“id:3:initdefault:”一行中的数字为5；</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed &apos;s/\(id:\)[0-9]\(:initdefault:\)/\15\2/g&apos; /etc/inittab</span><br></pre></td></tr></table></figure>
+<ol>
+<li>删除/etc/inittab文件中的空白行；</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed &apos;/^$/d&apos; /etc/inittab</span><br></pre></td></tr></table></figure>
+<ol>
+<li>删除/etc/inittab文件中开头的#号；</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed &apos;s/^#//g&apos; /etc/inittab</span><br></pre></td></tr></table></figure>
+<ol>
+<li>删除某文件中开头的#号及其后面的空白字符，但要求#号后面必须有空白符；</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed &apos;s/^#[[:space:]]\&#123;1,\&#125;//g&apos; /etc/inittab     或 sed  -r &apos;s/^#[[:space:]]+//g&apos; /etc/inittab</span><br></pre></td></tr></table></figure>
+<ol>
+<li>删除某文件中以空白字符后面跟#类的行中的开头的空白字符及#</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed -r &apos;s/^[[:space:]]+#//g&apos; /etc/inittab</span><br></pre></td></tr></table></figure>
+<ol>
+<li>取出一个文件路径的目录名称;</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;/etc/rc.d/abc/edu/&quot; | sed -r &apos;s@^(/.*/)[^/]+/?@\1@g&apos; 因sed支持扩展正则表达式，在扩展正则表达式中，+表示匹配其前面的字符至少1次</span><br></pre></td></tr></table></figure>
+<ol>
+<li>取出一个文件路径的最后一个文件名；</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;/etc/rc.d/abc/edu/&quot; | sed -r &apos;s@^/.*/([^/]+)/?@\1@g&apos;</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="awk"><a href="#awk" class="headerlink" title="awk"></a>awk</h2><p>awk是一种优良的文本处理工具，Linux及Unix环境中现有的功能最强大的数据处理引擎之一。</p>
+<p>这种编程及数据操作语言（其名称得自于它的创始人Alfred Aho 、Peter Weinberger 和 Brian Kernighan 姓氏的首个字母）的最大功能取决于一个人所拥有的知识。</p>
+<p>AWK提供了极其强大的功能：可以进行正则表达式的匹配，样式装入、流控制、数学运算符、进程控制语句甚至于内置的变量和函数。它具备了一个完整的语言所应具有的几乎所有精美 特性。</p>
+<p>实际上AWK的确拥有自己的语言：AWK程序设计语言，三位创建者已将它正式定义为“样式扫描和处理语言”。它允许您创建简短的程序，这些程序读取输入文件、为数据排序、处理数据、对输入执行计算以及生成报表，还有无数其他的功能。最简单地说，AWK是一种用于处理文本的编程语言工具。</p>
+<p>我们现在使用最多的是gawk，gawk是AWK的GNU版本。</p>
+<p>AWK的功能是什么？</p>
+<blockquote>
+<p>与sed和grep很相似，awk是一种样式扫描与处理工具。但其功能却大大强于sed和grep。<br>awk提供了极其强大的功能：它几乎可以完成grep和sed所能完成的全部工作，同时，它还可以可以进行样式装入、流控制、数学运算符、进程控制语句甚至于内置的变量和函数。它具备了一个完整的语言所应具有的几乎所有精美特性。</p>
+</blockquote>
+<h2 id="awk的命令格式为："><a href="#awk的命令格式为：" class="headerlink" title="awk的命令格式为："></a>awk的命令格式为：</h2><p>awk是一种程序语言，对文档资料的处理具有很强的功能。awk擅长从格式化报文或从一个大的文本文件中抽取数据。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">awk [-F filed-separator] “commands” input-file(s)</span><br></pre></td></tr></table></figure>
+<p>每一个命令（commands）都由两部分组成：一个模式（pattern）和一个相应的动作（action）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">/pattern1/&#123;action1&#125;  </span><br><span class="line">/pattern2/&#123;action2&#125;  </span><br><span class="line">/pattern3/&#123;action3&#125;</span><br></pre></td></tr></table></figure>
+<p>awk将一行文字按分隔符（filed-separator）分为多个域，依次记为$ 1，$ 2 . . . $ n。$0代表所有域值。</p>
+<p>因此awk更适合于以域为单位来处理文件。加之ARGIND等内置变量，使awk能处理多个文件。典型的应用为查找一个文件中的某个字段是否在另一个文件中出现。</p>
+<p>但由于$0代表所有域，即整行，因此awk也有简单行处理能力。</p>
+<h2 id="awk的输出：print和printf"><a href="#awk的输出：print和printf" class="headerlink" title="awk的输出：print和printf"></a>awk的输出：print和printf</h2><ol>
+<li>print</li>
+</ol>
+<p>print的使用格式：<br>    print item1, item2, …</p>
+<p>要点：</p>
+<ol>
+<li>各项目之间使用逗号隔开，而输出时则以空白字符分隔；</li>
+<li>输出的item可以为字符串或数值、当前记录的字段(如$1)、变量或awk的表达式；数值会先转换为字符串，而后再输出；</li>
+<li>print命令后面的item可以省略，此时其功能相当于print $0, 因此，如果想输出空白行，则需要使用print “”；</li>
+</ol>
+<p>例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">awk &apos;BEGIN &#123; print &quot;line one\nline two\nline three&quot; &#125;&apos;</span><br><span class="line">awk -F: &apos;&#123; print $1, $7 &#125;&apos; /etc/passwd     #等价于：awk -v FS=: &apos;&#123;print $1,$7&#125;&apos; /etc/passwd</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/U0cDwCJ.jpg" alt="image"></p>
+<ol>
+<li>awk变量</li>
+</ol>
+<ul>
+<li>awk内置变量之记录变量：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">FS: field separator，字段分隔符，默认是空白字符；</span><br><span class="line">RS: Record separator，记录分隔符，默认是换行符；</span><br><span class="line">OFS: Output Filed Separator，输出字段分隔符</span><br><span class="line">ORS：Output Row Separator，输出行分隔符</span><br></pre></td></tr></table></figure>
+<p>一起来看一个示例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">vim test.txt   #编辑该文件，添加如下两行信息作为示例使用</span><br><span class="line">welcome to redhat linux.</span><br><span class="line">how are you?</span><br><span class="line">[root@www ~]# awk &apos;BEGIN&#123;OFS=&quot;#&quot;&#125; &#123;print $1,$2&#125;&apos; test.txt    #指定输出时的分隔符</span><br><span class="line">[root@www ~]# awk &apos;BEGIN&#123;OFS=&quot;#&quot;&#125; &#123;print $1,&quot;hello&quot;,$2&#125;&apos; test.txt   #指定输出时的分隔符，并添加显示的内容</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/92NZBJX.jpg" alt="image"></p>
+<ol>
+<li>awk内置变量之数据变量：</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">NR: The number of input records，awk命令所处理的记录数；如果有多个文件，这个数目会把处理的多个文件中行统一计数；</span><br><span class="line">NF：Number of Field，当前记录的字段个数，有时可用来表示最后一个字段</span><br><span class="line">FNR: 与NR不同的是，FNR用于记录正处理的行是当前这一文件中被总共处理的行数；</span><br><span class="line">ARGV: 数组，保存命令行本身这个字符串，如awk &apos;&#123;print $0&#125;&apos; a.txt b.txt这个命令中，ARGV[0]保存awk，ARGV[1]保存a.txt；</span><br><span class="line">ARGC: awk命令的参数的个数；</span><br><span class="line">FILENAME: awk命令所处理的文件的名称；</span><br><span class="line">ENVIRON：当前shell环境变量及其值的关联数组；</span><br><span class="line">如：</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">awk &apos;BEGIN&#123;print ENVIRON[&quot;PATH&quot;]&#125;&apos;</span><br><span class="line">awk &apos;&#123;print $NF&#125;&apos; test.txt</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/2vKGOtK.jpg" alt="image"></p>
+<p>gawk命令也可以在“脚本”外为变量赋值，并在脚本中进行引用。例如，上述的例子还可以改写为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@www ~]# awk -v var=&quot;variable testing&quot; &apos;BEGIN&#123;print var&#125;&apos;     #与上述的例子一样，显示效果如下</span><br><span class="line"></span><br><span class="line">variable testing</span><br></pre></td></tr></table></figure>
+<ol>
+<li>printf</li>
+</ol>
+<p>printf命令的使用格式：<br>printf format, item1, item2, …</p>
+<p>要点：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1. 其与print命令的最大不同是，printf需要指定格式；</span><br><span class="line">2. format用于指定后面的每个item的输出格式；</span><br><span class="line">3. printf语句不会自动打印换行，需要显式使用\n换行。</span><br></pre></td></tr></table></figure>
+<p>format格式的指示符都以%开头，后跟一个字符；如下：<br>%c: 显示字符的ASCII码；<br>%d, %i：十进制整数；<br>%e, %E：科学计数法显示数值；<br>%f: 显示浮点数；<br>%g, %G: 以科学计数法的格式或浮点数的格式显示数值；<br>%s: 显示字符串；<br>%u: 无符号整数；<br>%%: 显示%自身；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">awk -F: &apos;&#123;printf &quot;%-15s%i\n&quot;,$1,$3&#125;&apos; /etc/passwd</span><br></pre></td></tr></table></figure>
+<ul>
+<li>使用printf显示该文件中的第一列和第三列，要求第一列左对齐且占用15个字符宽度，第二列显示十进制整数，显示效果如下所示：</li>
+</ul>
+<p><img src="https://i.imgur.com/voyMwD1.jpg" alt="image"></p>
+<ul>
+<li>字符串操作符：</li>
+</ul>
+<p>只有一个，而且不用写出来，用于实现字符串连接；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@www ~]# awk &apos;BEGIN&#123;print &quot;A&quot; &quot;B&quot;&#125;&apos;     #连接A和B两个字符，使其成为一个字符串，显示效果如下所示：</span><br><span class="line">AB</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h2><ul>
+<li>如果文件是格式化的，即由分隔符分为多个域的，优先使用awk</li>
+<li>awk适合按列（域）操作，sed适合按行操作</li>
+<li>awk适合对文件的抽取整理，sed适合对文件的编辑。</li>
+<li>grep 主要用于搜索某些字符串 </li>
+<li>sed，awk 用于处理文本 </li>
+</ul>
+<hr>
+<p><a href="http://blog.51cto.com/lq2419/1238880" target="_blank" rel="noopener">原文引自</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://code.meirenji.info/2017/12/12/zabbix3-4安装部署/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1152,7 +1424,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-count">16</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1174,7 +1446,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-count">11</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
