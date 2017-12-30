@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="v2ray," />
 
 
 
@@ -79,17 +79,20 @@
 
 
 
-<meta name="description" content="关于我简介 奶爸一枚，女儿奴在极客探索之途中漫漫求索，生命不息，折腾不止。  关于我 80后Web全栈开发者女儿奴，Happy wife happy lifeGoogle 服务重度依赖单反进阶，鲜有满意的照片拖延症患者  我的技能树 熟悉负载均衡高可用的Linux服务器部署，如Web环境（Nginx、PHP、Mysql） 熟悉Linux shell环境，熟练使用shell脚本编程，并熟悉运用awk">
-<meta property="og:type" content="website">
-<meta property="og:title" content="about">
-<meta property="og:url" content="http://code.meirenji.info/about/index.html">
+<meta name="description" content="V2Ray 的介绍中有这么一句话：”V2Ray 是一个模块化的代理软件包”。在推广的过程中，看上去大家对模块化的概念不太了解，不清楚这是一个什么样的东西。 模块化，简单来说就是乐高积木，每一块积木都有统一的接口（有例外，这里忽略），积木和积木之间想拼就拼，想拆就拆，很方便。V2Ray 也是这样，V2Ray 中的每一个功能都可以简单地添加或移除。  举个例子来说，一些用户尝试在路由器中运行 V2Ra">
+<meta name="keywords" content="v2ray">
+<meta property="og:type" content="article">
+<meta property="og:title" content="v2ray的模块化">
+<meta property="og:url" content="http://code.meirenji.info/2017/12/30/v2ray的模块化/index.html">
 <meta property="og:site_name" content="奶爸的天空">
-<meta property="og:description" content="关于我简介 奶爸一枚，女儿奴在极客探索之途中漫漫求索，生命不息，折腾不止。  关于我 80后Web全栈开发者女儿奴，Happy wife happy lifeGoogle 服务重度依赖单反进阶，鲜有满意的照片拖延症患者  我的技能树 熟悉负载均衡高可用的Linux服务器部署，如Web环境（Nginx、PHP、Mysql） 熟悉Linux shell环境，熟练使用shell脚本编程，并熟悉运用awk">
+<meta property="og:description" content="V2Ray 的介绍中有这么一句话：”V2Ray 是一个模块化的代理软件包”。在推广的过程中，看上去大家对模块化的概念不太了解，不清楚这是一个什么样的东西。 模块化，简单来说就是乐高积木，每一块积木都有统一的接口（有例外，这里忽略），积木和积木之间想拼就拼，想拆就拆，很方便。V2Ray 也是这样，V2Ray 中的每一个功能都可以简单地添加或移除。  举个例子来说，一些用户尝试在路由器中运行 V2Ra">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-12-21T05:33:15.580Z">
+<meta property="og:image" content="https://steemitimages.com/DQmZzExiv9UCyQkQ7xTbwq6bAbmmUK7HEdEfnYb6YbkMN11/lego-blocks-2458575_1920.jpg">
+<meta property="og:updated_time" content="2017-12-30T05:48:34.911Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="about">
-<meta name="twitter:description" content="关于我简介 奶爸一枚，女儿奴在极客探索之途中漫漫求索，生命不息，折腾不止。  关于我 80后Web全栈开发者女儿奴，Happy wife happy lifeGoogle 服务重度依赖单反进阶，鲜有满意的照片拖延症患者  我的技能树 熟悉负载均衡高可用的Linux服务器部署，如Web环境（Nginx、PHP、Mysql） 熟悉Linux shell环境，熟练使用shell脚本编程，并熟悉运用awk">
+<meta name="twitter:title" content="v2ray的模块化">
+<meta name="twitter:description" content="V2Ray 的介绍中有这么一句话：”V2Ray 是一个模块化的代理软件包”。在推广的过程中，看上去大家对模块化的概念不太了解，不清楚这是一个什么样的东西。 模块化，简单来说就是乐高积木，每一块积木都有统一的接口（有例外，这里忽略），积木和积木之间想拼就拼，想拆就拆，很方便。V2Ray 也是这样，V2Ray 中的每一个功能都可以简单地添加或移除。  举个例子来说，一些用户尝试在路由器中运行 V2Ra">
+<meta name="twitter:image" content="https://steemitimages.com/DQmZzExiv9UCyQkQ7xTbwq6bAbmmUK7HEdEfnYb6YbkMN11/lego-blocks-2458575_1920.jpg">
 
 
 
@@ -119,13 +122,13 @@
 
 
 
-  <link rel="canonical" href="http://code.meirenji.info/about/"/>
+  <link rel="canonical" href="http://code.meirenji.info/2017/12/30/v2ray的模块化/"/>
 
 
 
 
 
-  <title>about | 奶爸的天空</title>
+  <title>v2ray的模块化 | 奶爸的天空</title>
   
 
 
@@ -274,69 +277,215 @@
 
   <div id="posts" class="posts-expand">
     
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://code.meirenji.info/2017/12/30/v2ray的模块化/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ben wong">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="奶爸的天空">
+    </span>
+
     
-    
-    <div class="post-block page">
       <header class="post-header">
 
-	<h1 class="post-title" itemprop="name headline">about</h1>
-
-
-
-</header>
-
-      
-      
-      
-      <div class="post-body">
         
         
-          <h1 id="关于我"><a href="#关于我" class="headerlink" title="关于我"></a>关于我</h1><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><blockquote>
-<p>奶爸一枚，女儿奴<br>在极客探索之途中漫漫求索，生命不息，折腾不止。</p>
-</blockquote>
-<h3 id="关于我-1"><a href="#关于我-1" class="headerlink" title="关于我"></a>关于我</h3><blockquote>
-<p>80后<br>Web全栈开发者<br>女儿奴，Happy wife happy life<br>Google 服务重度依赖<br>单反进阶，鲜有满意的照片<br>拖延症患者</p>
-</blockquote>
-<h3 id="我的技能树"><a href="#我的技能树" class="headerlink" title="我的技能树"></a>我的技能树</h3><ol>
-<li>熟悉负载均衡高可用的Linux服务器部署，如Web环境（Nginx、PHP、Mysql）</li>
-<li>熟悉Linux shell环境，熟练使用shell脚本编程，并熟悉运用awk、sed等脚本辅助工具；</li>
-<li>熟悉zabbix等监控软件安装配置，能够配置对web,数据库，负载均衡，存储等服务器进行监控</li>
-<li>部署ssh key结合rsync备份和文件分发解决方案，了解puppet分发部署;</li>
-<li>熟悉配置常见的web集群，软件LVS+keepalived等；</li>
-<li>数据库（MySQL数据库主从Replication同步、配置文件优化）文件同步（rsync+inotify）、Linux群集（keeplived、haproxy、lvs）；</li>
-<li>熟悉iptables防火墙应用、生产环境中的系统安全防护措施；</li>
+          <h1 class="post-title" itemprop="name headline">v2ray的模块化</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-30T13:47:22+09:00">
+                2017-12-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/科学上网/" itemprop="url" rel="index">
+                    <span itemprop="name">科学上网</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/12/30/v2ray的模块化/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/12/30/v2ray的模块化/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>V2Ray 的介绍中有这么一句话：”V2Ray 是一个模块化的代理软件包”。在推广的过程中，看上去大家对模块化的概念不太了解，不清楚这是一个什么样的东西。</p>
+<p>模块化，简单来说就是乐高积木，每一块积木都有统一的接口（有例外，这里忽略），积木和积木之间想拼就拼，想拆就拆，很方便。V2Ray 也是这样，V2Ray 中的每一个功能都可以简单地添加或移除。</p>
+<p><img src="https://steemitimages.com/DQmZzExiv9UCyQkQ7xTbwq6bAbmmUK7HEdEfnYb6YbkMN11/lego-blocks-2458575_1920.jpg" alt="image"></p>
+<p>举个例子来说，一些用户尝试在路由器中运行 V2Ray，路由器的 ROM 通常只有 8M 或 16M，而 V2Ray 的程序文件就达到了 7M (v3.4 ARM)，这样就很难塞进路由器了。但其实根据使用情况，在路由器中不会用到 V2Ray 的所有功能，有一些功能不是必要的，比如 Shadowsocks，我们可以把它从 V2Ray 中拿走，以便减少可执行文件的体积。</p>
+<p>V2Ray 中所有的模块列表如下 （<a href="https://github.com/v2ray/v2ray-core/blob/master/main/distro/all/all.go" target="_blank" rel="noopener">文件连接</a>）</p>
+<a id="more"></a>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">import (</span><br><span class="line">    _ &quot;v2ray.com/core/app/dispatcher/impl&quot;</span><br><span class="line">    _ &quot;v2ray.com/core/app/dns&quot;</span><br><span class="line">    _ &quot;v2ray.com/core/app/log&quot;</span><br><span class="line">    _ &quot;v2ray.com/core/app/policy/manager&quot;</span><br><span class="line">    _ &quot;v2ray.com/core/app/proxyman/inbound&quot;</span><br><span class="line">    _ &quot;v2ray.com/core/app/proxyman/outbound&quot;</span><br><span class="line">    _ &quot;v2ray.com/core/app/router&quot;</span><br><span class="line"></span><br><span class="line">    _ &quot;v2ray.com/core/proxy/blackhole&quot;</span><br><span class="line">    _ &quot;v2ray.com/core/proxy/dokodemo&quot;</span><br><span class="line">    _ &quot;v2ray.com/core/proxy/freedom&quot;</span><br><span class="line">    _ &quot;v2ray.com/core/proxy/http&quot;</span><br><span class="line">    _ &quot;v2ray.com/core/proxy/shadowsocks&quot;</span><br><span class="line">    _ &quot;v2ray.com/core/proxy/socks&quot;</span><br><span class="line">    _ &quot;v2ray.com/core/proxy/vmess/inbound&quot;</span><br><span class="line">    _ &quot;v2ray.com/core/proxy/vmess/outbound&quot;</span><br><span class="line"></span><br><span class="line">    _ &quot;v2ray.com/core/transport/internet/kcp&quot;</span><br><span class="line">    _ &quot;v2ray.com/core/transport/internet/tcp&quot;</span><br><span class="line">    _ &quot;v2ray.com/core/transport/internet/tls&quot;</span><br><span class="line">    _ &quot;v2ray.com/core/transport/internet/udp&quot;</span><br><span class="line">    _ &quot;v2ray.com/core/transport/internet/websocket&quot;</span><br><span class="line"></span><br><span class="line">    _ &quot;v2ray.com/core/transport/internet/headers/http&quot;</span><br><span class="line">    _ &quot;v2ray.com/core/transport/internet/headers/noop&quot;</span><br><span class="line">    _ &quot;v2ray.com/core/transport/internet/headers/srtp&quot;</span><br><span class="line">    _ &quot;v2ray.com/core/transport/internet/headers/utp&quot;</span><br><span class="line">    _ &quot;v2ray.com/core/transport/internet/headers/wechat&quot;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>具体每个模块这里就不细说了，从它们的名字应该可以大致猜出是做什么的。假如根据使用场景，这些模块我们不需要：</p>
+<ul>
+<li>DNS（不加载的时候自动使用 localhost）；</li>
+<li>Blackhole、SOCKS、HTTP、Shadowsocks、VMess Inbound；</li>
+<li>Websocket、KCP 以及相关伪装；</li>
+</ul>
+<p>把上述的模块删除之后，我们仅使用透明代理加上 VMess 进行代理，以及 Freedom 做分流。示例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">import (</span><br><span class="line">    _ &quot;v2ray.com/core/app/dispatcher/impl&quot;</span><br><span class="line">    _ &quot;v2ray.com/core/app/log&quot;</span><br><span class="line">    _ &quot;v2ray.com/core/app/policy/manager&quot;</span><br><span class="line">    _ &quot;v2ray.com/core/app/proxyman/inbound&quot;</span><br><span class="line">    _ &quot;v2ray.com/core/app/proxyman/outbound&quot;</span><br><span class="line">    _ &quot;v2ray.com/core/app/router&quot;</span><br><span class="line"></span><br><span class="line">    _ &quot;v2ray.com/core/proxy/dokodemo&quot;</span><br><span class="line">    _ &quot;v2ray.com/core/proxy/freedom&quot;</span><br><span class="line">    _ &quot;v2ray.com/core/proxy/vmess/outbound&quot;</span><br><span class="line"></span><br><span class="line">    _ &quot;v2ray.com/core/transport/internet/tcp&quot;</span><br><span class="line">    _ &quot;v2ray.com/core/transport/internet/tls&quot;</span><br><span class="line">    _ &quot;v2ray.com/core/transport/internet/udp&quot;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>对，只需要修改这一个文件就可以了，其它的都不用动。</p>
+<p>重新编译一下，在 ARM 上获得新的程序文件，体积仅为 4M，几乎减半。这样就能很方便地集成进路由器的系统了。</p>
+<p>编译 V2Ray 需要一些 Golang 的知识，并不是很难，步骤如下：</p>
+<ol>
+<li>安装最新的 <a href="https://golang.org/doc/install" target="_blank" rel="noopener">Golang SDK</a>.</li>
+<li>下载 V2Ray 源码：</li>
 </ol>
-<h3 id="偶象"><a href="#偶象" class="headerlink" title="偶象"></a>偶象</h3><blockquote>
-<p>特斯拉的CEO,Elon Musk,钢铁侠的原型。此君脑洞大开，敢于想别人所未想，做别人所不敢做！他旗下的三家公司，改变了历史，在某些方面的实力，举全国之力亦赶不上。</p>
-</blockquote>
-<h3 id="让自己成长的途径有哪些？"><a href="#让自己成长的途径有哪些？" class="headerlink" title="让自己成长的途径有哪些？"></a>让自己成长的途径有哪些？</h3><blockquote>
-<p>制订目标，自学！<br>加入一个圈子，向先辈请教！<br>救助于Google,YouTube!</p>
-</blockquote>
-<h3 id="在找工作时最看重以下因素（排名不分先后"><a href="#在找工作时最看重以下因素（排名不分先后" class="headerlink" title="在找工作时最看重以下因素（排名不分先后)"></a>在找工作时最看重以下因素（排名不分先后)</h3><blockquote>
-<p>行业前景<br>办公地点（交通便利，楼下有星巴克可以供发呆）<br>上升空间<br>个人兴趣<br>薪酬待遇<br>企业文化</p>
-</blockquote>
-<h3 id="怎样看待加班？"><a href="#怎样看待加班？" class="headerlink" title="怎样看待加班？"></a>怎样看待加班？</h3><blockquote>
-<p>因工作需要，可以接受偶尔加班</p>
-</blockquote>
-<h3 id="喜欢的领导方式或团队组织类型是？"><a href="#喜欢的领导方式或团队组织类型是？" class="headerlink" title="喜欢的领导方式或团队组织类型是？"></a>喜欢的领导方式或团队组织类型是？</h3><blockquote>
-<p>领导有所放权,但同时下属承担相应的责任</p>
-</blockquote>
-<h3 id="希望在团队中是什么样的角色？"><a href="#希望在团队中是什么样的角色？" class="headerlink" title="希望在团队中是什么样的角色？"></a>希望在团队中是什么样的角色？</h3><blockquote>
-<p>独挡一面，解决问题的人！</p>
-</blockquote>
-<h3 id="你有哪些兴趣爱好？"><a href="#你有哪些兴趣爱好？" class="headerlink" title="你有哪些兴趣爱好？"></a>你有哪些兴趣爱好？</h3><blockquote>
-<p>看电影，看书，烹饪，旅游</p>
-</blockquote>
+<ul>
+<li>go get -u v2ray.com/core/…</li>
+<li>go get -u v2ray.com/ext/…</li>
+</ul>
+<ol>
+<li>安装 V2Ray 编译工具：go install v2ray.com/ext/tools/build/vbuild</li>
+<li>编译 V2Ray：$GOPATH/bin/vbuild -os=linux -arch=arm</li>
+</ol>
+<p>顺便介绍一下如何在路由器中绕过 v2ctl 程序的限制。</p>
+<ol>
+<li>准备好你的配置文件 config.json</li>
+<li>在 PC 上把它转换成 Protobuf 格式：v2ctl config &lt; config.json &gt; config.pb</li>
+<li>在路由器运行 V2Ray：v2ray -config=config.pb</li>
+</ol>
+<p>在仅使用 Protobuf 配置文件的时候，V2Ray 是不依赖 v2ctl 以及其它数据文件的，只需要 v2ray 一个文件即可运行。是不是很方便呢。</p>
+<p>现在你对 V2Ray 的强大之处是不是更仰慕了呢？ </p>
+<p><a href="https://steemit.com/cn/@v2ray/meemg-v2ray" target="_blank" rel="noopener">原文引自：这里</a></p>
 
-        
-      </div>
-      
-      
       
     </div>
     
     
     
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/v2ray/" rel="tag"># v2ray</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/22/v2ray设计理念/" rel="next" title="v2ray设计理念">
+                <i class="fa fa-chevron-left"></i> v2ray设计理念
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
   </div>
 
 
@@ -345,6 +494,20 @@
 
 
           
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
 
         </div>
         
@@ -365,17 +528,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview-wrap sidebar-panel">
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -455,22 +609,6 @@
         </div>
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#关于我"><span class="nav-number">1.</span> <span class="nav-text"><a href="#&#x5173;&#x4E8E;&#x6211;" class="headerlink" title="&#x5173;&#x4E8E;&#x6211;"></a>&#x5173;&#x4E8E;&#x6211;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#简介"><span class="nav-number">1.0.1.</span> <span class="nav-text"><a href="#&#x7B80;&#x4ECB;" class="headerlink" title="&#x7B80;&#x4ECB;"></a>&#x7B80;&#x4ECB;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#关于我-1"><span class="nav-number">1.0.2.</span> <span class="nav-text"><a href="#&#x5173;&#x4E8E;&#x6211;-1" class="headerlink" title="&#x5173;&#x4E8E;&#x6211;"></a>&#x5173;&#x4E8E;&#x6211;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#我的技能树"><span class="nav-number">1.0.3.</span> <span class="nav-text"><a href="#&#x6211;&#x7684;&#x6280;&#x80FD;&#x6811;" class="headerlink" title="&#x6211;&#x7684;&#x6280;&#x80FD;&#x6811;"></a>&#x6211;&#x7684;&#x6280;&#x80FD;&#x6811;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#偶象"><span class="nav-number">1.0.4.</span> <span class="nav-text"><a href="#&#x5076;&#x8C61;" class="headerlink" title="&#x5076;&#x8C61;"></a>&#x5076;&#x8C61;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#让自己成长的途径有哪些？"><span class="nav-number">1.0.5.</span> <span class="nav-text"><a href="#&#x8BA9;&#x81EA;&#x5DF1;&#x6210;&#x957F;&#x7684;&#x9014;&#x5F84;&#x6709;&#x54EA;&#x4E9B;&#xFF1F;" class="headerlink" title="&#x8BA9;&#x81EA;&#x5DF1;&#x6210;&#x957F;&#x7684;&#x9014;&#x5F84;&#x6709;&#x54EA;&#x4E9B;&#xFF1F;"></a>&#x8BA9;&#x81EA;&#x5DF1;&#x6210;&#x957F;&#x7684;&#x9014;&#x5F84;&#x6709;&#x54EA;&#x4E9B;&#xFF1F;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#在找工作时最看重以下因素（排名不分先后"><span class="nav-number">1.0.6.</span> <span class="nav-text"><a href="#&#x5728;&#x627E;&#x5DE5;&#x4F5C;&#x65F6;&#x6700;&#x770B;&#x91CD;&#x4EE5;&#x4E0B;&#x56E0;&#x7D20;&#xFF08;&#x6392;&#x540D;&#x4E0D;&#x5206;&#x5148;&#x540E;" class="headerlink" title="&#x5728;&#x627E;&#x5DE5;&#x4F5C;&#x65F6;&#x6700;&#x770B;&#x91CD;&#x4EE5;&#x4E0B;&#x56E0;&#x7D20;&#xFF08;&#x6392;&#x540D;&#x4E0D;&#x5206;&#x5148;&#x540E;)"></a>&#x5728;&#x627E;&#x5DE5;&#x4F5C;&#x65F6;&#x6700;&#x770B;&#x91CD;&#x4EE5;&#x4E0B;&#x56E0;&#x7D20;&#xFF08;&#x6392;&#x540D;&#x4E0D;&#x5206;&#x5148;&#x540E;)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#怎样看待加班？"><span class="nav-number">1.0.7.</span> <span class="nav-text"><a href="#&#x600E;&#x6837;&#x770B;&#x5F85;&#x52A0;&#x73ED;&#xFF1F;" class="headerlink" title="&#x600E;&#x6837;&#x770B;&#x5F85;&#x52A0;&#x73ED;&#xFF1F;"></a>&#x600E;&#x6837;&#x770B;&#x5F85;&#x52A0;&#x73ED;&#xFF1F;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#喜欢的领导方式或团队组织类型是？"><span class="nav-number">1.0.8.</span> <span class="nav-text"><a href="#&#x559C;&#x6B22;&#x7684;&#x9886;&#x5BFC;&#x65B9;&#x5F0F;&#x6216;&#x56E2;&#x961F;&#x7EC4;&#x7EC7;&#x7C7B;&#x578B;&#x662F;&#xFF1F;" class="headerlink" title="&#x559C;&#x6B22;&#x7684;&#x9886;&#x5BFC;&#x65B9;&#x5F0F;&#x6216;&#x56E2;&#x961F;&#x7EC4;&#x7EC7;&#x7C7B;&#x578B;&#x662F;&#xFF1F;"></a>&#x559C;&#x6B22;&#x7684;&#x9886;&#x5BFC;&#x65B9;&#x5F0F;&#x6216;&#x56E2;&#x961F;&#x7EC4;&#x7EC7;&#x7C7B;&#x578B;&#x662F;&#xFF1F;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#希望在团队中是什么样的角色？"><span class="nav-number">1.0.9.</span> <span class="nav-text"><a href="#&#x5E0C;&#x671B;&#x5728;&#x56E2;&#x961F;&#x4E2D;&#x662F;&#x4EC0;&#x4E48;&#x6837;&#x7684;&#x89D2;&#x8272;&#xFF1F;" class="headerlink" title="&#x5E0C;&#x671B;&#x5728;&#x56E2;&#x961F;&#x4E2D;&#x662F;&#x4EC0;&#x4E48;&#x6837;&#x7684;&#x89D2;&#x8272;&#xFF1F;"></a>&#x5E0C;&#x671B;&#x5728;&#x56E2;&#x961F;&#x4E2D;&#x662F;&#x4EC0;&#x4E48;&#x6837;&#x7684;&#x89D2;&#x8272;&#xFF1F;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#你有哪些兴趣爱好？"><span class="nav-number">1.0.10.</span> <span class="nav-text"><a href="#&#x4F60;&#x6709;&#x54EA;&#x4E9B;&#x5174;&#x8DA3;&#x7231;&#x597D;&#xFF1F;" class="headerlink" title="&#x4F60;&#x6709;&#x54EA;&#x4E9B;&#x5174;&#x8DA3;&#x7231;&#x597D;&#xFF1F;"></a>&#x4F60;&#x6709;&#x54EA;&#x4E9B;&#x5174;&#x8DA3;&#x7231;&#x597D;&#xFF1F;</span></a></li></ol></li></ol></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       
@@ -632,6 +770,18 @@
       <script id="dsq-count-scr" src="https://louis90.disqus.com/count.js" async></script>
     
 
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://code.meirenji.info/2017/12/30/v2ray的模块化/';
+          this.page.identifier = '2017/12/30/v2ray的模块化/';
+          this.page.title = 'v2ray的模块化';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://louis90.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
     
 
   
