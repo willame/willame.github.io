@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[vultr上SSR服务优化-开启bbr]]></title>
+    <url>%2F2018%2F01%2F25%2Fvultr%E4%B8%8ASSR%E6%9C%8D%E5%8A%A1%E4%BC%98%E5%8C%96-%E5%BC%80%E5%90%AFbbr%2F</url>
+    <content type="text"><![CDATA[现在linode已经不提供因GFW原因，造成的ip被锁定之后，而提供免费更换IP的服务了。所以得想替代方案了。vultr与樱花都进入了视线。vultr的购买方便。以后有机会再测试 樱花吧。 什么是BBR? BBR是来自于谷歌的TCP拥塞控制算法，它可以让我们绕过拥塞的流量管道，实现加速。Google 开源了其 TCP BBR 拥塞控制算法，并提交到了 Linux 内核，从 4.9 开始，Linux 内核已经用上了该算法。根据以往的传统，Google 总是先在自家的生产环境上线运用后，才会将代码开源，此次也不例外。根据实地测试，在部署了最新版内核并开启了 TCP BBR 的机器上，网速甚至可以提升好几个数量级。 什么情况下搭建bbr魔改全部需要加速的地方，比如以下几种情况（但不限于）： 搭建ss，实现科学上网。但是网速较慢，无法观看高清视频 博客搭建在国外的服务器上，访问速度较慢 升级内核版本如果系统是 64 位，则下载 amd64 的 linux-image 中含有 generic 这个 deb 包；如果系统是 32 位，则下载 i386 的 linux-image 中含有 generic 这个 deb 包；安装的命令如下（以最新版的 64 位 4.12.4 举例而已，请替换为下载好的 deb 包）： TCP-BBR需要VPS升级内核版本到4.9.0 1weget http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.12.7/linux-image-4.12.7-041207-generic_4.12.7-041207.201708160856_amd64.deb 1dpkg -i linux-image-4.12.7-041207-generic_4.12.7-041207.201708160856_amd64.deb 安装完成后，再执行命令： 1/usr/sbin/update-grub 重启 vps ss服务建好后，部分朋友在使用过程中可能会觉得速度不够快，这就需要对服务器作进一步的优化了，即开启bbr（谷歌提供的新的TCP拥塞控制算法，其目的就是要尽量跑满带宽，并且尽量不要有排队的情况）。先上一张优化后油管可顺畅观看2K视频的图片。 确认是否已经开启bbr，如果返回结果中没有显示bbr即表示未开启。 1lsmod | grep bbr 依次执行下记命令，可每次复制一行后右键粘贴至命令窗口中。 123456modprobe tcp_bbrecho &quot;tcp_bbr&quot; &gt;&gt; /etc/modules-load.d/modules.confecho &quot;net.core.default_qdisc=fq&quot; &gt;&gt; /etc/sysctl.confecho &quot;net.ipv4.tcp_congestion_control=bbr&quot; &gt;&gt; /etc/sysctl.confsysctl -p 继续输入命令，如果结果都有 bbr, 则证明你的内核已开启 bbr。 12sysctl net.ipv4.tcp_available_congestion_controlsysctl net.ipv4.tcp_congestion_control 再输入之前的命令验证一下看看是否已经开启成功，这次有显示bbr字样了。 1lsmod | grep bbr 参考文档： 原文引自这里:开启bbr 一键安装最新内核并开启 BBR 脚本 vultr全面教呈 几种vps的比较：linode，vultr，樱花 目前能代购到最好的日本VPS]]></content>
+      <categories>
+        <category>科学上网</category>
+      </categories>
+      <tags>
+        <tag>shadowsocks</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[虞美人]]></title>
     <url>%2F2018%2F01%2F15%2F%E8%99%9E%E7%BE%8E%E4%BA%BA%2F</url>
     <content type="text"><![CDATA[春花秋月何时了，往事知多少。小楼昨夜又东风，故国不堪回首月明中。雕栏玉砌应犹在，只是朱颜改。问君能有几多愁，恰似一江春水向东流。 今日行路听《五代十国.后唐篇》。作者言，古代有二段可歌可泣的爱情故事《西楚霸王项羽与虞姬》、《后唐国主李煜与小周后》。项羽自不必言，生是人杰，死亦鬼雄！李煜在政治上毫无建树，不但失国，而且老婆小周后与他一同降宋后，第三年被宋太宗赵光义看上，并被骗入宫中遭多次侮辱。宋人画《熙陵幸小周后图》就是描述赵光义这段风流债。1127年，靖康之难，金人减宋,赵光义后人的妻女亦被金人凌辱, 真是因果循环，一点不差！ 小周后为了家人，一再隐忍。李煜不是不知道这些，而是无能为力，在传闻里，小周后受辱后常常是破口大骂，觉得自己的夫君无能，此刻李煜除了写词写诗以外，没有别的办法排遣，想到国破家亡，自己的女人也保护不了，在极度压抑苦闷的心境下,于是有这了这首《虞美人》，词中流露出不加掩饰的故国之思，据说是促使宋太宗下令毒死李煜的原因之一。那么，它等于是李煜的催命词了。李煜被毒杀,时年42岁，死状甚惨，小周后悲痛欲绝，不久也随之死去。 李煜亡国后，所写的词凄凉悲壮，意境深远，通俗生动，接近口语，为词史上承前启后的大宗师。被誉为词圣。想到年，除了硬记，没有结合时代的背景去理解，今日反聆听这一段，不禁悲从中来！ 历史没有如果，项羽如果选择了投降，而不死自刎，下场也好不到哪里去。看自己的对手韩信下场就知了！]]></content>

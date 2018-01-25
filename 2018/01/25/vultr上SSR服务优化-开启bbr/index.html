@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="shadowsocks," />
 
 
 
@@ -79,16 +79,22 @@
 
 
 
-<meta name="description" content="要么忙着活，要么忙着死">
-<meta property="og:type" content="website">
-<meta property="og:title" content="奶爸的天空">
-<meta property="og:url" content="http://code.meirenji.info/categories/书评/index.html">
+<meta name="description" content="现在linode已经不提供因GFW原因，造成的ip被锁定之后，而提供免费更换IP的服务了。所以得想替代方案了。vultr与樱花都进入了视线。vultr的购买方便。以后有机会再测试 樱花吧。  什么是BBR? BBR是来自于谷歌的TCP拥塞控制算法，它可以让我们绕过拥塞的流量管道，实现加速。Google 开源了其 TCP BBR 拥塞控制算法，并提交到了 Linux 内核，从 4.9 开始，Lin">
+<meta name="keywords" content="shadowsocks">
+<meta property="og:type" content="article">
+<meta property="og:title" content="vultr上SSR服务优化-开启bbr">
+<meta property="og:url" content="http://code.meirenji.info/2018/01/25/vultr上SSR服务优化-开启bbr/index.html">
 <meta property="og:site_name" content="奶爸的天空">
-<meta property="og:description" content="要么忙着活，要么忙着死">
+<meta property="og:description" content="现在linode已经不提供因GFW原因，造成的ip被锁定之后，而提供免费更换IP的服务了。所以得想替代方案了。vultr与樱花都进入了视线。vultr的购买方便。以后有机会再测试 樱花吧。  什么是BBR? BBR是来自于谷歌的TCP拥塞控制算法，它可以让我们绕过拥塞的流量管道，实现加速。Google 开源了其 TCP BBR 拥塞控制算法，并提交到了 Linux 内核，从 4.9 开始，Lin">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://3.bp.blogspot.com/-Zn4qeqWyWqA/WcHlrl1959I/AAAAAAAAEPE/D9x5-mOfTwghE7v3oMw7fl2GDbfFt6woACLcBGAs/s640/28.jpg">
+<meta property="og:image" content="https://2.bp.blogspot.com/-Up3oEKdrKlQ/WcHWmsLn4mI/AAAAAAAAEOQ/JmuHuzbMFE0ZKVC05McJDi-P9V9uIa6vwCLcBGAs/s640/12.png">
+<meta property="og:image" content="https://3.bp.blogspot.com/-pViuV8OEQCs/WcHXd03jQlI/AAAAAAAAEOY/8lOfUKe7bkY9VA811WBGPB8_lR_Q-o7dgCLcBGAs/s640/13.png">
+<meta property="og:updated_time" content="2018-01-25T08:01:35.313Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="奶爸的天空">
-<meta name="twitter:description" content="要么忙着活，要么忙着死">
+<meta name="twitter:title" content="vultr上SSR服务优化-开启bbr">
+<meta name="twitter:description" content="现在linode已经不提供因GFW原因，造成的ip被锁定之后，而提供免费更换IP的服务了。所以得想替代方案了。vultr与樱花都进入了视线。vultr的购买方便。以后有机会再测试 樱花吧。  什么是BBR? BBR是来自于谷歌的TCP拥塞控制算法，它可以让我们绕过拥塞的流量管道，实现加速。Google 开源了其 TCP BBR 拥塞控制算法，并提交到了 Linux 内核，从 4.9 开始，Lin">
+<meta name="twitter:image" content="https://3.bp.blogspot.com/-Zn4qeqWyWqA/WcHlrl1959I/AAAAAAAAEPE/D9x5-mOfTwghE7v3oMw7fl2GDbfFt6woACLcBGAs/s640/28.jpg">
 
 
 
@@ -118,13 +124,13 @@
 
 
 
-  <link rel="canonical" href="http://code.meirenji.info/categories/书评/"/>
+  <link rel="canonical" href="http://code.meirenji.info/2018/01/25/vultr上SSR服务优化-开启bbr/"/>
 
 
 
 
 
-  <title>分类: 书评 | 奶爸的天空</title>
+  <title>vultr上SSR服务优化-开启bbr | 奶爸的天空</title>
   
 
 
@@ -143,7 +149,7 @@
     
   
 
-  <div class="container sidebar-position-left ">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -271,55 +277,220 @@
           <div id="content" class="content">
             
 
-  
-  
-  
-  <div class="post-block category">
+  <div id="posts" class="posts-expand">
+    
 
-    <div id="posts" class="posts-collapse">
-      <div class="collection-title">
-        <h1>书评<small>分类</small>
-        </h1>
-      </div>
+  
 
-      
-        
+  
+  
+  
 
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://code.meirenji.info/2018/01/25/vultr上SSR服务优化-开启bbr/">
 
-      <h2 class="post-title">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ben wong">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="奶爸的天空">
+    </span>
+
+    
+      <header class="post-header">
+
         
-            <a class="post-title-link" href="/2018/01/15/虞美人/" itemprop="url">
-              
-                <span itemprop="name">虞美人</span>
-              
-            </a>
         
-      </h2>
+          <h1 class="post-title" itemprop="name headline">vultr上SSR服务优化-开启bbr</h1>
+        
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-01-15T13:04:44+09:00"
-              content="2018-01-15" >
-          01-15
-        </time>
-      </div>
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-25T15:00:12+08:00">
+                2018-01-25
+              </time>
+            
 
-    </header>
-  </article>
+            
 
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/科学上网/" itemprop="url" rel="index">
+                    <span itemprop="name">科学上网</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/01/25/vultr上SSR服务优化-开启bbr/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2018/01/25/vultr上SSR服务优化-开启bbr/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>现在linode已经不提供因GFW原因，造成的ip被锁定之后，而提供免费更换IP的服务了。所以得想替代方案了。vultr与樱花都进入了视线。vultr的购买方便。以后有机会再测试<br> 樱花吧。</p>
+</blockquote>
+<h2 id="什么是BBR"><a href="#什么是BBR" class="headerlink" title="什么是BBR?"></a>什么是BBR?</h2><blockquote>
+<p>BBR是来自于谷歌的TCP拥塞控制算法，它可以让我们绕过拥塞的流量管道，实现加速。Google 开源了其 TCP BBR 拥塞控制算法，并提交到了 Linux 内核，从 4.9 开始，Linux 内核已经用上了该算法。根据以往的传统，Google 总是先在自家的生产环境上线运用后，才会将代码开源，此次也不例外。<br>根据实地测试，在部署了最新版内核并开启了 TCP BBR 的机器上，网速甚至可以提升好几个数量级。</p>
+</blockquote>
+<hr>
+<h2 id="什么情况下搭建bbr魔改"><a href="#什么情况下搭建bbr魔改" class="headerlink" title="什么情况下搭建bbr魔改"></a>什么情况下搭建bbr魔改</h2><p>全部需要加速的地方，比如以下几种情况（但不限于）：</p>
+<ol>
+<li>搭建ss，实现科学上网。但是网速较慢，无法观看高清视频</li>
+<li>博客搭建在国外的服务器上，访问速度较慢</li>
+</ol>
+<a id="more"></a>
+<hr>
+<h2 id="升级内核版本"><a href="#升级内核版本" class="headerlink" title="升级内核版本"></a>升级内核版本</h2><p>如果系统是 64 位，则下载 amd64 的 linux-image 中含有 generic 这个 deb 包；<br>如果系统是 32 位，则下载 i386 的 linux-image 中含有 generic 这个 deb 包；<br>安装的命令如下（以最新版的 64 位 4.12.4 举例而已，请替换为下载好的 deb 包）：</p>
+<p>TCP-BBR需要VPS升级内核版本到4.9.0</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">weget http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.12.7/linux-image-4.12.7-041207-generic_4.12.7-041207.201708160856_amd64.deb</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dpkg -i linux-image-4.12.7-041207-generic_4.12.7-041207.201708160856_amd64.deb</span><br></pre></td></tr></table></figure>
+<p>安装完成后，再执行命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/sbin/update-grub</span><br></pre></td></tr></table></figure>
+<p>重启 vps</p>
+<hr>
+<p>ss服务建好后，部分朋友在使用过程中可能会觉得速度不够快，这就需要对服务器作进一步的优化了，即开启bbr（谷歌提供的新的TCP拥塞控制算法，其目的就是要尽量跑满带宽，并且尽量不要有排队的情况）。先上一张优化后油管可顺畅观看2K视频的图片。</p>
+<p><img src="https://3.bp.blogspot.com/-Zn4qeqWyWqA/WcHlrl1959I/AAAAAAAAEPE/D9x5-mOfTwghE7v3oMw7fl2GDbfFt6woACLcBGAs/s640/28.jpg" alt="image"></p>
+<p>确认是否已经开启bbr，如果返回结果中没有显示bbr即表示未开启。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lsmod | grep bbr</span><br></pre></td></tr></table></figure>
+<p> 依次执行下记命令，可每次复制一行后右键粘贴至命令窗口中。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">modprobe tcp_bbr</span><br><span class="line"></span><br><span class="line">echo &quot;tcp_bbr&quot; &gt;&gt; /etc/modules-load.d/modules.conf</span><br><span class="line">echo &quot;net.core.default_qdisc=fq&quot; &gt;&gt; /etc/sysctl.conf</span><br><span class="line">echo &quot;net.ipv4.tcp_congestion_control=bbr&quot; &gt;&gt; /etc/sysctl.conf</span><br><span class="line">sysctl -p</span><br></pre></td></tr></table></figure>
+<p><img src="https://2.bp.blogspot.com/-Up3oEKdrKlQ/WcHWmsLn4mI/AAAAAAAAEOQ/JmuHuzbMFE0ZKVC05McJDi-P9V9uIa6vwCLcBGAs/s640/12.png" alt="image"></p>
+<p>继续输入命令，如果结果都有 bbr, 则证明你的内核已开启 bbr。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sysctl net.ipv4.tcp_available_congestion_control</span><br><span class="line">sysctl net.ipv4.tcp_congestion_control</span><br></pre></td></tr></table></figure>
+<p><img src="https://3.bp.blogspot.com/-pViuV8OEQCs/WcHXd03jQlI/AAAAAAAAEOY/8lOfUKe7bkY9VA811WBGPB8_lR_Q-o7dgCLcBGAs/s640/13.png" alt="image"></p>
+<p> 再输入之前的命令验证一下看看是否已经开启成功，这次有显示bbr字样了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lsmod | grep bbr</span><br></pre></td></tr></table></figure>
+<hr>
+<p>参考文档：</p>
+<p><a href="https://gwokshingcheung.blogspot.com/2017/09/vultrss-bbr.html" target="_blank" rel="noopener">原文引自这里:开启bbr </a></p>
+<p><a href="https://teddysun.com/489.html" target="_blank" rel="noopener">一键安装最新内核并开启 BBR 脚本</a></p>
+<p><a href="https://www.zhihu.in/vultr" target="_blank" rel="noopener">vultr全面教呈</a></p>
+<p><a href="http://blog.csdn.net/zhang_zp2014/article/details/46822263" target="_blank" rel="noopener">几种vps的比较：linode，vultr，樱花</a></p>
+<p><a href="https://servercat.me/20160905-sakura-vps/" target="_blank" rel="noopener">目前能代购到最好的日本VPS</a></p>
 
       
     </div>
+    
+    
+    
 
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/shadowsocks/" rel="tag"># shadowsocks</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/15/虞美人/" rel="next" title="虞美人">
+                <i class="fa fa-chevron-left"></i> 虞美人
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
+  </article>
 
-  
 
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -327,6 +498,20 @@
 
 
           
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
 
         </div>
         
@@ -347,8 +532,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -428,6 +622,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是BBR"><span class="nav-number">1.</span> <span class="nav-text"><a href="#&#x4EC0;&#x4E48;&#x662F;BBR" class="headerlink" title="&#x4EC0;&#x4E48;&#x662F;BBR?"></a>&#x4EC0;&#x4E48;&#x662F;BBR?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#什么情况下搭建bbr魔改"><span class="nav-number">2.</span> <span class="nav-text"><a href="#&#x4EC0;&#x4E48;&#x60C5;&#x51B5;&#x4E0B;&#x642D;&#x5EFA;bbr&#x9B54;&#x6539;" class="headerlink" title="&#x4EC0;&#x4E48;&#x60C5;&#x51B5;&#x4E0B;&#x642D;&#x5EFA;bbr&#x9B54;&#x6539;"></a>&#x4EC0;&#x4E48;&#x60C5;&#x51B5;&#x4E0B;&#x642D;&#x5EFA;bbr&#x9B54;&#x6539;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#升级内核版本"><span class="nav-number">3.</span> <span class="nav-text"><a href="#&#x5347;&#x7EA7;&#x5185;&#x6838;&#x7248;&#x672C;" class="headerlink" title="&#x5347;&#x7EA7;&#x5185;&#x6838;&#x7248;&#x672C;"></a>&#x5347;&#x7EA7;&#x5185;&#x6838;&#x7248;&#x672C;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -568,6 +778,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
 
   
 
@@ -585,6 +799,18 @@
       <script id="dsq-count-scr" src="https://louis90.disqus.com/count.js" async></script>
     
 
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://code.meirenji.info/2018/01/25/vultr上SSR服务优化-开启bbr/';
+          this.page.identifier = '2018/01/25/vultr上SSR服务优化-开启bbr/';
+          this.page.title = 'vultr上SSR服务优化-开启bbr';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://louis90.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
     
 
   
