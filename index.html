@@ -398,21 +398,21 @@
 <p>缺点：不支持tcp、不支持代理、不能从服务端推送路由表、安全性没openvpn好</p>
 </blockquote>
 <p>n2n最大的<strong>优势</strong>在于：</p>
-<ol>
+<ul>
 <li>开源，任何人都可以检查代码，看看是否有猫腻，而hamachi是闭源的，LogMeIn是否会截获密钥不得而知，一旦截获密钥，就可以对流经 hamachi服务器的数据包进行解码。</li>
 <li>n2n的加解密过程由edge node实现，只有两端的用户知道协商好的共享密钥，super node无从知晓。</li>
 <li>灵活性，n2n允许用户在Internet上自行创建super node，也可以利用任何一个公开的super node。</li>
 <li>对于一个VPN而言，主要涉及封装和加解密两个步骤，</li>
 <li>edge node<strong>使用UDP协议进行封装</strong>，目的是为了更好的兼容防火墙的策略，因为很多防火墙禁用了非TCP/UDP协议禁用。加密算法则采用了twofish，好处开源、简便，处理速度快。</li>
-</ol>
-<ol>
+</ul>
+<ul>
 <li><p>为了降低设计难度，n2n利用了tap/tun虚拟网卡，这样做得好处是一方面软件尺寸极小，一方面源码的依赖性极低，可以很容易移植到嵌入式设备中，目前有openwrt的版本，在未来的计划中，还将移植到Android和iPhone中。</p>
 </li>
 <li><p>有NAT和穿越防火墙的功能，即使n2n节点位于私网中，也能够访问，防火墙不再是在IP层的直接沟通和交流的障碍</p>
 </li>
 <li><p>如果两边都是内网，有个公网vps，可以使用ssh端口转发需要的端口给公网vps，再使用vps的ip:port远程使用但是有个缺陷是这始终是服务器中转连接，既然有公网vps，做成是n2n vpn，两边双内网直接连接，速度完爆vps中转，毕竟一个是中转，一个是直连。</p>
 </li>
-</ol>
+</ul>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2018/02/03/N2N组网-实现家里访与公司网络互访-精编版/#more" rel="contents">
