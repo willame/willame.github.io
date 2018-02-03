@@ -79,13 +79,13 @@
 
 
 
-<meta name="description" content="n2n与openvpn对比 N2N可以用公众服务器， 所以可以不用外网IP  不用端口映射, OpenVPN服务器必需要一个外网端口  优点：不需要外网ip、不需要制做证书、设置简单 缺点：不支持tcp、不支持代理、不能从服务端推送路由表、安全性没openvpn好 n2n最大的优势在于：  开源，任何人都可以检查代码，看看是否有猫腻，而hamachi是闭源的，LogMeIn是否会截获密钥不得而知，">
+<meta name="description" content="n2n与openvpn对比 N2N可以用公众服务器， 所以可以不用外网IP  不用端口映射, OpenVPN服务器必需要一个外网端口   优点：不需要外网ip、不需要制做证书、设置简单 缺点：不支持tcp、不支持代理、不能从服务端推送路由表、安全性没openvpn好  n2n最大的优势在于：  开源，任何人都可以检查代码，看看是否有猫腻，而hamachi是闭源的，LogMeIn是否会截获密钥不得而">
 <meta name="keywords" content="n2n">
 <meta property="og:type" content="article">
 <meta property="og:title" content="N2N组网 实现家里访与公司网络互访(精编版)">
 <meta property="og:url" content="http://code.meirenji.info/2018/02/03/N2N组网-实现家里访与公司网络互访-精编版/index.html">
 <meta property="og:site_name" content="奶爸的天空">
-<meta property="og:description" content="n2n与openvpn对比 N2N可以用公众服务器， 所以可以不用外网IP  不用端口映射, OpenVPN服务器必需要一个外网端口  优点：不需要外网ip、不需要制做证书、设置简单 缺点：不支持tcp、不支持代理、不能从服务端推送路由表、安全性没openvpn好 n2n最大的优势在于：  开源，任何人都可以检查代码，看看是否有猫腻，而hamachi是闭源的，LogMeIn是否会截获密钥不得而知，">
+<meta property="og:description" content="n2n与openvpn对比 N2N可以用公众服务器， 所以可以不用外网IP  不用端口映射, OpenVPN服务器必需要一个外网端口   优点：不需要外网ip、不需要制做证书、设置简单 缺点：不支持tcp、不支持代理、不能从服务端推送路由表、安全性没openvpn好  n2n最大的优势在于：  开源，任何人都可以检查代码，看看是否有猫腻，而hamachi是闭源的，LogMeIn是否会截获密钥不得而">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://i.imgur.com/81CudtZ.png">
 <meta property="og:image" content="https://i.imgur.com/Pcyzwpt.png">
@@ -99,15 +99,25 @@
 <meta property="og:image" content="https://i.imgur.com/Rgx61kw.jpg">
 <meta property="og:image" content="https://i.imgur.com/DMOUsNB.jpg">
 <meta property="og:image" content="https://i.imgur.com/KGUWmlt.jpg">
+<meta property="og:image" content="https://i.imgur.com/GqN5gpg.jpg">
 <meta property="og:image" content="https://i.imgur.com/hHX0PdL.jpg">
 <meta property="og:image" content="https://i.imgur.com/KGUWmlt.jpg">
 <meta property="og:image" content="https://i.imgur.com/nUF96q7.jpg">
+<meta property="og:image" content="https://i.imgur.com/Yhnh9pc.jpg">
+<meta property="og:image" content="https://i.imgur.com/9kvzzyw.jpg">
+<meta property="og:image" content="https://i.imgur.com/GqN5gpg.jpg">
+<meta property="og:image" content="https://i.imgur.com/Yhnh9pc.jpg">
+<meta property="og:image" content="https://i.imgur.com/Kb08SGL.jpg">
 <meta property="og:image" content="https://i.imgur.com/ezxs0JZ.jpg">
-<meta property="og:image" content="https://i.imgur.com/DMOUsNB.jpg">
-<meta property="og:updated_time" content="2018-02-03T11:45:52.941Z">
+<meta property="og:image" content="https://i.imgur.com/aX3NTM9.jpg">
+<meta property="og:image" content="https://i.imgur.com/lacb1Oa.jpg">
+<meta property="og:image" content="https://i.imgur.com/VbCI1S7.png">
+<meta property="og:image" content="https://i.imgur.com/VbCI1S7.png">
+<meta property="og:image" content="https://i.imgur.com/w2bFdBJ.png">
+<meta property="og:updated_time" content="2018-02-03T12:52:46.952Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="N2N组网 实现家里访与公司网络互访(精编版)">
-<meta name="twitter:description" content="n2n与openvpn对比 N2N可以用公众服务器， 所以可以不用外网IP  不用端口映射, OpenVPN服务器必需要一个外网端口  优点：不需要外网ip、不需要制做证书、设置简单 缺点：不支持tcp、不支持代理、不能从服务端推送路由表、安全性没openvpn好 n2n最大的优势在于：  开源，任何人都可以检查代码，看看是否有猫腻，而hamachi是闭源的，LogMeIn是否会截获密钥不得而知，">
+<meta name="twitter:description" content="n2n与openvpn对比 N2N可以用公众服务器， 所以可以不用外网IP  不用端口映射, OpenVPN服务器必需要一个外网端口   优点：不需要外网ip、不需要制做证书、设置简单 缺点：不支持tcp、不支持代理、不能从服务端推送路由表、安全性没openvpn好  n2n最大的优势在于：  开源，任何人都可以检查代码，看看是否有猫腻，而hamachi是闭源的，LogMeIn是否会截获密钥不得而">
 <meta name="twitter:image" content="https://i.imgur.com/81CudtZ.png">
 
 
@@ -409,19 +419,25 @@
 <li>N2N可以用公众服务器， 所以可以不用外网IP  不用端口映射,</li>
 <li>OpenVPN服务器必需要一个外网端口</li>
 </ul>
+<blockquote>
 <p>优点：不需要外网ip、不需要制做证书、设置简单</p>
 <p>缺点：不支持tcp、不支持代理、不能从服务端推送路由表、安全性没openvpn好</p>
-<p>n2n最大的优势在于：</p>
+</blockquote>
+<p>n2n最大的<strong>优势</strong>在于：</p>
 <ol>
 <li>开源，任何人都可以检查代码，看看是否有猫腻，而hamachi是闭源的，LogMeIn是否会截获密钥不得而知，一旦截获密钥，就可以对流经 hamachi服务器的数据包进行解码。</li>
 <li>n2n的加解密过程由edge node实现，只有两端的用户知道协商好的共享密钥，super node无从知晓。</li>
 <li>灵活性，n2n允许用户在Internet上自行创建super node，也可以利用任何一个公开的super node。</li>
-<li>对于一个VPN而言，主要涉及封装和加解密两个步骤，edge node<strong>使用UDP协议进行封装</strong>，目的是为了更好的兼容防火墙的策略，因为很多防火墙禁用了非TCP/UDP协议禁用。加密算法则采用了twofish，好处开源、简便，处理速度快。</li>
+<li>对于一个VPN而言，主要涉及封装和加解密两个步骤，</li>
+<li>edge node<strong>使用UDP协议进行封装</strong>，目的是为了更好的兼容防火墙的策略，因为很多防火墙禁用了非TCP/UDP协议禁用。加密算法则采用了twofish，好处开源、简便，处理速度快。</li>
 </ol>
 <ol>
-<li>为了降低设计难度，n2n利用了tap/tun虚拟网卡，这样做得好处是一方面软件尺寸极小，一方面源码的依赖性极低，可以很容易移植到嵌入式设备中，目前有openwrt的版本，在未来的计划中，还将移植到Android和iPhone中。</li>
-<li>有NAT和穿越防火墙的功能，即使n2n节点位于私网中，也能够访问，防火墙不再是在IP层的直接沟通和交流的障碍</li>
-<li>如果两边都是内网，有个公网vps，可以使用ssh端口转发需要的端口给公网vps，再使用vps的ip:port远程使用但是有个缺陷是这始终是服务器中转连接，既然有公网vps，做成是n2n vpn，两边双内网直接连接，速度完爆vps中转，毕竟一个是中转，一个是直连</li>
+<li><p>为了降低设计难度，n2n利用了tap/tun虚拟网卡，这样做得好处是一方面软件尺寸极小，一方面源码的依赖性极低，可以很容易移植到嵌入式设备中，目前有openwrt的版本，在未来的计划中，还将移植到Android和iPhone中。</p>
+</li>
+<li><p>有NAT和穿越防火墙的功能，即使n2n节点位于私网中，也能够访问，防火墙不再是在IP层的直接沟通和交流的障碍</p>
+</li>
+<li><p>如果两边都是内网，有个公网vps，可以使用ssh端口转发需要的端口给公网vps，再使用vps的ip:port远程使用但是有个缺陷是这始终是服务器中转连接，既然有公网vps，做成是n2n vpn，两边双内网直接连接，速度完爆vps中转，毕竟一个是中转，一个是直连。</p>
+</li>
 </ol>
 <a id="more"></a>
 <ol>
@@ -434,7 +450,8 @@
 </li>
 <li><p>n2n国内的服务器速度较好，可以自己租用vps来搭建，可用的公共IP太少，好多公共IP都失效，要是大家能够一起搭建一服务器，那真是比较划算。</p>
 </li>
-<li>n2n是一个基于P2P协议的加密的二层专用网。加密使用开放协议部署在边缘节点，它使用用户定义的加密钥匙，由你自己控制安。各个n2n用户可以同时属于多个网络（或者社区）。它拥有在反向通信方向（如，从外部到内部）穿越NAT和防火墙的能力，因此可以到达n2n节点，即使运行在一个专用网中。防火墙不再是IP层面掌控通信的障碍。n2n网络并不意味着它是独立的，它可以在n2n和非n2n网络间路由通信。</li>
+<li><p>n2n是一个基于P2P协议的加密的二层专用网。加密使用开放协议部署在边缘节点，它使用用户定义的加密钥匙，由你自己控制安。各个n2n用户可以同时属于多个网络（或者社区）。它拥有在反向通信方向（如，从外部到内部）穿越NAT和防火墙的能力，因此可以到达n2n节点，即使运行在一个专用网中。防火墙不再是IP层面掌控通信的障碍。n2n网络并不意味着它是独立的，它可以在n2n和非n2n网络间路由通信。</p>
+</li>
 </ol>
 <hr>
 <h2 id="N2N的实现具有两个部分："><a href="#N2N的实现具有两个部分：" class="headerlink" title="N2N的实现具有两个部分："></a>N2N的实现具有两个部分：</h2><p>supernode中心节点和edge边界节点， 边界节点通过中心节点找到对方，边界节点之间建立通信后，可以直接断开中心节点，实现点对点的加密通信。</p>
@@ -444,21 +461,28 @@
 <hr>
 <p>点对点 VPN（又称 P2P VPN）是另一个 VPN 模型，它能解决传统的基于服务器-客户端模型的 VPN 存在的这些问题。</p>
 <p>一个 P2P VPN 中不再有一个中心的 VPN 服务器，任何拥有一个公开 IP 地址的节点都能引导其他节点进入 VPN。</p>
-<p>当连接到一个 VPN 之后，每一个节点都能与 VPN 中的任何其他节点直接通信，而不需要经过一个中间的服务器节点。<br>当然任何节点出现故障时，VPN 中的剩余节点不会受到影响。节点中的延迟、带宽以及 VPN 扩展性在这样的设定中都有自然的提升，当你想要使用 VPN 进行多人游戏或者与许多朋友分享文件时，这都是十分理想的。</p>
-<p>开源的 P2P VPN 实现已经有几个了，比如 Tinc、peerVPN，以及 n2n。在本教程中，我将会展示如何在 Linux 上用 n2n 配置点对点 VPN。</p>
-<p>n2n 是一个开源（GPLv3）软件，它允许你在用户间构建一个加密的 2/3 层点对点 VPN。由 n2n 构建的 VPN 是“对 NAT 友好”的，也就是说，不同 NAT 路由器后方的两个用户可以通过 VPN 直接与对方通信。n2n 支持对称的 NAT 类型，这是 NAT 中限制最多的一种。因此，<strong>n2n 的 VPN 数据流量是用 UDP 封装的</strong>。<br>较别的系统，n2n 实现的是终端到终端的加密通讯（端对端）</p>
+<p>当连接到一个 VPN 之后，每一个节点都能与 VPN 中的任何其他节点直接通信，而不需要经过一个中间的服务器节点。</p>
+<p>当然任何节点出现故障时，VPN 中的剩余节点不会受到影响。节点中的延迟、带宽以及 VPN 扩展性在这样的设定中都有自然的提升，当你想要使用 VPN 进行多人游戏或者与许多朋友分享文件时，这都是十分理想的。</p>
+<p>开源的 P2P VPN 实现已经有几个了，比如 Tinc、peerVPN，以及 n2n。</p>
+<p>在本教程中，我将会展示如何在 Linux 上用 n2n 配置点对点 VPN。</p>
+<p>n2n 是一个开源（GPLv3）软件，它允许你在用户间构建一个加密的 2/3 层点对点 VPN。由 n2n 构建的 VPN 是“对 NAT 友好”的，也就是说，不同 NAT 路由器后方的两个用户可以通过 VPN 直接与对方通信。n2n 支持对称的 NAT 类型，这是 NAT 中限制最多的一种。因此，<strong>n2n 的 VPN 数据流量是用 UDP 封装的</strong>。<br>较别的系统，n2n 实现的是终端到终端的加密通讯（端对端）.</p>
+<blockquote>
 <p>假如想实现远程访问，访问家里的路由、电脑，等等设备，最简单的方式就是采用端口映射（端口转发），但是很多情况下我们没有路由的权限，这样根本就没有办法访问私网，因为受网关的保护。</p>
+</blockquote>
 <p>本想通过sock请求来发送的，但是实现起来必须是内网主动发起，不能外网主动发起，可以保持长连接来通信，但是还是有很多的局限性。放弃采用。<br>考虑过VPN，但是VPN配置还是比较复杂，不能做到随意使用，放弃。</p>
 <p>这时N2N进入了我的视野，其实就是P2P协议，及点对点协议，实现UDP打洞。</p>
 <p>n2n 是个很好玩的东西，假如你在家里面也有几台类似 nas</p>
 <p>之类的东西，你在学校也有路由器之类的东西，那么你就可以将他们组成一个内网了，无论在哪里都可以访问到这几台设备了。只需要你在每一天设备上都设置好 edge</p>
 <p>，部署在同一个 Supernode 上，并且设置相同的密钥和community就好了。</p>
 <p>于我将要把一台树莓派放在学校内网挂校内的 PT ，并且这台树莓派又是通过路由器接入校园网的，那这样问题就来了。</p>
+<blockquote>
 <p>假如我不在宿舍，但是我又想连上我的树莓派看看电影下载完了没有，那么我是没有办法连接上我的树莓派的。</p>
 <p>如果用路由器进行端口映射的话，那么我必须在校园网的网络环境之中，并且我得知道我路由器的 IP ，由于校园网使用 DHCP 动态获取IP地址，因此我很难知道我路由器的IP。</p>
 <p>如果我在校外的话，那么就基本上没有什么方法可以访问到我的树莓派了。</p>
+</blockquote>
 <p>经过一轮折腾，我发现了 n2n 这个工具<br>n2n 是一个开放源代码的2层跨越3层的VPN程序，该程序利用了点对点的架构来处理网络间的成员关系和路由。</p>
-<p>不像大多数 VPN 程序那样， n2n 可以连接位于 NAT 路由器后面的计算机。这些连接在双方计算机都能连接的第三方计算机的帮助下建立起来。这台第三方的计算机，我们称之为supernode，他可以为 NAT 的计算机之间传输信息。<br>这是一个免费的开源软件，以GNU General Public License v3协议开源。</p>
+<p>不像大多数 VPN 程序那样， n2n 可以连接位于 NAT 路由器后面的计算机。这些连接在双方计算机都能连接的第三方计算机的帮助下建立起来。这台第三方的计算机，我们称之为supernode，他可以为 NAT 的计算机之间传输信息。</p>
+<p>这是一个免费的开源软件，以GNU General Public License v3协议开源。</p>
 <hr>
 <p>NAT(Network Address Translation) 模式（对外部网络单向可见）</p>
 <p>外部网络对虚拟系统的网卡是可见的；虚拟系统的网卡对外部网络是不可见的。换句话说，NAT 模式可以起到【单向】防火墙的效果。这种模式用得最多。</p>
@@ -516,7 +540,9 @@
 <ol>
 <li>网络设置</li>
 </ol>
-<p>添加一个接口  n2n<br>公司openwrt路由器N2N设置 注意 以太网适配器 “edge0”</p>
+<p>添加一个接口  n2n</p>
+<p><img src="https://i.imgur.com/GqN5gpg.jpg" alt="image"></p>
+<p>公司openwrt路由器N2N设置 注意 以太网适配器 “edge0”</p>
 <p><img src="https://i.imgur.com/hHX0PdL.jpg" alt="image"></p>
 <p><img src="https://i.imgur.com/KGUWmlt.jpg" alt="image"></p>
 <p><img src="https://i.imgur.com/nUF96q7.jpg" alt="image"></p>
@@ -526,38 +552,74 @@
 <p>如果没有防火墙这一步的设置的话，会出现一个问题。能远程访问路由，就是通过自己设置的n2n ip 10.30.168.1网关访问路由，但是不能访问10.68.0.0 网段的ip，但是ping不通，网关也ping不通？</p>
 <p>原因及解决方法：虚拟IP与真实IP是独立的，互相不能访问的，需要设置iptables.</p>
 <p>添加zone　n2n</p>
-<p><img src="https://i.imgur.com/ezxs0JZ.jpg" alt="image"></p>
+<p><img src="https://i.imgur.com/Yhnh9pc.jpg" alt="image"></p>
 <hr>
-<p>第二部分<br>4.家里openwrt路由器N2N设置</p>
-<p><img src="https://i.imgur.com/DMOUsNB.jpg" alt="image"></p>
+<h2 id="第二部分"><a href="#第二部分" class="headerlink" title="第二部分"></a>第二部分</h2><ol>
+<li>家里openwrt路由器N2N设置</li>
+</ol>
+<p><img src="https://i.imgur.com/9kvzzyw.jpg" alt="image"></p>
 <p>分组名、密钥随便填,但要与公司的n2n设置一样</p>
-<p>5.网络设置<br>添加一个接口 n2n</p>
-<p>6.防火墙设置<br>添加zone　n2n</p>
+<ol>
+<li>网络设置 添加一个接口 n2n</li>
+</ol>
+<p><img src="https://i.imgur.com/GqN5gpg.jpg" alt="image"></p>
+<ol>
+<li>防火墙设置 添加zone　n2n</li>
+</ol>
+<p><img src="https://i.imgur.com/Yhnh9pc.jpg" alt="image"></p>
 <hr>
 <p>7.添加静态路由表让172.25.0.0走10.0.3.1网关(公司)</p>
 <p>静态路由表设置</p>
+<p><img src="https://i.imgur.com/Kb08SGL.jpg" alt="image"></p>
+<p><img src="https://i.imgur.com/ezxs0JZ.jpg" alt="image"></p>
+<p><img src="https://i.imgur.com/aX3NTM9.jpg" alt="image"></p>
 <p>测试</p>
+<p><img src="https://i.imgur.com/lacb1Oa.jpg" alt="image"></p>
 <p>我网络中有人在看电影所以延时高，平是在25~40ms之间</p>
-<p>如果要双向访问(从公司访问家里192.168.1.0网段)，<br>就在公司openwrt路由上添加静态路由 (公司openwrt上面添加的静态路由，要跟填家里openwrt上面的网段还有分配的虚拟n2nip)</p>
+<p>如果要双向访问(从公司访问家里192.168.1.0网段)，</p>
+<p>就在公司openwrt路由上添加静态路由 (公司openwrt上面添加的静态路由，要跟填家里openwrt上面的网段还有分配的虚拟n2nip)</p>
+<p><img src="https://i.imgur.com/VbCI1S7.png" alt="image"></p>
 <p>反过来，如果要访问在家里访问公司的电脑，则要在家里的路由器上面添加静态路由值。而且值要是公司的网段，IPv4-网关要添分配给公司的虚拟n2n ip.</p>
+<p><img src="https://i.imgur.com/VbCI1S7.png" alt="image"></p>
 <p>当双方都能ping 之后，客户端也必须要开启，并且让客户端上面n2n ip与路由器上面的保持一致！</p>
-<p>接口:n2n<br>对象:192.168.1.0<br>子网:255.255.255.0<br>网关:192.168.3.2</p>
+<p><img src="https://i.imgur.com/w2bFdBJ.png" alt="image"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">接口:n2n</span><br><span class="line">对象:192.168.1.0</span><br><span class="line">子网:255.255.255.0</span><br><span class="line">网关:192.168.3.2</span><br></pre></td></tr></table></figure>
 <hr>
-<p>原文链接：<a href="http://www.openwrt.org.cn/bbs/thread-7023-1-1.html" target="_blank" rel="noopener">http://www.openwrt.org.cn/bbs/thread-7023-1-1.html</a><br>原文名称：N2N VPN设置图文教程<br>发表时间：2011-12-13 20:23:02<br>测试情况：这是我照着此教程进行的测试情况图（本地以无线连接路由器；n2n拨号的IP是10.0.0.X）。远程主机是某openwrt系统，本地路由器是潘多拉 1024 版本（也是openwrt系统）。<br>需要注意的是：1、作者使用的超级节点已经失效，请自己更改一个有效的超级节点；<br>2、设置过程中也许需要重启路由器，以使各步生效。</p>
+<p>原文链接：<a href="http://www.openwrt.org.cn/bbs/thread-7023-1-1.html" target="_blank" rel="noopener">这里</a></p>
+<p>原文名称：N2N VPN设置图文教程</p>
+<p>测试情况：这是我照着此教程进行的测试情况图（本地以无线连接路由器；n2n拨号的IP是10.0.0.X）。远程主机是某openwrt系统，本地路由器是潘多拉 1024 版本（也是openwrt系统）。</p>
+<p>需要注意的是：</p>
+<ol>
+<li><p>作者使用的超级节点已经失效，请自己更改一个有效的超级节点；</p>
+</li>
+<li><p>设置过程中也许需要重启路由器，以使各步生效。</p>
+</li>
+</ol>
 <p>无法访问目标主机。</p>
 <p>注意事项</p>
-<p>重启（或关机重新开机）本地路由器后，与远程的局域网就断开了，解决办法，<br>1、进入管理页面的“网络-接口”，将n2n网络重新连接，<br>2、在 etc/rc.local 中添加如下代码（需对应自己的网络进行对应的修改）即可开机自动连接上远程的局域网。<br>killall -9 edge &amp;<br>sleep 2<br>edge -d n2n -a 10.10.10.2 -c test -k password -l 88.86.108.50:82 -M 1300 -r &amp;<br>sleep 13<br>route add -net 192.168.1.0/24 gw 10.10.10.1 &amp;<br>iptables -t nat -A POSTROUTING -j MASQUERADE &amp;</p>
-<p>原文在这里</p>
+<p>重启（或关机重新开机）本地路由器后，与远程的局域网就断开了，解决办法.</p>
+<ol>
+<li><p>进入管理页面的“网络-接口”，将n2n网络重新连接，</p>
+</li>
+<li><p>在 etc/rc.local 中添加如下代码（需对应自己的网络进行对应的修改）即可开机自动连接上远程的局域网。</p>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">killall -9 edge &amp;</span><br><span class="line">sleep 2</span><br><span class="line">edge -d n2n -a 10.10.10.2 -c test -k password -l 88.86.108.50:82 -M 1300 -r &amp;</span><br><span class="line">sleep 13</span><br><span class="line">route add -net 192.168.1.0/24 gw 10.10.10.1 &amp;</span><br><span class="line">iptables -t nat -A POSTROUTING -j MASQUERADE &amp;</span><br></pre></td></tr></table></figure>
+<hr>
+<p>参考原文在这里</p>
 <p>1.不要用同一个局域 网内的机器 试。同城 两个 局域网内机器 ping 4ms mtu 设置为1300 下载速度可以达到 80k/s ，基本跑满 1M带宽</p>
-<p>N2N(vpn)　Edge node（边界节点）与supernode（局端交换中心节点）配置手册</p>
-<p>n2n内网穿透神器<br>树莓派通过 n2n 实现内网穿透</p>
-<p>有玩N2N vpn的吗？就差一步成功了 </p>
-<p>N2N VPN设置图文教程</p>
-<p>openwrt N2N VPN应用 (实现在家访问公司内网)</p>
-<p>n2n内网穿透神器(一条命令实现穿透)(linux,安卓,win,openwrt全介绍)</p>
-<p>通过OpenWrt路由器和OpenVPN实现两地局域网互联</p>
-<p>在内网组建n2n vpn 远程管理openwrt ssh远程控制</p>
-<p>超级supernode资源共享：N2N VPN 超级节点共享<br>用n2n在Linux上配置一个非常实用免费的VPN解决方案<br>参考文档：n2n搭建手记-1-V1<br>参考文档：n2n搭建手记-2-V2</p>
+<p><a href="http://itoedr.blog.163.com/blog/static/1202842972013101592438403/" target="_blank" rel="noopener">N2N(vpn)　Edge node（边界节点）与supernode（局端交换中心节点）配置手册</a></p>
+<p><a href="https://www.phpbulo.com/archives/655.html" target="_blank" rel="noopener">n2n内网穿透神器</a></p>
+<p><a href="https://imlonghao.com/21.html" target="_blank" rel="noopener">树莓派通过 n2n 实现内网穿透</a></p>
+<p><a href="http://www.right.com.cn/forum/thread-115546-1-1.html" target="_blank" rel="noopener">有玩N2N vpn的吗？就差一步成功了 </a></p>
+<p><a href="www.openwrt.org.cn/bbs/forum.php?mod=viewthread&amp;tid=7023">N2N VPN设置图文教程</a></p>
+<p><a href="www.openwrt.org.cn/bbs/forum.php?mod=viewthread&amp;tid=3495">openwrt N2N VPN应用</a></p>
+<p><a href="http://blog.csdn.net/lunaw/article/details/50426873" target="_blank" rel="noopener">n2n内网穿透神器</a></p>
+<p><a href="blog.ltns.info/linux/connect_two_home_networks_using_openvpn_and_openwrt/">通过OpenWrt路由器和OpenVPN实现两地局域网互联</a></p>
+<p><a href="http://www.right.com.cn/forum/thread-148272-1-1.html" target="_blank" rel="noopener">在内网组建n2n vpn 远程管理openwrt ssh远程控制</a></p>
+<p><a href="www.lucktu.com/archives/749.html">超级supernode资源共享：N2N VPN 超级节点共享</a></p>
+<p><a href="http://os.51cto.com/art/201501/463248.htm" target="_blank" rel="noopener">用n2n在Linux上配置一个非常实用免费的VPN解决方案</a></p>
+<p>参考文档：<a href="http://www.cnblogs.com/mousean/p/6006597.html" target="_blank" rel="noopener">n2n搭建手记-1-V1</a><br>参考文档：<a href="http://www.cnblogs.com/mousean/p/6007036.html" target="_blank" rel="noopener">n2n搭建手记-2-V2</a></p>
 
       
     </div>
@@ -758,7 +820,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#n2n与openvpn对比"><span class="nav-number">1.</span> <span class="nav-text"><a href="#n2n&#x4E0E;openvpn&#x5BF9;&#x6BD4;" class="headerlink" title="n2n&#x4E0E;openvpn&#x5BF9;&#x6BD4;"></a>n2n&#x4E0E;openvpn&#x5BF9;&#x6BD4;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#N2N的实现具有两个部分："><span class="nav-number">2.</span> <span class="nav-text"><a href="#N2N&#x7684;&#x5B9E;&#x73B0;&#x5177;&#x6709;&#x4E24;&#x4E2A;&#x90E8;&#x5206;&#xFF1A;" class="headerlink" title="N2N&#x7684;&#x5B9E;&#x73B0;&#x5177;&#x6709;&#x4E24;&#x4E2A;&#x90E8;&#x5206;&#xFF1A;"></a>N2N&#x7684;&#x5B9E;&#x73B0;&#x5177;&#x6709;&#x4E24;&#x4E2A;&#x90E8;&#x5206;&#xFF1A;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第一部分：服务端即supernode端："><span class="nav-number">3.</span> <span class="nav-text"><a href="#&#x7B2C;&#x4E00;&#x90E8;&#x5206;&#xFF1A;&#x670D;&#x52A1;&#x7AEF;&#x5373;supernode&#x7AEF;&#xFF1A;" class="headerlink" title="&#x7B2C;&#x4E00;&#x90E8;&#x5206;&#xFF1A;&#x670D;&#x52A1;&#x7AEF;&#x5373;supernode&#x7AEF;&#xFF1A;"></a>&#x7B2C;&#x4E00;&#x90E8;&#x5206;&#xFF1A;&#x670D;&#x52A1;&#x7AEF;&#x5373;supernode&#x7AEF;&#xFF1A;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-配置Android的N2N客户端"><span class="nav-number">4.</span> <span class="nav-text"><a href="#3-&#x914D;&#x7F6E;Android&#x7684;N2N&#x5BA2;&#x6237;&#x7AEF;" class="headerlink" title="3.&#x914D;&#x7F6E;Android&#x7684;N2N&#x5BA2;&#x6237;&#x7AEF;"></a>3.&#x914D;&#x7F6E;Android&#x7684;N2N&#x5BA2;&#x6237;&#x7AEF;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二部分：Edge段"><span class="nav-number">5.</span> <span class="nav-text"><a href="#&#x7B2C;&#x4E8C;&#x90E8;&#x5206;&#xFF1A;Edge&#x6BB5;" class="headerlink" title="&#x7B2C;&#x4E8C;&#x90E8;&#x5206;&#xFF1A;Edge&#x6BB5;"></a>&#x7B2C;&#x4E8C;&#x90E8;&#x5206;&#xFF1A;Edge&#x6BB5;</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#n2n与openvpn对比"><span class="nav-number">1.</span> <span class="nav-text"><a href="#n2n&#x4E0E;openvpn&#x5BF9;&#x6BD4;" class="headerlink" title="n2n&#x4E0E;openvpn&#x5BF9;&#x6BD4;"></a>n2n&#x4E0E;openvpn&#x5BF9;&#x6BD4;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#N2N的实现具有两个部分："><span class="nav-number">2.</span> <span class="nav-text"><a href="#N2N&#x7684;&#x5B9E;&#x73B0;&#x5177;&#x6709;&#x4E24;&#x4E2A;&#x90E8;&#x5206;&#xFF1A;" class="headerlink" title="N2N&#x7684;&#x5B9E;&#x73B0;&#x5177;&#x6709;&#x4E24;&#x4E2A;&#x90E8;&#x5206;&#xFF1A;"></a>N2N&#x7684;&#x5B9E;&#x73B0;&#x5177;&#x6709;&#x4E24;&#x4E2A;&#x90E8;&#x5206;&#xFF1A;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第一部分：服务端即supernode端："><span class="nav-number">3.</span> <span class="nav-text"><a href="#&#x7B2C;&#x4E00;&#x90E8;&#x5206;&#xFF1A;&#x670D;&#x52A1;&#x7AEF;&#x5373;supernode&#x7AEF;&#xFF1A;" class="headerlink" title="&#x7B2C;&#x4E00;&#x90E8;&#x5206;&#xFF1A;&#x670D;&#x52A1;&#x7AEF;&#x5373;supernode&#x7AEF;&#xFF1A;"></a>&#x7B2C;&#x4E00;&#x90E8;&#x5206;&#xFF1A;&#x670D;&#x52A1;&#x7AEF;&#x5373;supernode&#x7AEF;&#xFF1A;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-配置Android的N2N客户端"><span class="nav-number">4.</span> <span class="nav-text"><a href="#3-&#x914D;&#x7F6E;Android&#x7684;N2N&#x5BA2;&#x6237;&#x7AEF;" class="headerlink" title="3.&#x914D;&#x7F6E;Android&#x7684;N2N&#x5BA2;&#x6237;&#x7AEF;"></a>3.&#x914D;&#x7F6E;Android&#x7684;N2N&#x5BA2;&#x6237;&#x7AEF;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二部分：Edge段"><span class="nav-number">5.</span> <span class="nav-text"><a href="#&#x7B2C;&#x4E8C;&#x90E8;&#x5206;&#xFF1A;Edge&#x6BB5;" class="headerlink" title="&#x7B2C;&#x4E8C;&#x90E8;&#x5206;&#xFF1A;Edge&#x6BB5;"></a>&#x7B2C;&#x4E8C;&#x90E8;&#x5206;&#xFF1A;Edge&#x6BB5;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二部分"><span class="nav-number">6.</span> <span class="nav-text"><a href="#&#x7B2C;&#x4E8C;&#x90E8;&#x5206;" class="headerlink" title="&#x7B2C;&#x4E8C;&#x90E8;&#x5206;"></a>&#x7B2C;&#x4E8C;&#x90E8;&#x5206;</span></a></li></ol></div>
             
 
           </div>
