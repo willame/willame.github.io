@@ -286,6 +286,174 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://code.meirenji.info/2018/02/04/远程ssh-session-的管理工具/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ben wong">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="奶爸的天空">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/02/04/远程ssh-session-的管理工具/" itemprop="url">远程ssh session 的管理工具</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-04T20:50:52+09:00">
+                2018-02-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/善用佳软/" itemprop="url" rel="index">
+                    <span itemprop="name">善用佳软</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/02/04/远程ssh-session-的管理工具/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2018/02/04/远程ssh-session-的管理工具/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h3 id="tmux架构图："><a href="#tmux架构图：" class="headerlink" title="tmux架构图："></a>tmux架构图：</h3><p><img src="http://images.cnblogs.com/cnblogs_com/itech/linux/tmux.png" alt="image"></p>
+<h2 id="为什么使用分屏工具"><a href="#为什么使用分屏工具" class="headerlink" title="为什么使用分屏工具"></a>为什么使用分屏工具</h2><p>在 C、C++ 开发过程中分屏是一项非常提高效率的功能，因为我们时常需要一边写代码 一边编译、测试。在脱离 IDE 的时代，通常我们需要开多个终端：一个终端编辑文件、 一个终端编译运行程序、一个终端查看相关的 man 文档…。多个终端管理起来其实是 非常不便的，因为你需要不停的在各个终端之间切换。终端分屏工具是解决这个问题 的绝佳办法，它可以把一个终端分成多个窗口，把所有需要做的事情放到一个终端里面， 让你不用再耗费大量的时间在不同的窗口之间切换。</p>
+<h2 id="工作中的痛点"><a href="#工作中的痛点" class="headerlink" title="工作中的痛点"></a>工作中的痛点</h2><p>在使用SSH的环境下，避免网络不稳定，导致工作现场的丢失。想象以下场景， 你在执行一条命令的过程中，由于网络不稳定，SSH连接断开了。这个时候，你就不知道之前 的那条命令是否执行成功。如果此时你打开了很多文件，进入了较深层次的目录，由于网络 不稳定，SSH连接断开。重新连接以后，你又不得不重新打开那些文件，进入那个深层次的 目录。如果使用了tmux，重新连接以后，就可以直接回到原来的工作环境，不但提高了工作 效率，还降低了风险，增加了安全性。</p>
+<h2 id="What-is-a-terminal-multiplexer"><a href="#What-is-a-terminal-multiplexer" class="headerlink" title="What is a terminal multiplexer?"></a>What is a terminal multiplexer?</h2><p>It lets you switch easily between several programs in one terminal, detach them (they keep running in the background) and reattach them to a different terminal.</p>
+<h2 id="工作场景"><a href="#工作场景" class="headerlink" title="工作场景"></a>工作场景</h2><p>screen/tmux 是远程ssh session的管理工具。</p>
+<p>可以在server端帮你保存工作现场和恢复工作现场。</p>
+<p>最典型的应用场景就是，你每天下班关机器的时候，先保存现场(session)。</p>
+<p>然后第二天上班的时候再登录上去恢复现场(session) ，可以一下子就进入到之前的工作状态，</p>
+<p>比如当时正使用vim编写代码编写到第N行的状态。</p>
+<h3 id="为什么使用tmux："><a href="#为什么使用tmux：" class="headerlink" title="为什么使用tmux："></a>为什么使用tmux：</h3><p>tmux比screen有更多的功能，能够保持你的工作环境连续性。例如tmux解决如下的问题：</p>
+<p>1）下班后，你需要断开ssh或关闭电脑，你的ssh连接将丢失；</p>
+<p>2）在公司打开的ssh，在家里也需要访问</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/02/04/远程ssh-session-的管理工具/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://code.meirenji.info/2018/02/03/N2N组网-实现家里访与公司网络互访-精编版/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1782,167 +1950,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://code.meirenji.info/2017/12/17/inotify-rsync实现数据实时同步/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="ben wong">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="奶爸的天空">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/12/17/inotify-rsync实现数据实时同步/" itemprop="url">inotify+rsync实现数据实时同步</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-17T17:06:30+09:00">
-                2017-12-17
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/安全运维/" itemprop="url" rel="index">
-                    <span itemprop="name">安全运维</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2017/12/17/inotify-rsync实现数据实时同步/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="2017/12/17/inotify-rsync实现数据实时同步/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="数据实时同步介绍"><a href="#数据实时同步介绍" class="headerlink" title="数据实时同步介绍"></a>数据实时同步介绍</h2><h3 id="什么是实时同步：如何实现实时同步"><a href="#什么是实时同步：如何实现实时同步" class="headerlink" title="什么是实时同步：如何实现实时同步"></a>什么是实时同步：如何实现实时同步</h3><p>A. 要利用监控服务（inotify），监控同步数据服务器目录中信息的变化</p>
-<p>B. 发现目录中数据产生变化，就利用rsync服务推送到备份服务器上</p>
-<h3 id="实现实时同步的方法"><a href="#实现实时同步的方法" class="headerlink" title="实现实时同步的方法"></a>实现实时同步的方法</h3><p>inotify+rsync 方式实现数据同步</p>
-<p>sersync 方式实现实时数据同步</p>
-<h3 id="实时同步原理介绍"><a href="#实时同步原理介绍" class="headerlink" title="实时同步原理介绍"></a>实时同步原理介绍</h3><p><img src="https://i.imgur.com/eKIJeFK.jpg" alt="image"></p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/12/17/inotify-rsync实现数据实时同步/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1997,7 +2004,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">22</span>
+                  <span class="site-state-item-count">23</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2019,7 +2026,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-count">14</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
