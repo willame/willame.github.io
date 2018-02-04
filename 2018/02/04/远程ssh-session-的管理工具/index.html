@@ -79,22 +79,21 @@
 
 
 
-<meta name="description" content="tmux架构图： 为什么使用分屏工具在 C、C++ 开发过程中分屏是一项非常提高效率的功能，因为我们时常需要一边写代码 一边编译、测试。在脱离 IDE 的时代，通常我们需要开多个终端：一个终端编辑文件、 一个终端编译运行程序、一个终端查看相关的 man 文档…。多个终端管理起来其实是 非常不便的，因为你需要不停的在各个终端之间切换。终端分屏工具是解决这个问题 的绝佳办法，它可以把一个终端分成多个窗">
+<meta name="description" content="tmux架构图：Imgur 为什么使用分屏工具在 C、C++ 开发过程中分屏是一项非常提高效率的功能，因为我们时常需要一边写代码 一边编译、测试。在脱离 IDE 的时代，通常我们需要开多个终端：一个终端编辑文件、 一个终端编译运行程序、一个终端查看相关的 man 文档…。多个终端管理起来其实是 非常不便的，因为你需要不停的在各个终端之间切换。终端分屏工具是解决这个问题 的绝佳办法，它可以把一个终端">
 <meta name="keywords" content="tmux">
 <meta property="og:type" content="article">
 <meta property="og:title" content="远程ssh session 的管理工具">
 <meta property="og:url" content="http://code.meirenji.info/2018/02/04/远程ssh-session-的管理工具/index.html">
 <meta property="og:site_name" content="奶爸的天空">
-<meta property="og:description" content="tmux架构图： 为什么使用分屏工具在 C、C++ 开发过程中分屏是一项非常提高效率的功能，因为我们时常需要一边写代码 一边编译、测试。在脱离 IDE 的时代，通常我们需要开多个终端：一个终端编辑文件、 一个终端编译运行程序、一个终端查看相关的 man 文档…。多个终端管理起来其实是 非常不便的，因为你需要不停的在各个终端之间切换。终端分屏工具是解决这个问题 的绝佳办法，它可以把一个终端分成多个窗">
+<meta property="og:description" content="tmux架构图：Imgur 为什么使用分屏工具在 C、C++ 开发过程中分屏是一项非常提高效率的功能，因为我们时常需要一边写代码 一边编译、测试。在脱离 IDE 的时代，通常我们需要开多个终端：一个终端编辑文件、 一个终端编译运行程序、一个终端查看相关的 man 文档…。多个终端管理起来其实是 非常不便的，因为你需要不停的在各个终端之间切换。终端分屏工具是解决这个问题 的绝佳办法，它可以把一个终端">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://images.cnblogs.com/cnblogs_com/itech/linux/tmux.png">
 <meta property="og:image" content="https://dn-linuxcn.qbox.me/data/attachment/album/201410/05/211259xrnlljtni7vzgsfz.jpg">
 <meta property="og:image" content="http://harttle.com/assets/img/blog/tmux-concept.png">
-<meta property="og:updated_time" content="2018-02-04T12:54:57.750Z">
+<meta property="og:updated_time" content="2018-02-04T13:07:02.279Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="远程ssh session 的管理工具">
-<meta name="twitter:description" content="tmux架构图： 为什么使用分屏工具在 C、C++ 开发过程中分屏是一项非常提高效率的功能，因为我们时常需要一边写代码 一边编译、测试。在脱离 IDE 的时代，通常我们需要开多个终端：一个终端编辑文件、 一个终端编译运行程序、一个终端查看相关的 man 文档…。多个终端管理起来其实是 非常不便的，因为你需要不停的在各个终端之间切换。终端分屏工具是解决这个问题 的绝佳办法，它可以把一个终端分成多个窗">
-<meta name="twitter:image" content="http://images.cnblogs.com/cnblogs_com/itech/linux/tmux.png">
+<meta name="twitter:description" content="tmux架构图：Imgur 为什么使用分屏工具在 C、C++ 开发过程中分屏是一项非常提高效率的功能，因为我们时常需要一边写代码 一边编译、测试。在脱离 IDE 的时代，通常我们需要开多个终端：一个终端编辑文件、 一个终端编译运行程序、一个终端查看相关的 man 文档…。多个终端管理起来其实是 非常不便的，因为你需要不停的在各个终端之间切换。终端分屏工具是解决这个问题 的绝佳办法，它可以把一个终端">
+<meta name="twitter:image" content="https://dn-linuxcn.qbox.me/data/attachment/album/201410/05/211259xrnlljtni7vzgsfz.jpg">
 
 
 
@@ -320,7 +319,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-04T20:50:52+09:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-04T19:50:52+08:00">
                 2018-02-04
               </time>
             
@@ -391,7 +390,7 @@
       
 
       
-        <h3 id="tmux架构图："><a href="#tmux架构图：" class="headerlink" title="tmux架构图："></a>tmux架构图：</h3><p><img src="http://images.cnblogs.com/cnblogs_com/itech/linux/tmux.png" alt="image"></p>
+        <h3 id="tmux架构图："><a href="#tmux架构图：" class="headerlink" title="tmux架构图："></a>tmux架构图：</h3><p><a href="https://i.imgur.com/pLNZLLo.png" target="_blank" rel="noopener">Imgur</a></p>
 <h2 id="为什么使用分屏工具"><a href="#为什么使用分屏工具" class="headerlink" title="为什么使用分屏工具"></a>为什么使用分屏工具</h2><p>在 C、C++ 开发过程中分屏是一项非常提高效率的功能，因为我们时常需要一边写代码 一边编译、测试。在脱离 IDE 的时代，通常我们需要开多个终端：一个终端编辑文件、 一个终端编译运行程序、一个终端查看相关的 man 文档…。多个终端管理起来其实是 非常不便的，因为你需要不停的在各个终端之间切换。终端分屏工具是解决这个问题 的绝佳办法，它可以把一个终端分成多个窗口，把所有需要做的事情放到一个终端里面， 让你不用再耗费大量的时间在不同的窗口之间切换。</p>
 <h2 id="工作中的痛点"><a href="#工作中的痛点" class="headerlink" title="工作中的痛点"></a>工作中的痛点</h2><p>在使用SSH的环境下，避免网络不稳定，导致工作现场的丢失。想象以下场景， 你在执行一条命令的过程中，由于网络不稳定，SSH连接断开了。这个时候，你就不知道之前 的那条命令是否执行成功。如果此时你打开了很多文件，进入了较深层次的目录，由于网络 不稳定，SSH连接断开。重新连接以后，你又不得不重新打开那些文件，进入那个深层次的 目录。如果使用了tmux，重新连接以后，就可以直接回到原来的工作环境，不但提高了工作 效率，还降低了风险，增加了安全性。</p>
 <h2 id="What-is-a-terminal-multiplexer"><a href="#What-is-a-terminal-multiplexer" class="headerlink" title="What is a terminal multiplexer?"></a>What is a terminal multiplexer?</h2><p>It lets you switch easily between several programs in one terminal, detach them (they keep running in the background) and reattach them to a different terminal.</p>
