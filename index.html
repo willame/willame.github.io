@@ -286,6 +286,199 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://code.meirenji.info/2018/09/03/puppet自动化布署配置入门/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ben wong">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="奶爸的天空">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/03/puppet自动化布署配置入门/" itemprop="url">puppet自动化布署配置入门</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-04T00:01:51+09:00">
+                2018-09-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全运维/" itemprop="url" rel="index">
+                    <span itemprop="name">安全运维</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/09/03/puppet自动化布署配置入门/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2018/09/03/puppet自动化布署配置入门/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <ul>
+<li>本实例用到的系统 <blockquote>
+<p>Centos6.8<br>puppet3.8.7<br>mysql5.1.73 </p>
+</blockquote>
+</li>
+</ul>
+<h2 id="1-自动化运维都有哪些开源软件"><a href="#1-自动化运维都有哪些开源软件" class="headerlink" title="1. 自动化运维都有哪些开源软件"></a>1. 自动化运维都有哪些开源软件</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">初始化：Kickstart、Cobbler、 Rpmbuild/Xen、Kvm、Lxc、Docker/Openstack、Cloudstack、Opennebula、Eucalyplus</span><br><span class="line">  </span><br><span class="line">配置类工具：Chef、Puppet、Func、Cfengine</span><br><span class="line">  </span><br><span class="line">命令和控制类工具: Fabric、Salstack、Ansible、Capistrano、Pssh、Dsh、Expect</span><br><span class="line">  </span><br><span class="line">监控类工具：Cacti、Nagios、Zabbix、Ganglia</span><br></pre></td></tr></table></figure>
+<ol>
+<li><p>什么是Puppet?</p>
+<blockquote>
+<p> puppet是一种Linux、Unix平台的==集中配置管理系统==，使用ruby语言，可管理配置文件、用户、cron任务、软件包、系统服务等。puppet把这些系统实体称之为资源，<strong>puppet的设计目标是简化对这些资源的管理以及妥善处理资源间的依赖关系</strong></p>
+</blockquote>
+</li>
+<li><p>Puppet都有哪些特性?</p>
+</li>
+</ol>
+<ul>
+<li>能管理多达40多种资源，如：file、user 、group、host、packeage、service、cron、exec、yumrepo等，适合整个软件生命周期的管理</li>
+<li>可自动化重复任务、快速部署关键性应用及本地或者云端完成主动管理变更和快速扩展架构规模等</li>
+</ul>
+<ol>
+<li>puppet的整个生命周期</li>
+</ol>
+<blockquote>
+<p>供应（provisioning:包安装）—&gt;配置（configuration）—&gt;联动(orchestration)—&gt;报告(reporting)</p>
+</blockquote>
+<p>Puppet通常可以用来管理一台主机的整个生命周期：从初始化到安装、升级、维护以及最后将服务迁移并下架。</p>
+<ol>
+<li>Puppet适用于哪些场合</li>
+</ol>
+<ul>
+<li>初始化配置、修复、升级、审计</li>
+<li>统一安装、配置管理软件</li>
+<li>统一配置系统优化参数</li>
+<li>定期检测服务是否运行</li>
+<li>快速替换集群时设备的角色</li>
+</ul>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/09/03/puppet自动化布署配置入门/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://code.meirenji.info/2018/09/02/Centos6配置防火墙iptables规则/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1758,183 +1951,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://code.meirenji.info/2017/12/22/v2ray设计理念/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="ben wong">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="奶爸的天空">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/12/22/v2ray设计理念/" itemprop="url">v2ray设计理念</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-22T12:15:46+09:00">
-                2017-12-22
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/科学上网/" itemprop="url" rel="index">
-                    <span itemprop="name">科学上网</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2017/12/22/v2ray设计理念/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="2017/12/22/v2ray设计理念/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p><img src="https://i.imgur.com/l2TDEFy.png" alt="image"></p>
-<h2 id="首先，V2Ray-是什么？"><a href="#首先，V2Ray-是什么？" class="headerlink" title="首先，V2Ray 是什么？"></a>首先，V2Ray 是什么？</h2><blockquote>
-<p>V2Ray 是一个网络代理工具。<br>什么是代理？代理是当 A 和 B 想说话但不能直接对话时，要找 C 来传话，这时 C 就是代理。<br>那么在这个过程中，C 有哪些职责？很简单，把话传到，把话传对，并且不泄露给除 A、B 之外的人。</p>
-</blockquote>
-<p>看似这个描述很简单，把它应用到代理软件中，可以表述为下面的内容：</p>
-<ul>
-<li>开放网络连接，使得 A 和 B 可以间接地进行正常通信；</li>
-<li>通信内容不能被第三方知晓；</li>
-<li>网络连接要稳定，不能间歇或永久地失效；</li>
-</ul>
-<p>之所以没有写成一二三条，是因为上述三条的优先级，在不同的人看来是不一样的。</p>
-<hr>
-<p>大多数人的选择应该会是“正常通信”。毕竟翻墙工具诞生的意义就是让用户访问被墙的网站，比如 Google 被墙了，我架设一个 Shadowsocks 服务器就又可以访问 Google 。至于我在 Google 上搜索了什么，都是一些人畜无害的内容，我想别人也没兴趣知道。只要这个工具能让我爽快地访问 Google，它就是一个好工具。<strong>这种情况我们称为“速度优先”</strong>。</p>
-<hr>
-<p>另外一些人可能就比较注重私密性，不管我在搜索一些什么内容，可能也就是一些网红八卦，但我就是不想让别人知道，被别人知道了我就不爽。<strong>这种情况我们称为“隐私优先”</strong>。</p>
-<hr>
-<p>还有一些人对服务器的稳定性有需求，平时我不怎么翻墙，而一旦需要的时候，就一定要可以及时翻出去。几百万的大单，谈不成这个月就要喝西北风了。这些人对翻墙服务（或服务器）的稳定性要求很高，服务不能断线。而断线的情况有很多种，比如翻墙协议被识别了，或者服务器被探测了，都可以造成翻墙服务失效。<strong>这种情况我们称为“稳定优先”。</strong></p>
-<hr>
-<p>上述的三种情况在翻墙工具中都有相应的功能，比如“速度优先”可能的问题是 ISP 的 QoS 限制，应对方式是<strong>流量混淆</strong>。</p>
-<p>又比如“隐私优先”可能需要工具<strong>提供完美的加密方式</strong>。</p>
-<p>而“稳定优先”需要翻墙服务器不被探测，翻墙协议需要<strong>减少特征</strong>。</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/12/22/v2ray设计理念/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1989,7 +2005,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">25</span>
+                  <span class="site-state-item-count">26</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
