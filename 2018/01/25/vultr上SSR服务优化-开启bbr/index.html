@@ -82,7 +82,7 @@
 <meta name="description" content="现在linode已经不提供因GFW原因，造成的ip被锁定之后，而提供免费更换IP的服务了。所以得想替代方案了。vultr与樱花都进入了视线。vultr的购买方便。以后有机会再测试 樱花吧。  什么是BBR? BBR是来自于谷歌的TCP拥塞控制算法，它可以让我们绕过拥塞的流量管道，实现加速。Google 开源了其 TCP BBR 拥塞控制算法，并提交到了 Linux 内核，从 4.9 开始，Lin">
 <meta name="keywords" content="shadowsocks">
 <meta property="og:type" content="article">
-<meta property="og:title" content="vultr上SSR服务优化-开启bbr">
+<meta property="og:title" content="Linode+vultr上SSR服务优化-开启bbr">
 <meta property="og:url" content="http://code.meirenji.info/2018/01/25/vultr上SSR服务优化-开启bbr/index.html">
 <meta property="og:site_name" content="奶爸的天空">
 <meta property="og:description" content="现在linode已经不提供因GFW原因，造成的ip被锁定之后，而提供免费更换IP的服务了。所以得想替代方案了。vultr与樱花都进入了视线。vultr的购买方便。以后有机会再测试 樱花吧。  什么是BBR? BBR是来自于谷歌的TCP拥塞控制算法，它可以让我们绕过拥塞的流量管道，实现加速。Google 开源了其 TCP BBR 拥塞控制算法，并提交到了 Linux 内核，从 4.9 开始，Lin">
@@ -90,9 +90,9 @@
 <meta property="og:image" content="https://3.bp.blogspot.com/-Zn4qeqWyWqA/WcHlrl1959I/AAAAAAAAEPE/D9x5-mOfTwghE7v3oMw7fl2GDbfFt6woACLcBGAs/s640/28.jpg">
 <meta property="og:image" content="https://2.bp.blogspot.com/-Up3oEKdrKlQ/WcHWmsLn4mI/AAAAAAAAEOQ/JmuHuzbMFE0ZKVC05McJDi-P9V9uIa6vwCLcBGAs/s640/12.png">
 <meta property="og:image" content="https://3.bp.blogspot.com/-pViuV8OEQCs/WcHXd03jQlI/AAAAAAAAEOY/8lOfUKe7bkY9VA811WBGPB8_lR_Q-o7dgCLcBGAs/s640/13.png">
-<meta property="og:updated_time" content="2018-06-24T16:58:21.468Z">
+<meta property="og:updated_time" content="2018-09-09T03:19:55.991Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="vultr上SSR服务优化-开启bbr">
+<meta name="twitter:title" content="Linode+vultr上SSR服务优化-开启bbr">
 <meta name="twitter:description" content="现在linode已经不提供因GFW原因，造成的ip被锁定之后，而提供免费更换IP的服务了。所以得想替代方案了。vultr与樱花都进入了视线。vultr的购买方便。以后有机会再测试 樱花吧。  什么是BBR? BBR是来自于谷歌的TCP拥塞控制算法，它可以让我们绕过拥塞的流量管道，实现加速。Google 开源了其 TCP BBR 拥塞控制算法，并提交到了 Linux 内核，从 4.9 开始，Lin">
 <meta name="twitter:image" content="https://3.bp.blogspot.com/-Zn4qeqWyWqA/WcHlrl1959I/AAAAAAAAEPE/D9x5-mOfTwghE7v3oMw7fl2GDbfFt6woACLcBGAs/s640/28.jpg">
 
@@ -130,7 +130,7 @@
 
 
 
-  <title>vultr上SSR服务优化-开启bbr | 奶爸的天空</title>
+  <title>Linode+vultr上SSR服务优化-开启bbr | 奶爸的天空</title>
   
 
 
@@ -308,7 +308,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">vultr上SSR服务优化-开启bbr</h1>
+          <h1 class="post-title" itemprop="name headline">Linode+vultr上SSR服务优化-开启bbr</h1>
         
 
         <div class="post-meta">
@@ -427,6 +427,9 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lsmod | grep bbr</span><br></pre></td></tr></table></figure>
 <hr>
 <p>2018.6.24 补充 在 CentOS release 6.8 (Final) 系统上安装 BBR加速</p>
+<blockquote>
+<p>如果是Linode VPS的CentOS 6系统，安装BBR前修改内核为GRUB（Legacy）</p>
+</blockquote>
 <p><a href="https://www.wn789.com/14186.html" target="_blank" rel="noopener">如何在Linode VPS安装BBR</a></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">uname -r #查看内核版本，是否含4.10</span><br><span class="line"></span><br><span class="line">lsmod | grep bbr #查看BBR是否启动，返回值有 tcp_bbr表示已启动</span><br></pre></td></tr></table></figure>
 <hr>
@@ -569,7 +572,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">27</span>
+                  <span class="site-state-item-count">28</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -812,7 +815,7 @@
         var disqus_config = function () {
           this.page.url = 'http://code.meirenji.info/2018/01/25/vultr上SSR服务优化-开启bbr/';
           this.page.identifier = '2018/01/25/vultr上SSR服务优化-开启bbr/';
-          this.page.title = 'vultr上SSR服务优化-开启bbr';
+          this.page.title = 'Linode+vultr上SSR服务优化-开启bbr';
         };
         var d = document, s = d.createElement('script');
         s.src = 'https://louis90.disqus.com/embed.js';
