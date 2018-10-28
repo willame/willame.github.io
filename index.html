@@ -317,7 +317,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-25T21:24:36+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-25T22:24:36+09:00">
                 2018-10-25
               </time>
             
@@ -327,6 +327,28 @@
             
           </span>
 
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/善用佳软/" itemprop="url" rel="index">
+                    <span itemprop="name">善用佳软</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -368,7 +390,160 @@
       
         
           
-            
+            <h3 id="运行环境："><a href="#运行环境：" class="headerlink" title="运行环境："></a>运行环境：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">mysql 5.5.56</span><br><span class="line"></span><br><span class="line">mysql:root:  Gc20180625</span><br><span class="line"></span><br><span class="line">php 7.1.7</span><br><span class="line"></span><br><span class="line">服务器（CentOS6.8）</span><br><span class="line"></span><br><span class="line">redmine3.3.3.stable </span><br><span class="line"></span><br><span class="line">Ruby2.3.3 </span><br><span class="line"></span><br><span class="line">Rails4.2.7.1</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>下面的安装过程，假定已经安装好了LNMP环境</p>
+</blockquote>
+<p>安装开发工具</p>
+<ol>
+<li>命令：</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum groupinstall &quot;Development tools&quot;</span><br></pre></td></tr></table></figure>
+<p>清理已安装过的</p>
+<ol>
+<li>命令：</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum erase ruby ruby-libs ruby-mode ruby-rdoc ruby-irb ruby-ri ruby-docs</span><br></pre></td></tr></table></figure>
+<p>安装依赖</p>
+<ol>
+<li>命令：</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum -y install zlib-devel curl-devel openssl-devel httpd-devel apr-devel apr-util-devel mysql-devel</span><br></pre></td></tr></table></figure>
+<ol>
+<li>安装RVM</li>
+</ol>
+<p>安装公匙</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -sSL https://rvm.io/mpapis.asc | gpg --import</span><br></pre></td></tr></table></figure>
+<p>安装rvm</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -L https://get.rvm.io | bash -s stable</span><br></pre></td></tr></table></figure>
+<ol>
+<li>安装ruby</li>
+</ol>
+<p>刚开始用命令yum install ruby安装，但是是2.0以下的版本。</p>
+<p><a href="http://www.ruby-lang.org/en/downloads/下载你需要的版本，把安装包上传到指定目录，并解压" target="_blank" rel="noopener">http://www.ruby-lang.org/en/downloads/下载你需要的版本，把安装包上传到指定目录，并解压</a></p>
+<p>wget –no-check-certificate <a href="https://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.6.tar.gz" target="_blank" rel="noopener">https://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.6.tar.gz</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">命令：tar zxvf ruby-2.3.6.tar.gz；解压后，进入ruby-2.3.6目录下，依次执行下面命令</span><br><span class="line"></span><br><span class="line">命令：./configure</span><br><span class="line"></span><br><span class="line">命令：make</span><br><span class="line"></span><br><span class="line">命令：make install</span><br></pre></td></tr></table></figure>
+<ol>
+<li>查看ruby信息</li>
+</ol>
+<p>命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ruby -v</span><br></pre></td></tr></table></figure>
+<ol>
+<li>安装rails 4.2 </li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gem install rails -v=4.2</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>Ruby on Rails（官方简称为Rails，亦被简称为RoR），是一个使用Ruby语言写的开源Web應用框架，它是严格按照MVC结构开发的。 它努力使自身保持简单，来使实际的应用开发时的代码更少，使用最少的配置。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gem install rails --no-document -v=&apos;4.2.7&apos;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>下载redmine,解压并进入目录.安装管理ruby的包依赖的工具bundler</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gem install bundler #注意是在网站根目录下执行</span><br></pre></td></tr></table></figure>
+<p>安装redmine依赖的所有ruby包</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bundle install --without development test rmagick #完成redmine依赖包的安装</span><br></pre></td></tr></table></figure>
+<ol>
+<li>为Rails生成cookies秘钥</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rake generate_secret_token</span><br></pre></td></tr></table></figure>
+<ol>
+<li>安装redmine</li>
+</ol>
+<p>创建redmine数据库,添加mysql用户,配置Redmine的database.yml</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">SHOW databases;</span><br><span class="line"></span><br><span class="line">CREATE DATABASE redmine;</span><br><span class="line"></span><br><span class="line">use redmine;</span><br><span class="line"></span><br><span class="line">CREATE USER &apos;redmineAdmin&apos;@&apos;localhost&apos; IDENTIFIED BY &apos;redmine20180625&apos;;</span><br><span class="line"></span><br><span class="line">grant all privileges  ON redmine.* TO &apos;redmineAdmin&apos;@&apos;localhost&apos; IDENTIFIED BY &apos;redmine20180625&apos;;</span><br><span class="line"></span><br><span class="line">mysqldump -u redmineAdmin -p redmine20180625 redmine &gt; redmine_backup0627.sql</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">cp config/database.yml.example config/database.yml</span><br><span class="line">cat database.yum #修改对应数据库连接信息</span><br><span class="line">production:  </span><br><span class="line">  adapter: mysql2</span><br><span class="line">  database: redmine</span><br><span class="line">  host: localhost</span><br><span class="line">  username: redmine</span><br><span class="line">  password: &quot;my_password&quot;  </span><br><span class="line">  encoding: utf8</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">RAILS_ENV=production bundle exec rake db:migrate    #生成表结构,创建数据库结构</span><br><span class="line"></span><br><span class="line">RAILS_ENV=production bundle exec rake redmine:load_default_data       # 初始化数据选择zh,生成缺省数据</span><br></pre></td></tr></table></figure>
+<ol>
+<li>在WEBrick服务上测试Redmine是否安装成功</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bundle exec rails server webrick -e production -b xx.xxx.xx.xx</span><br></pre></td></tr></table></figure>
+<ol>
+<li>配置Redmine在Nginx上运行</li>
+</ol>
+<p>安装passenger</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gem install passenger</span><br><span class="line">passenger-install-nginx-module</span><br></pre></td></tr></table></figure>
+<hr>
+<p>报错</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Can&apos;t connect to local MySQL server through socket &apos;/tmp/mysql.sock&apos; (2)</span><br></pre></td></tr></table></figure>
+<p>解决方法<a href="https://stackoverflow.com/questions/5499035/ruby-on-rails-3-cant-connect-to-local-mysql-server-through-socket-tmp-mysql-s" target="_blank" rel="noopener"> 在这里</a></p>
+<hr>
+<p>Redmine  Internal error</p>
+<p>bundle exec rails server webrick -e production -b 0.0.0.0</p>
+<p>/sbin/iptables -I INPUT -p tcp –dport 3000 -j ACCEPT</p>
+<hr>
+<p>find / -name php.ini</p>
+<p>tail -f  production.log</p>
+<hr>
+<p>报错,这个报错很奇葩，会导致浏览的时候，报500错误。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">Error: unknown attribute &apos;issues_visibility&apos; for Role. Default configuration data was not loaded</span><br></pre></td></tr></table></figure>
+<p>解决方法：</p>
+<p>我做了如下处理后得到解决：</p>
+<ol>
+<li><p>把数据库中redmine库的字符集从原来设置的utf8mb4改为utf8；</p>
+</li>
+<li><p>把redmine库里自动生成的表全部清空，重新生成。这里用了个批理删除方法：</p>
+</li>
+<li><p>再运行下面命令重新初始化redmine库。</p>
+</li>
+</ol>
+<p>这次成功执行。</p>
+<p>报错调试方法 <a href="http://kerzzi.logdown.com/posts/1677847-error-log-done-recruitment-website-5-1-there-errorfailed-to-build-gem-native-extension" target="_blank" rel="noopener">原文传送</a></p>
+<p>ERROR: Failed to build gem native extension</p>
+<p>报错</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Don&apos;t run Bundler as root. Bundler can ask for sudo if it is needed, and installing your bundle as root will break this application for all</span><br><span class="line">non-root users on this machine.</span><br></pre></td></tr></table></figure>
+<p>解决方法：</p>
+<p><a href="https://github.com/docker-library/rails/issues/10" target="_blank" rel="noopener">原文传送
+</a><br>运行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bundle config --global silence_root_warning 1</span><br></pre></td></tr></table></figure>
+<hr>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">DROP USER &apos;redmineAdmin&apos;@&apos;localhost&apos;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">wget http://www.redmine.org/releases/redmine-3.3.3.tar.gz</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">source /etc/profile.d/rvm.sh</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">rvm yum install -y gcc-c++ patch readline readline-devel zlib zlib-devel libyaml-devel libffi-devel openssl-devel make bzip2 autoconf automake libtool bison iconv-devel</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">rvmsudo yum install -y gcc-c++ patch readline readline-devel zlib zlib-devel libyaml-devel libffi-devel openssl-devel make bzip2 autoconf automake libtool bison iconv-devel</span><br></pre></td></tr></table></figure>
+<p>新建用户redmine</p>
+<p>mkdir -p /home/redmine</p>
+<p>useradd -d /home/redmine -m redmine</p>
+<p>useradd -d /usr/lredmine -m lredmine</p>
+<p>passwd lredmine:</p>
+<p>lredmine625</p>
+<p>给予redmine用户sudo权限：不然后面执行 bundle install会报错 could not locate gemfile redmine</p>
+<p>Gem::Ext::BuildError: ERROR: Failed to build gem native extension. gem install rmagick -v ‘2.16.0’</p>
+<p>su lredmine</p>
+<p>/root/redmine-3.3.3</p>
+<p>bundle install –without development test rmagick  替换 undle install命令。不然会报错，通不过。</p>
+<p>ERROR: Failed to build gem native extension</p>
+<hr>
+<hr>
+<p>大家都在用哪些Redmine插件呢?</p>
+<p>推荐一些自己用过，而且觉得还不错的（全部支持3.3.x 版本）：</p>
+<ul>
+<li><a href="https://github.com/peclik/clipboard_image_paste" target="_blank" rel="noopener">粘贴图片插件:Clipboard image paste </a></li>
+<li>[Redmine Banner plugin:全局或者 project 的banner，用来通知全体人员某些信息，挺方便] (<a href="https://github.com/akiko-pusu/redmine_banner" target="_blank" rel="noopener">https://github.com/akiko-pusu/redmine_banner</a>)</li>
+<li><a href="https://github.com/paginagmbh/redmine_lightbox2/releases/tag/v0.3.5" target="_blank" rel="noopener">点击打开大图</a></li>
+</ul>
+<p>插件安装更新命令:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">rake redmine:plugins:migrate RAILS_ENV=production</span><br></pre></td></tr></table></figure>
+<p><a href="https://www.zhihu.com/question/19926665" target="_blank" rel="noopener">大家都在用哪些Redmine插件呢?</a></p>
+<p><a href="http://www.cnblogs.com/xionghui/archive/2011/12/09/2281827.html" target="_blank" rel="noopener">redmine-1.2.2安装截图粘贴插件</a></p>
+<p><a href="https://github.com/Restream/redmine_issue_checklist" target="_blank" rel="noopener">Redmine Checklists plugin: redmine_checklists-3_1_11-light</a></p>
+<blockquote>
+<p>Redmine Checklists plugin (Light version) 编辑器增强</p>
+<p>Redmine CKEditor plugin会在每个issue下面增加一个check list 超好用，当任务至最小层次的时候，这个插件很好用。</p>
+</blockquote>
+<p><a href="https://github.com/a-ono/redmine_ckeditor" target="_blank" rel="noopener">ckeditor插件，高级功能插件</a></p>
+<h2 id="Uninstall-plug"><a href="#Uninstall-plug" class="headerlink" title="Uninstall plug"></a>Uninstall plug</h2><ul>
+<li><p>Change the text formatting (Administration &gt; Settings &gt; General &gt; Text formatting) to textile</p>
+</li>
+<li><p>Rollback the migration</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rake redmine:plugins:migrate  NAME=redmine_ckeditor VERSION=0 RAILS_ENV=production</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Delete the plugin directory (plugins/redmine_ckeditor)</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@li1830-25 redmine-3.3.3]# rake -T emoji</span><br><span class="line">rake emoji  # Copy emoji to the Rails `public/images/emoji` directory</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">Could not find rmagick-2.16.0 in any of the sources</span><br><span class="line"></span><br><span class="line">Run `bundle install` to install missing gems.</span><br></pre></td></tr></table></figure>
+<p>解决方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install ImageMagick</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">Gems in the groups development, test and rmagick were not installed.</span><br></pre></td></tr></table></figure>
+
           
         
       
@@ -1994,7 +2169,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-count">18</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
