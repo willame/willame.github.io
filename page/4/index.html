@@ -286,6 +286,173 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://code.meirenji.info/2017/12/09/MySQL搭建主从复制实现细节分析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ben wong">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="奶爸的天空">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/12/09/MySQL搭建主从复制实现细节分析/" itemprop="url">MySQL搭建主从复制实现细节分析</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-09T19:18:58+09:00">
+                2017-12-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全运维/" itemprop="url" rel="index">
+                    <span itemprop="name">安全运维</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/12/09/MySQL搭建主从复制实现细节分析/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/12/09/MySQL搭建主从复制实现细节分析/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><ul>
+<li>主从复制可以使MySQL数据库主服务器的主数据库，复制到一个或多个MySQL从服务器从数据库，默认情况下，复制异步;</li>
+<li>根据配置，可以复制数据库中的所有数据库，选定的数据库或甚至选定的表。</li>
+</ul>
+<p><img src="https://i.imgur.com/Vxcgv6S.jpg" alt="image"></p>
+<p><img src="https://i.imgur.com/cuDZr0Y.jpg" alt="image"></p>
+<h2 id="MySQL中主从复制的优点"><a href="#MySQL中主从复制的优点" class="headerlink" title="MySQL中主从复制的优点"></a>MySQL中主从复制的优点</h2><h5 id="横向扩展解决方案"><a href="#横向扩展解决方案" class="headerlink" title="横向扩展解决方案"></a>横向扩展解决方案</h5><p>在多个从库之间扩展负载以提高性能。在这种环境中，所有写入和更新在主库上进行。但是，读取可能发生在一个或多个从库上。该模型可以提高写入的性能（由于主库专用于更新），同时在多个从库上读取，可以大大提高读取速度。</p>
+<h5 id="数据安全性"><a href="#数据安全性" class="headerlink" title="数据安全性"></a>数据安全性</h5><p>由于主库数据被复制到从库，从库可以暂停复制过程，可以在从库上运行备份服务，而不会破坏对应的主库数据。</p>
+<h5 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h5><p>可以在主库上创建实时数据，而信息分析可以在从库上进行，而不会影响主服务器的性能。</p>
+<h5 id="长距离数据分发"><a href="#长距离数据分发" class="headerlink" title="长距离数据分发"></a>长距离数据分发</h5><p>可以使用复制创建远程站点使用的数据的本地副本，而无需永久访问主库。</p>
+<h2 id=""><a href="#" class="headerlink" title=""></a>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/12/09/MySQL搭建主从复制实现细节分析/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://code.meirenji.info/2017/12/09/Ubuntu配置Shadowsocks实现终端代理/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -662,7 +829,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-count">33</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -684,7 +851,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-count">21</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
