@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="k8s," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="环境说明:  Kubernetes版本：1.13.1 操作系统：CentOS-7.5 Docker版本：docker-ce-18.06.1.ce  所有节点都需要安装以下组件：  Docker：不用多说了吧 kubelet：运行于所有 Node上，负责启动容器和 Pod kubeadm：负责初始化集群 kubectl： k8s命令行工具，通过其可以部署/管理应用 以及CRUD各种资源  1kube">
+<meta name="keywords" content="k8s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="kubernetes集群搭建流程及出坑记录">
+<meta property="og:url" content="http://code.meirenji.info/2019/03/26/kubernetes集群搭建流程及出坑记录/index.html">
+<meta property="og:site_name" content="奶爸的天空">
+<meta property="og:description" content="环境说明:  Kubernetes版本：1.13.1 操作系统：CentOS-7.5 Docker版本：docker-ce-18.06.1.ce  所有节点都需要安装以下组件：  Docker：不用多说了吧 kubelet：运行于所有 Node上，负责启动容器和 Pod kubeadm：负责初始化集群 kubectl： k8s命令行工具，通过其可以部署/管理应用 以及CRUD各种资源  1kube">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://i.imgur.com/LU6tK6w.png">
+<meta property="og:image" content="https://i.imgur.com/De3euPE.jpg">
+<meta property="og:image" content="https://i.imgur.com/FNUmCoO.jpg">
+<meta property="og:image" content="https://i.imgur.com/jIoHQ2x.png">
+<meta property="og:image" content="https://i.imgur.com/Ys3IJDo.png">
+<meta property="og:image" content="https://i.imgur.com/JYb3fGu.png">
+<meta property="og:image" content="https://i.imgur.com/jIoHQ2x.png">
+<meta property="og:image" content="https://i.imgur.com/JzWjrC0.png">
+<meta property="og:updated_time" content="2019-03-26T06:02:13.238Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="kubernetes集群搭建流程及出坑记录">
+<meta name="twitter:description" content="环境说明:  Kubernetes版本：1.13.1 操作系统：CentOS-7.5 Docker版本：docker-ce-18.06.1.ce  所有节点都需要安装以下组件：  Docker：不用多说了吧 kubelet：运行于所有 Node上，负责启动容器和 Pod kubeadm：负责初始化集群 kubectl： k8s命令行工具，通过其可以部署/管理应用 以及CRUD各种资源  1kube">
+<meta name="twitter:image" content="https://i.imgur.com/LU6tK6w.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://code.meirenji.info/2019/03/26/kubernetes集群搭建流程及出坑记录/"/>
+
+
+
+
+
+  <title>kubernetes集群搭建流程及出坑记录 | 奶爸的天空</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">奶爸的天空</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://code.meirenji.info/2019/03/26/kubernetes集群搭建流程及出坑记录/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ben wong">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="奶爸的天空">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">kubernetes集群搭建流程及出坑记录</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-03-26T13:46:14+09:00">
+                2019-03-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/DevOps/" itemprop="url" rel="index">
+                    <span itemprop="name">DevOps</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/03/26/kubernetes集群搭建流程及出坑记录/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2019/03/26/kubernetes集群搭建流程及出坑记录/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>环境说明:</p>
+<ul>
+<li>Kubernetes版本：1.13.1</li>
+<li>操作系统：CentOS-7.5</li>
+<li>Docker版本：docker-ce-18.06.1.ce</li>
+</ul>
+<p>所有节点都需要安装以下组件：</p>
+<ul>
+<li>Docker：不用多说了吧</li>
+<li>kubelet：运行于所有 Node上，负责启动容器和 Pod</li>
+<li>kubeadm：负责初始化集群</li>
+<li>kubectl： k8s命令行工具，通过其可以部署/管理应用 以及CRUD各种资源</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm config images list</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">   kube-apiserver:v1.13.1</span><br><span class="line">kube-controller-manager:v1.13.1</span><br><span class="line">kube-scheduler:v1.13.1</span><br><span class="line">kube-proxy:v1.13.1</span><br><span class="line">pause:3.1</span><br><span class="line">etcd:3.2.24</span><br><span class="line">coredns:1.2.6</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>虚拟机环境要求：</p>
+<ul>
+<li>操作系统 CentOS 7.5</li>
+<li>内存 2G 【至少】</li>
+<li>CPU 2核【至少】</li>
+<li>硬盘 20G 【至少】</li>
+</ul>
+<p>各主机的主机名及ip配置:</p>
+<p>本次实战中一共用到三台主机，一台用于Master的部署，领导两台分别为node1和node2。主机名和IP的对应关系如下：</p>
+<p><img src="https://i.imgur.com/LU6tK6w.png" alt="image"></p>
+<p>安装好centos7.5之后，要提前准备的工作：</p>
+<p>所有的节点修改/etc/hosts文件， 主机名/IP加入 hosts解析</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">echo &quot;192.168.1.110 k8s-master&quot; &gt;&gt; /etc/hosts</span><br><span class="line">echo &quot;192.168.1.125 k8s-node-1&quot; &gt;&gt; /etc/hosts</span><br><span class="line">echo &quot;192.168.1.220 k8s-node-2&quot; &gt;&gt; /etc/hosts</span><br></pre></td></tr></table></figure>
+<p>设置所有节点主机名</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hostnamectl --static set-hostname  k8s-master</span><br><span class="line">hostnamectl --static set-hostname  k8s-node-1</span><br><span class="line">hostnamectl --static set-hostname  k8s-node-2</span><br></pre></td></tr></table></figure>
+<ol>
+<li>关闭防火墙 (全部节点)</li>
+</ol>
+<p>防火墙一定要提前关闭，否则在后续安装K8S集群的时候是个trouble maker。执行下面语句关闭，并禁用开机启动：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl stop firewalld &amp; systemctl disable firewalld</span><br></pre></td></tr></table></figure>
+<ol>
+<li>关闭Swap(全部节点)</li>
+</ol>
+<p>类似ElasticSearch集群，在安装K8S集群时，Linux的Swap内存交换机制是一定要关闭的，否则会因为内存交换而影响性能以及稳定性。这里，我们可以提前进行设置：</p>
+<p>执行swapoff -a可临时关闭，但系统重启后恢复<br>编辑/etc/fstab，注释掉包含swap的那一行即可，重启后可永久关闭，如下所示：</p>
+<ul>
+<li>执行swapoff -a可临时关闭，但系统重启后恢复</li>
+<li>编辑/etc/fstab，注释掉包含swap的那一行即可，重启后可永久关闭，如下所示</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">/dev/mapper/centos-root /                       xfs     defaults        0 0</span><br><span class="line">UUID=20ca01ff-c5eb-47bc-99a0-6527b8cb246e /boot                   xfs     defaults        0 0</span><br><span class="line"># /dev/mapper/centos-swap swap</span><br></pre></td></tr></table></figure>
+<p>或直接执行:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed -i &apos;/ swap / s/^/#/&apos; /etc/fstab</span><br></pre></td></tr></table></figure>
+<p>关闭成功后，使用top命令查看，如下图所示表示正常：</p>
+<p><img src="https://i.imgur.com/De3euPE.jpg" alt="image"></p>
+<ol>
+<li>关闭SeLinux (全部节点)</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">/usr/sbin/sestatus -v</span><br><span class="line"></span><br><span class="line">sed -i &apos;s/SELINUX=enforcing/SELINUX=disabled/&apos; /etc/selinux/config</span><br><span class="line"></span><br><span class="line">重启生效</span><br></pre></td></tr></table></figure>
+<p>创建/etc/sysctl.d/k8s.conf文件，添加如下内容：(全部节点)</p>
+<p>开启内核ipv4转发需要加载br_netfilter模块</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">net.bridge.bridge-nf-call-ip6tables = 1</span><br><span class="line">net.bridge.bridge-nf-call-iptables = 1</span><br><span class="line">net.ipv4.ip_forward = 1</span><br><span class="line"></span><br><span class="line">#加载br_netfilter模块(centos7没有加载)</span><br><span class="line">modprobe br_netfilter</span><br><span class="line"></span><br><span class="line">#生效系统参数</span><br><span class="line">sysctl -p /etc/sysctl.d/k8s.conf</span><br></pre></td></tr></table></figure>
+<ol>
+<li>安装docker-ce-18.06.1.ce（全部节点）</li>
+</ol>
+<p>Centos的系统一定要是64位的，不管版本是什么。并且内核版本至少是3.10以上</p>
+<p>安装K8S必须要先安装Docker</p>
+<p>执行以下命令，安装最新版Docker：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">卸载老版本的 docker 及其相关依赖(centos7.5无需这一步)</span><br><span class="line">yum remove docker docker-common container-selinux docker-selinux docker-engine</span><br><span class="line"></span><br><span class="line">安装 yum-utils，它提供了 yum-config-manager，可用来管理yum源</span><br><span class="line">yum install -y yum-utils</span><br><span class="line"></span><br><span class="line">添加yum源</span><br><span class="line">yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo</span><br><span class="line"></span><br><span class="line">更新索引</span><br><span class="line">yum makecache fast</span><br><span class="line"></span><br><span class="line">目前比较稳定而且支持k8s的docker版本为:</span><br><span class="line">yum update &amp;&amp; yum install docker-ce-18.06.1.ce</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">启动Docker服务并激活开机启动</span><br><span class="line">systemctl start docker &amp; systemctl enable docker</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">docker --version</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/FNUmCoO.jpg" alt="image"></p>
+<p>卸载docker</p>
+<ol>
+<li>查看已安装的docker</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum list installed | grep docke</span><br></pre></td></tr></table></figure>
+<ol>
+<li>使用yum卸载</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum remove -y docker-ce.x86_64   #docker-ce.x86_64为已安装的docker，以实际安装的版本为准</span><br></pre></td></tr></table></figure>
+<hr>
+<ol>
+<li>安装K8S组件 （所有节点）</li>
+</ol>
+<p>kubelet、kubeadm、kubectl安装（所有节点）</p>
+<p><img src="https://i.imgur.com/jIoHQ2x.png" alt="image"></p>
+<p>首先准备repo</p>
+<p>Configure Kubernetes Repository</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">cat&gt;&gt;/etc/yum.repos.d/kubrenetes.repo&lt;&lt;EOF</span><br><span class="line">[kubernetes]</span><br><span class="line">name=Kubernetes Repo</span><br><span class="line">baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/</span><br><span class="line">gpgcheck=0</span><br><span class="line">gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+<p>执行如下指令来进行安装</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum install -y kubelet kubeadm kubectl</span><br><span class="line">systemctl enable kubelet &amp;&amp; systemctl start kubelet</span><br></pre></td></tr></table></figure>
+<p>初始化 k8s集群 (所有节点)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">docker pull mirrorgooglecontainers/kube-apiserver:v1.13.1</span><br><span class="line">docker pull mirrorgooglecontainers/kube-controller-manager:v1.13.1</span><br><span class="line">docker pull mirrorgooglecontainers/kube-scheduler:v1.13.1</span><br><span class="line">docker pull mirrorgooglecontainers/kube-proxy:v1.13.1</span><br><span class="line">docker pull mirrorgooglecontainers/pause:3.1</span><br><span class="line">docker pull mirrorgooglecontainers/etcd:3.2.24</span><br><span class="line">docker pull coredns/coredns:1.2.6</span><br><span class="line">docker pull registry.cn-shenzhen.aliyuncs.com/cp_m/flannel:v0.10.0-amd64</span><br><span class="line"></span><br><span class="line">docker tag mirrorgooglecontainers/kube-apiserver:v1.13.1 k8s.gcr.io/kube-apiserver:v1.13.1</span><br><span class="line">docker tag mirrorgooglecontainers/kube-controller-manager:v1.13.1 k8s.gcr.io/kube-controller-manager:v1.13.1</span><br><span class="line">docker tag mirrorgooglecontainers/kube-scheduler:v1.13.1 k8s.gcr.io/kube-scheduler:v1.13.1</span><br><span class="line">docker tag mirrorgooglecontainers/kube-proxy:v1.13.1 k8s.gcr.io/kube-proxy:v1.13.1</span><br><span class="line">docker tag mirrorgooglecontainers/pause:3.1 k8s.gcr.io/pause:3.1</span><br><span class="line">docker tag mirrorgooglecontainers/etcd:3.2.24 k8s.gcr.io/etcd:3.2.24</span><br><span class="line">docker tag coredns/coredns:1.2.6 k8s.gcr.io/coredns:1.2.6</span><br><span class="line">docker tag registry.cn-shenzhen.aliyuncs.com/cp_m/flannel:v0.10.0-amd64 quay.io/coreos/flannel:v0.10.0-amd64</span><br><span class="line"></span><br><span class="line">docker rmi mirrorgooglecontainers/kube-apiserver:v1.13.1</span><br><span class="line">docker rmi mirrorgooglecontainers/kube-controller-manager:v1.13.1</span><br><span class="line">docker rmi mirrorgooglecontainers/kube-scheduler:v1.13.1</span><br><span class="line">docker rmi mirrorgooglecontainers/kube-proxy:v1.13.1</span><br><span class="line">docker rmi mirrorgooglecontainers/pause:3.1</span><br><span class="line">docker rmi mirrorgooglecontainers/etcd:3.2.24</span><br><span class="line">docker rmi coredns/coredns:1.2.6</span><br><span class="line">docker rmi registry.cn-shenzhen.aliyuncs.com/cp_m/flannel:v0.10.0-amd64</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#dashboard</span><br><span class="line"></span><br><span class="line">docker pull registry.cn-qingdao.aliyuncs.com/wangxiaoke/kubernetes-dashboard-amd64:v1.10.0</span><br><span class="line">docker tag registry.cn-qingdao.aliyuncs.com/wangxiaoke/kubernetes-dashboard-amd64:v1.10.0 k8s.gcr.io/kubernetes-dashboard-amd64:v1.10.0</span><br><span class="line">docker image rm registry.cn-qingdao.aliyuncs.com/wangxiaoke/kubernetes-dashboard-amd64:v1.10.0</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm init --kubernetes-version=1.13.1 --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=192.168.1.170</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">终于成功了。注意最后的这3段输入，分别是：为正常非root用户所做的配置；部署pod network；添加其它node到这个集群（注意token是保密的，不要泄露给别人）。下面会继续提到。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">To start using your cluster, you need to run the following as a regular user:</span><br><span class="line"></span><br><span class="line">  mkdir -p $HOME/.kube</span><br><span class="line">  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config</span><br><span class="line">  sudo chown $(id -u):$(id -g) $HOME/.kube/config</span><br><span class="line"></span><br><span class="line">You should now deploy a pod network to the cluster.</span><br><span class="line">Run &quot;kubectl apply -f [podnetwork].yaml&quot; with one of the options listed at:</span><br><span class="line">  https://kubernetes.io/docs/concepts/cluster-administration/addons/</span><br><span class="line"></span><br><span class="line">You can now join any number of machines by running the following on each node</span><br><span class="line">as root:</span><br><span class="line"></span><br><span class="line">  kubeadm join 192.168.1.170:6443 --token i8ev51.a541c7le1ykjwofre --discovery-token-ca-cert-hash sha256:9962e3ef597c9e3bac74e4915d419166a5f813a9c736bd2b77fd1883a09c3649</span><br></pre></td></tr></table></figure>
+<p>配置授权信息的目的:</p>
+<p>所需的命令在init成功后也会有提示，主要是为了保存相关的配置信息在用户目录下，这样不用每次都输入相关的认证信息。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p $HOME/.kube</span><br><span class="line">  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config</span><br><span class="line">  sudo chown $(id -u):$(id -g) $HOME/.kube/config</span><br></pre></td></tr></table></figure>
+<p>以上的安装所有的机器都要同步</p>
+<p>初始化Master节点之后，查看各节点的时间是否一致，如果不一致则需要再次同步个节点的时间。时间同步可以看之前NTP相关的文章。保存安装日志的以下部分以备接下来在各node执行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">systemctl enable kubelet.service</span><br><span class="line"></span><br><span class="line">kubeadm init --kubernetes-version=v1.13.1 --apiserver-advertise-address [192.168.1.110] --pod-network-cidr=10.244.0.0/16</span><br></pre></td></tr></table></figure>
+<p>选择flannel作为Pod网络插件，所以上面的命令指定–pod-network-cidr=10.244.0.0/16</p>
+<h2 id="kubeadm-init成功提示之后的正确操作步骤如下："><a href="#kubeadm-init成功提示之后的正确操作步骤如下：" class="headerlink" title="kubeadm init成功提示之后的正确操作步骤如下："></a>kubeadm init成功提示之后的正确操作步骤如下：</h2><p>集群初始化如果遇到问题，可以使用下面的命令进行清理</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">kubeadm reset</span><br><span class="line">ifconfig cni0 down</span><br><span class="line">ip link delete cni0</span><br><span class="line">ifconfig flannel.1 down</span><br><span class="line">ip link delete flannel.1</span><br><span class="line">rm -rf /var/lib/cni/</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>配置kubectl认证信息（Master节点操作）</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">echo &quot;export KUBECONFIG=/etc/kubernetes/admin.conf&quot; &gt;&gt; /etc/profile</span><br><span class="line">source /etc/profile</span><br><span class="line">echo $KUBECONFIG</span><br></pre></td></tr></table></figure>
+<p>安装Pod网络 (安装flannel网络（Master节点操作）)</p>
+<p>使用flannel，可以配置不同的backend来支持多种类型的网络。当然，如果对网络安全有特殊的限制，可以考虑其他的组件.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml</span><br></pre></td></tr></table></figure>
+<p>一旦 Pod网络安装完成，可以执行如下命令检查一下 CoreDNS Pod此刻是否正常运行起来了，一旦其正常运行起来，则可以继续后续步骤</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pods --all-namespaces -o wide</span><br></pre></td></tr></table></figure>
+<p>拆卸集群</p>
+<p>在master节点上执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl drain &lt;node name&gt; --delete-local-data --force --ignore-daemonsets</span><br><span class="line">kubectl delete node &lt;node name&gt;</span><br></pre></td></tr></table></figure></p>
+<p>在node2上面执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">kubeadm reset</span><br><span class="line">ifconfig cni0 down</span><br><span class="line">ip link delete cni0</span><br><span class="line">ifconfig flannel.1 down</span><br><span class="line">ip link delete flannel.1</span><br><span class="line">rm -rf /var/lib/cni/</span><br></pre></td></tr></table></figure>
+<p>在node1上面执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl delete node node2</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/Ys3IJDo.png" alt="image"></p>
+<hr>
+<p>三.部署pod network</p>
+<p>让node1、node2加入集群</p>
+<p>在node1和node2节点上分别执行kubeadm join命令，加入集群：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm join 192.168.1.110:6443 --token lu231m.8ieu0hjdcpyhnjwm2 --discovery-token-ca-cert-hash sha256:87333cfe365c7234342744bcd3f3cb58fb94f2a6f717b460efb11810049cb5db</span><br></pre></td></tr></table></figure>
+<p>默认情况下，Master节点不参与工作负载，但如果希望安装出一个All-In-One的k8s环境，则可以执行以下命令，让Master节点也成为一个Node节点：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl taint nodes --all node-role.kubernetes.io/master-</span><br></pre></td></tr></table></figure>
+<h1 id="查看节点状态"><a href="#查看节点状态" class="headerlink" title="查看节点状态"></a>查看节点状态</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get nodes</span><br></pre></td></tr></table></figure>
+<h1 id="查看pods状态"><a href="#查看pods状态" class="headerlink" title="查看pods状态"></a>查看pods状态</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pods --all-namespaces</span><br></pre></td></tr></table></figure>
+<h1 id="查看K8S集群状态"><a href="#查看K8S集群状态" class="headerlink" title="查看K8S集群状态"></a>查看K8S集群状态</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get cs</span><br></pre></td></tr></table></figure>
+<h1 id="重启kubelet-service"><a href="#重启kubelet-service" class="headerlink" title="重启kubelet service"></a>重启kubelet service</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart kubelet.service</span><br></pre></td></tr></table></figure>
+<h1 id="查看所有pod状态"><a href="#查看所有pod状态" class="headerlink" title="查看所有pod状态"></a>查看所有pod状态</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pods -n kube-system</span><br><span class="line"></span><br><span class="line">kubectl get pods --all-namespaces -o wide</span><br></pre></td></tr></table></figure>
+<h1 id="查看-dashboard的外网暴露端口"><a href="#查看-dashboard的外网暴露端口" class="headerlink" title="查看 dashboard的外网暴露端口"></a>查看 dashboard的外网暴露端口</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get service --namespace=kube-system</span><br></pre></td></tr></table></figure>
+<p>全部Running则表示集群正常。至此，我们的K8S集群就搭建成功了</p>
+<p><img src="https://i.imgur.com/JYb3fGu.png" alt="image"></p>
+<h1 id="查看cluster的状态"><a href="#查看cluster的状态" class="headerlink" title="查看cluster的状态"></a>查看cluster的状态</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl cluster-info</span><br></pre></td></tr></table></figure>
+<h1 id="如果-token忘记-可以去-Master上执行如下命令来获取"><a href="#如果-token忘记-可以去-Master上执行如下命令来获取" class="headerlink" title="如果 token忘记,可以去 Master上执行如下命令来获取"></a>如果 token忘记,可以去 Master上执行如下命令来获取</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm token list</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="安装dashboard"><a href="#安装dashboard" class="headerlink" title="安装dashboard"></a>安装dashboard</h2><p>在安装好k8s集群之后，确保集群各个节点都处于ready状态的时候，就可以安装kubernetes-dashboard了</p>
+<p>K8S Dashboard是官方的一个基于WEB的用户界面，专门用来管理K8S集群，并可展示集群的状态。K8S集群安装好后默认没有包含Dashboard，我们需要额外创建它。</p>
+<p>如果你厌倦了命令行的操作，全程使用Dashboard也是可行的。</p>
+<p>安装 v1.10.0版本的 kubernetes-dashboard，用于集群可视化的管理。</p>
+<p>首先手动下载镜像并重新打标签：（所有节点）</p>
+<p><img src="https://i.imgur.com/jIoHQ2x.png" alt="image"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker pull registry.cn-qingdao.aliyuncs.com/wangxiaoke/kubernetes-dashboard-amd64:v1.10.0</span><br><span class="line">docker tag registry.cn-qingdao.aliyuncs.com/wangxiaoke/kubernetes-dashboard-amd64:v1.10.0 k8s.gcr.io/kubernetes-dashboard-amd64:v1.10.0</span><br><span class="line">docker image rm registry.cn-qingdao.aliyuncs.com/wangxiaoke/kubernetes-dashboard-amd64:v1.10.0</span><br></pre></td></tr></table></figure>
+<p>安装 dashboard：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create -f dashboard.yaml</span><br></pre></td></tr></table></figure>
+<p>查看 dashboard的 pod是否正常启动，如果正常说明安装成功:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pods --namespace=kube-system</span><br></pre></td></tr></table></figure>
+<p>查看 dashboard的外网暴露端口</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get service --namespace=kube-system</span><br></pre></td></tr></table></figure>
+<hr>
+<p>在master上面生成私钥和证书签名，然后复制到各node上面的 /home/share/certs目录上面</p>
+<p>生成私钥和证书签名</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">openssl genrsa -des3 -passout pass:x -out dashboard.pass.key 2048</span><br><span class="line">openssl rsa -passin pass:x -in dashboard.pass.key -out dashboard.key</span><br><span class="line">rm dashboard.pass.key</span><br><span class="line">openssl req -new -key dashboard.key -out dashboard.csr</span><br></pre></td></tr></table></figure>
+<p>生成SSL证书：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl x509 -req -sha256 -days 365 -in dashboard.csr -signkey dashboard.key -out dashboard.crt</span><br></pre></td></tr></table></figure>
+<p>然后将生成的 dashboard.key 和 dashboard.crt置于路径 /home/share/certs下，该路径会配置到下面即将要操作的</p>
+<p>创建 dashboard用户</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create -f dashboard-user-role.yaml</span><br></pre></td></tr></table></figure>
+<p>获取登陆token</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl describe secret/$(kubectl get secret -nkube-system |grep admin|awk &apos;&#123;print $1&#125;&apos;) -nkube-system</span><br></pre></td></tr></table></figure>
+<p>token既然生成成功，接下来就可以打开浏览器，输入 token来登录进集群管理页面：</p>
+<p><img src="https://i.imgur.com/JzWjrC0.png" alt="image"></p>
+<hr>
+<h1 id="查看当前yum里的kubernetes版本"><a href="#查看当前yum里的kubernetes版本" class="headerlink" title="查看当前yum里的kubernetes版本"></a>查看当前yum里的kubernetes版本</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum info kubernetes</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">kubectl create -f kubernetes-dashboard.yaml</span><br><span class="line"></span><br><span class="line">kubectl get pods -n kube-system</span><br><span class="line"></span><br><span class="line">kubectl describe pod [kubernetes-dashboard-697f86d999-lpz58] -n kube-system</span><br></pre></td></tr></table></figure>
+<hr>
+<p>报错1：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[WARNING HTTPProxy]: Connection to &quot;https://*&quot; uses proxy &quot;http://*:*&quot;. If that is not intended, adjust your proxy settings</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export no_proxy=localhost,127.0.0.1,localaddress,.localdomain.com,.localdomain.local,192.168.0.0/16,10.96.0.0/12,172.25.50.21,172.25.50.22,172.25.50.23,172.25.50.24</span><br></pre></td></tr></table></figure>
+<p>报错2：</p>
+<p>kubeadm init failed to pull image</p>
+<p>由于官方镜像地址被墙，所以我们需要首先获取所需镜像以及它们的版本。然后从国内镜像站获取。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">for i in `kubeadm config images list`; do</span><br><span class="line">  imageName=$&#123;i#k8s.gcr.io/&#125;</span><br><span class="line">  docker pull registry.aliyuncs.com/google_containers/$imageName</span><br><span class="line">  docker tag registry.aliyuncs.com/google_containers/$imageName k8s.gcr.io/$imageName</span><br><span class="line">  docker rmi registry.aliyuncs.com/google_containers/$imageName</span><br><span class="line">done;</span><br></pre></td></tr></table></figure>
+<p>报错3：</p>
+<p>bridge-nf-call-iptables contents are not set to 1</p>
+<p>报错4：</p>
+<p>shell文件报错syntax error near unexpected token ‘$’\r’’<br>本来跑的好好得一个文件，在windows下修改了，然后移植到linux就报错了</p>
+<p>解决方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sed &apos;s/\r//g&apos; task_start.sh &gt; task_start2.sh</span><br><span class="line"></span><br><span class="line">sed &apos;s/\r//g&apos; get-k8s-dashboard.sh &gt; get-k8s-dashboard-1.sh</span><br><span class="line"></span><br><span class="line">或者</span><br><span class="line">dos2unix  *.sh</span><br></pre></td></tr></table></figure>
+<p>报错5：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[ERROR FileContent--proc-sys-net-bridge-bridge-nf-call-iptables]: /proc/sys/net/bridge/bridge-nf-call-iptables contents are not set to 1</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo 1 &gt; /proc/sys/net/bridge/bridge-nf-call-iptables</span><br></pre></td></tr></table></figure>
+<p>报错6：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">the connection to the server localhost:8080 was refused</span><br></pre></td></tr></table></figure>
+<p>解决方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">did you run below commands after kubeadm init</span><br><span class="line"></span><br><span class="line">To start using your cluster, you need to run (as a regular user):</span><br><span class="line"></span><br><span class="line">sudo cp /etc/kubernetes/admin.conf $HOME/</span><br><span class="line">sudo chown $(id -u):$(id -g) $HOME/admin.conf</span><br><span class="line">export KUBECONFIG=$HOME/admin.conf</span><br></pre></td></tr></table></figure>
+<p>报错7：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Unable to connect to the server: x509: certificate signed by unknown authority (possibly because of &quot;crypto/rsa: verification error&quot; while trying to verify candidate authority certificate &quot;kubernetes&quot;)</span><br></pre></td></tr></table></figure>
+<p>解决方案：</p>
+<p>do you have $KUBECONFIG pointing to /etc/kubernetes/kubelet.conf?</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export KUBECONFIG=/etc/kubernetes/kubelet.conf</span><br><span class="line">kubectl get nodes</span><br></pre></td></tr></table></figure>
+<p>报错8：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Error from server (Forbidden): componentstatuses is forbidden: User &quot;system:node:k8s-m&quot; cannot list resource &quot;componentstatuses&quot; in API group &quot;&quot; at the cluster scope</span><br></pre></td></tr></table></figure>
+<p>报错9：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Error from server (AlreadyExists): error when creating &quot;kubernetes-dashboard.yaml&quot;: secrets &quot;kubernetes-dashboard-certs&quot; already exists</span><br></pre></td></tr></table></figure>
+<p>解决方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl create 的反向操作</span><br><span class="line"></span><br><span class="line">kubectl delete -f kubenetes-dashboard.yml</span><br></pre></td></tr></table></figure>
+<p>报错10：</p>
+<p>I installed a Kubernetes master using kubeadm sucessfully on a VM (esxi). The problem is that if I stop the machine and restart it the master node seems to be down:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">The connection to the server *:6443 was refused - did you specify the right host or port?</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl version</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">export KUBECONFIG=/etc/kubernetes/admin.conf</span><br><span class="line"></span><br><span class="line">systemctl restart kubelet.service</span><br><span class="line">systemctl status kubelet</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl restart kubelet</span><br></pre></td></tr></table></figure>
+<p><a href="https://github.com/kubernetes/kubernetes/issues/66748" target="_blank" rel="noopener">After rebooting Master node, cannot connect server anymore</a></p>
+<p>报错11：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Error while initializing connection to Kubernetes apiserver. This most likely means that the cluster is misconfigured (e.g., it has invalid apiserver certificates or service account&apos;s configuration) or the --apiserver-host param points to a server that does not exist. Reason: Get https://10.96.0.1:443/version: dial tcp 10.96.0.1:443: i/o timeout</span><br><span class="line">Refer to our FAQ and wiki pages for more information: https://github.com/kubernetes/dashboard/wiki/FAQ</span><br></pre></td></tr></table></figure>
+<hr>
+<p>源文传送门：<a href="https://blog.linuxeye.cn/458.html" target="_blank" rel="noopener">这里</a></p>
+<p><a href="https://www.jianshu.com/p/ad3c712e1d95" target="_blank" rel="noopener">从零开始搭建Kubernetes集群（二、搭建虚拟机环境）</a></p>
+<p><a href="https://www.jianshu.com/p/e43f5e848da1" target="_blank" rel="noopener">从零开始搭建Kubernetes集群（三、搭建K8S集群）</a></p>
+<p><a href="https://blog.linuxeye.cn/458.html" target="_blank" rel="noopener">Kubernetes集群搭建</a></p>
+<p><a href="https://blog.csdn.net/xixiworld/article/details/71438794" target="_blank" rel="noopener">在 Cent OS 7 上安装 docker-ce</a></p>
+<p><a href="https://blog.linuxeye.cn/31.html" target="_blank" rel="noopener">lnmp、lamp、lnmpa一键安装包</a></p>
+<p><a href="https://blog.csdn.net/smiles13/article/details/81395614" target="_blank" rel="noopener">Centos7安装与卸载Docker</a></p>
+<p><a href="https://www.jianshu.com/p/55597646fa84" target="_blank" rel="noopener">shell文件报错syntax error near unexpected token ‘$’\r’’</a></p>
+<p><a href="https://www.linuxtechi.com/install-kubernetes-1-7-centos7-rhel7/" target="_blank" rel="noopener">How to Install Kubernetes (k8s) 1.7 on CentOS 7 / RHEL 7</a></p>
+<p><a href="http://blog.51cto.com/devingeng/2096495" target="_blank" rel="noopener">深入玩转K8S之使用kubeadm安装Kubernetes v1.10以及常见问题解答</a></p>
+<p><a href="https://kubernetes.feisky.xyz/bu-shu-pei-zhi/cluster/kubeadm#pei-zhi-network-plugin" target="_blank" rel="noopener">k8s指南</a></p>
+<p><a href="https://cloud.tencent.com/developer/article/1375297" target="_blank" rel="noopener">国内环境Kubernetes v1.12.1的安装与配置</a></p>
+<p><a href="http://ljchen.net/2018/10/23/%E5%9F%BA%E4%BA%8E%E9%98%BF%E9%87%8C%E4%BA%91%E9%95%9C%E5%83%8F%E7%AB%99%E5%AE%89%E8%A3%85kubernetes/" target="_blank" rel="noopener">基于阿里云镜像站安装Kubernetes</a></p>
+<p><a href="https://mp.weixin.qq.com/s?__biz=MzU4ODI1MjA3NQ==&amp;mid=2247483755&amp;idx=1&amp;sn=92a547c579aeacf1db9a8f0e56601b52&amp;chksm=fdded7afcaa95eb9d6aa6cf323bff1df46692fc6a6672e0a483105f091ddf9670fb06d034e2a&amp;scene=21#wechat_redirect" target="_blank" rel="noopener">利用K8S技术栈打造个人私有云（连载之：K8S集群搭建）</a></p>
+<p><a href="https://blog.frognew.com/2018/12/kubeadm-install-kubernetes-1.13.html#12kube-proxy%E5%BC%80%E5%90%AFipvs%E7%9A%84%E5%89%8D%E7%BD%AE%E6%9D%A1%E4%BB%B6" target="_blank" rel="noopener">使用kubeadm安装Kubernetes 1.13</a></p>
+<p><a href="https://mp.weixin.qq.com/s?__biz=MzU4ODI1MjA3NQ==&amp;mid=2247483699&amp;idx=1&amp;sn=57b84f4ec72c8a578934cdb4225e6fe7&amp;chksm=fdded7f7caa95ee198652c295b48b74565fd244afc4dccc0551b036c8216caab0397a1342d99&amp;scene=21#wechat_redirect" target="_blank" rel="noopener">利用K8S技术栈打造个人私有云（连载之：初章）</a></p>
+<p><a href="https://www.codesheep.cn/2018/12/27/kubeadm-k8s1-13-1/" target="_blank" rel="noopener">利用Kubeadm部署 Kubernetes 1.13.1集群实践录</a></p>
+<p><a href="http://www.yunweipai.com/archives/8056.html" target="_blank" rel="noopener">你闺女也能看懂的插画版Kubernetes指南</a></p>
+<p><a href="http://www.yunweipai.com/archives/23717.html" target="_blank" rel="noopener">华为是怎么用Kubernetes的？</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/k8s/" rel="tag"># k8s</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/03/19/安装-shadowsocks-libev启用-obfs-混淆/" rel="next" title="安装 shadowsocks-libev启用 obfs 混淆">
+                <i class="fa fa-chevron-left"></i> 安装 shadowsocks-libev启用 obfs 混淆
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="ben wong" />
+            
+              <p class="site-author-name" itemprop="name">ben wong</p>
+              <p class="site-description motion-element" itemprop="description">要么忙着活，要么忙着死</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">35</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://imgur.com" title="图床" target="_blank">图床</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#kubeadm-init成功提示之后的正确操作步骤如下："><span class="nav-number">1.</span> <span class="nav-text"><a href="#kubeadm-init&#x6210;&#x529F;&#x63D0;&#x793A;&#x4E4B;&#x540E;&#x7684;&#x6B63;&#x786E;&#x64CD;&#x4F5C;&#x6B65;&#x9AA4;&#x5982;&#x4E0B;&#xFF1A;" class="headerlink" title="kubeadm init&#x6210;&#x529F;&#x63D0;&#x793A;&#x4E4B;&#x540E;&#x7684;&#x6B63;&#x786E;&#x64CD;&#x4F5C;&#x6B65;&#x9AA4;&#x5982;&#x4E0B;&#xFF1A;"></a>kubeadm init&#x6210;&#x529F;&#x63D0;&#x793A;&#x4E4B;&#x540E;&#x7684;&#x6B63;&#x786E;&#x64CD;&#x4F5C;&#x6B65;&#x9AA4;&#x5982;&#x4E0B;&#xFF1A;</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#查看节点状态"><span class="nav-number"></span> <span class="nav-text"><a href="#&#x67E5;&#x770B;&#x8282;&#x70B9;&#x72B6;&#x6001;" class="headerlink" title="&#x67E5;&#x770B;&#x8282;&#x70B9;&#x72B6;&#x6001;"></a>&#x67E5;&#x770B;&#x8282;&#x70B9;&#x72B6;&#x6001;</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#查看pods状态"><span class="nav-number"></span> <span class="nav-text"><a href="#&#x67E5;&#x770B;pods&#x72B6;&#x6001;" class="headerlink" title="&#x67E5;&#x770B;pods&#x72B6;&#x6001;"></a>&#x67E5;&#x770B;pods&#x72B6;&#x6001;</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#查看K8S集群状态"><span class="nav-number"></span> <span class="nav-text"><a href="#&#x67E5;&#x770B;K8S&#x96C6;&#x7FA4;&#x72B6;&#x6001;" class="headerlink" title="&#x67E5;&#x770B;K8S&#x96C6;&#x7FA4;&#x72B6;&#x6001;"></a>&#x67E5;&#x770B;K8S&#x96C6;&#x7FA4;&#x72B6;&#x6001;</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#重启kubelet-service"><span class="nav-number"></span> <span class="nav-text"><a href="#&#x91CD;&#x542F;kubelet-service" class="headerlink" title="&#x91CD;&#x542F;kubelet service"></a>&#x91CD;&#x542F;kubelet service</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#查看所有pod状态"><span class="nav-number"></span> <span class="nav-text"><a href="#&#x67E5;&#x770B;&#x6240;&#x6709;pod&#x72B6;&#x6001;" class="headerlink" title="&#x67E5;&#x770B;&#x6240;&#x6709;pod&#x72B6;&#x6001;"></a>&#x67E5;&#x770B;&#x6240;&#x6709;pod&#x72B6;&#x6001;</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#查看-dashboard的外网暴露端口"><span class="nav-number"></span> <span class="nav-text"><a href="#&#x67E5;&#x770B;-dashboard&#x7684;&#x5916;&#x7F51;&#x66B4;&#x9732;&#x7AEF;&#x53E3;" class="headerlink" title="&#x67E5;&#x770B; dashboard&#x7684;&#x5916;&#x7F51;&#x66B4;&#x9732;&#x7AEF;&#x53E3;"></a>&#x67E5;&#x770B; dashboard&#x7684;&#x5916;&#x7F51;&#x66B4;&#x9732;&#x7AEF;&#x53E3;</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#查看cluster的状态"><span class="nav-number"></span> <span class="nav-text"><a href="#&#x67E5;&#x770B;cluster&#x7684;&#x72B6;&#x6001;" class="headerlink" title="&#x67E5;&#x770B;cluster&#x7684;&#x72B6;&#x6001;"></a>&#x67E5;&#x770B;cluster&#x7684;&#x72B6;&#x6001;</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#如果-token忘记-可以去-Master上执行如下命令来获取"><span class="nav-number"></span> <span class="nav-text"><a href="#&#x5982;&#x679C;-token&#x5FD8;&#x8BB0;-&#x53EF;&#x4EE5;&#x53BB;-Master&#x4E0A;&#x6267;&#x884C;&#x5982;&#x4E0B;&#x547D;&#x4EE4;&#x6765;&#x83B7;&#x53D6;" class="headerlink" title="&#x5982;&#x679C; token&#x5FD8;&#x8BB0;,&#x53EF;&#x4EE5;&#x53BB; Master&#x4E0A;&#x6267;&#x884C;&#x5982;&#x4E0B;&#x547D;&#x4EE4;&#x6765;&#x83B7;&#x53D6;"></a>&#x5982;&#x679C; token&#x5FD8;&#x8BB0;,&#x53EF;&#x4EE5;&#x53BB; Master&#x4E0A;&#x6267;&#x884C;&#x5982;&#x4E0B;&#x547D;&#x4EE4;&#x6765;&#x83B7;&#x53D6;</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#安装dashboard"><span class="nav-number">1.</span> <span class="nav-text"><a href="#&#x5B89;&#x88C5;dashboard" class="headerlink" title="&#x5B89;&#x88C5;dashboard"></a>&#x5B89;&#x88C5;dashboard</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#查看当前yum里的kubernetes版本"><span class="nav-number"></span> <span class="nav-text"><a href="#&#x67E5;&#x770B;&#x5F53;&#x524D;yum&#x91CC;&#x7684;kubernetes&#x7248;&#x672C;" class="headerlink" title="&#x67E5;&#x770B;&#x5F53;&#x524D;yum&#x91CC;&#x7684;kubernetes&#x7248;&#x672C;"></a>&#x67E5;&#x770B;&#x5F53;&#x524D;yum&#x91CC;&#x7684;kubernetes&#x7248;&#x672C;</span></a></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ben wong</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://louis90.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://code.meirenji.info/2019/03/26/kubernetes集群搭建流程及出坑记录/';
+          this.page.identifier = '2019/03/26/kubernetes集群搭建流程及出坑记录/';
+          this.page.title = 'kubernetes集群搭建流程及出坑记录';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://louis90.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
