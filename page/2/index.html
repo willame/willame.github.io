@@ -883,7 +883,14 @@
 
       
         
-          <h2 id="n2n与openvpn对比"><a href="#n2n与openvpn对比" class="headerlink" title="n2n与openvpn对比"></a>n2n与openvpn对比</h2><ul>
+          <h2 id="N2N-是什么？"><a href="#N2N-是什么？" class="headerlink" title="N2N 是什么？"></a>N2N 是什么？</h2><p>N2N 是指通过 UDP 方式，建立虚拟局域网的一种轻量级 VPN，是全端口开放的 VPN。所以，如果某个网络禁用了 UDP，那么该网络下的设备就不适合使用本软件来加入这个虚拟局域网（用”blue’s port scanner”，选择UDP来扫描，扫出来的就是未被封的，正常情况下应该超级多）。</p>
+<h2 id="N2N-目前有几个版本？"><a href="#N2N-目前有几个版本？" class="headerlink" title="N2N 目前有几个版本？"></a>N2N 目前有几个版本？</h2><p>目前有三个版本，他们互不相容，必须分开独立使用。每一个版本都有两个主程序，一个是 edge （客户端），一个是 supernode（服务器端）。edge 和 supernode 必须成对使用，不能用 v1 的 edge 连接 v2 的 supernode。</p>
+<p>推荐你使用官方新版 V2（2019-6-10 以后的）：速度最快、直连率高，最重要的是，官方正在更新，你也可以参与进来，帮助完善</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">V1 ： https://github.com/meyerd/n2n/tree/master/n2n_v1 （版本号是 v.1.x.x）（使用 edge -h 可见，下同）</span><br><span class="line">V2 ： https://github.com/ntop/n2n ---------------------------------（版本号是 v.2.x.x）</span><br><span class="line">V2s： https://github.com/meyerd/n2n/tree/master/n2n_v2 （版本号是 v.2.1.0；V2s 是我们为便于区分，给它取的别名，它其实是一个德国网友写的 n2n v2 分支，非官方版本。曾经在三个版本中，它的直连率和稳定性是最高的）</span><br></pre></td></tr></table></figure>
+<h2 id="最新N2N-最新版的安装方式"><a href="#最新N2N-最新版的安装方式" class="headerlink" title="最新N2N 最新版的安装方式"></a>最新N2N 最新版的安装方式</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install subversion build-essential libssl-dev autoconf</span><br><span class="line">git clone https://github.com/ntop/n2n.git</span><br><span class="line">cd n2n</span><br><span class="line">./autogen</span><br><span class="line">make</span><br><span class="line">sudo make install</span><br></pre></td></tr></table></figure>
+<h2 id="建立-N2N-网络的前提条件？"><a href="#建立-N2N-网络的前提条件？" class="headerlink" title="建立 N2N 网络的前提条件？"></a>建立 N2N 网络的前提条件？</h2><p>需要在所有的设备上运行一个 n2n 的客户端 edge（点对网、网对网的除外），并需要一个服务端 supernode（即中心节点）的帮助。</p>
+<p>这个服务端 supernode 既可以是公用的（一个 supernode 可以同时支持很多 edge，同时支持多个虚拟局域网），也可以是自建的，但它必须要有一个外网 IP 以及对外开放的固定端口（别人通过这个 IP 和端口可以访问到它提供的服务）。而且所在的网络环境没有封 UDP 通讯（这个基本都没有封）。</p>
+<h2 id="n2n与openvpn对比"><a href="#n2n与openvpn对比" class="headerlink" title="n2n与openvpn对比"></a>n2n与openvpn对比</h2><ul>
 <li>N2N可以用公众服务器， 所以可以不用外网IP  不用端口映射,</li>
 <li>OpenVPN服务器必需要一个外网端口</li>
 </ul>
@@ -2064,7 +2071,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>

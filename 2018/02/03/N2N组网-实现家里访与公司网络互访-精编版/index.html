@@ -79,13 +79,13 @@
 
 
 
-<meta name="description" content="n2n与openvpn对比 N2N可以用公众服务器， 所以可以不用外网IP  不用端口映射, OpenVPN服务器必需要一个外网端口   优点：不需要外网ip、不需要制做证书、设置简单 缺点：不支持tcp、不支持代理、不能从服务端推送路由表、安全性没openvpn好  n2n最大的优势在于：  开源，任何人都可以检查代码，看看是否有猫腻，而hamachi是闭源的，LogMeIn是否会截获密钥不得而">
+<meta name="description" content="N2N 是什么？N2N 是指通过 UDP 方式，建立虚拟局域网的一种轻量级 VPN，是全端口开放的 VPN。所以，如果某个网络禁用了 UDP，那么该网络下的设备就不适合使用本软件来加入这个虚拟局域网（用”blue’s port scanner”，选择UDP来扫描，扫出来的就是未被封的，正常情况下应该超级多）。 N2N 目前有几个版本？目前有三个版本，他们互不相容，必须分开独立使用。每一个版本都有两">
 <meta name="keywords" content="n2n">
 <meta property="og:type" content="article">
 <meta property="og:title" content="N2N组网 实现家里访与公司网络互访(精编版)">
 <meta property="og:url" content="http://code.meirenji.info/2018/02/03/N2N组网-实现家里访与公司网络互访-精编版/index.html">
 <meta property="og:site_name" content="奶爸的天空">
-<meta property="og:description" content="n2n与openvpn对比 N2N可以用公众服务器， 所以可以不用外网IP  不用端口映射, OpenVPN服务器必需要一个外网端口   优点：不需要外网ip、不需要制做证书、设置简单 缺点：不支持tcp、不支持代理、不能从服务端推送路由表、安全性没openvpn好  n2n最大的优势在于：  开源，任何人都可以检查代码，看看是否有猫腻，而hamachi是闭源的，LogMeIn是否会截获密钥不得而">
+<meta property="og:description" content="N2N 是什么？N2N 是指通过 UDP 方式，建立虚拟局域网的一种轻量级 VPN，是全端口开放的 VPN。所以，如果某个网络禁用了 UDP，那么该网络下的设备就不适合使用本软件来加入这个虚拟局域网（用”blue’s port scanner”，选择UDP来扫描，扫出来的就是未被封的，正常情况下应该超级多）。 N2N 目前有几个版本？目前有三个版本，他们互不相容，必须分开独立使用。每一个版本都有两">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://i.imgur.com/81CudtZ.png">
 <meta property="og:image" content="https://i.imgur.com/Pcyzwpt.png">
@@ -112,10 +112,10 @@
 <meta property="og:image" content="https://i.imgur.com/VbCI1S7.png">
 <meta property="og:image" content="https://i.imgur.com/VbCI1S7.png">
 <meta property="og:image" content="https://i.imgur.com/w2bFdBJ.png">
-<meta property="og:updated_time" content="2018-02-03T13:41:45.623Z">
+<meta property="og:updated_time" content="2020-07-25T07:58:34.966Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="N2N组网 实现家里访与公司网络互访(精编版)">
-<meta name="twitter:description" content="n2n与openvpn对比 N2N可以用公众服务器， 所以可以不用外网IP  不用端口映射, OpenVPN服务器必需要一个外网端口   优点：不需要外网ip、不需要制做证书、设置简单 缺点：不支持tcp、不支持代理、不能从服务端推送路由表、安全性没openvpn好  n2n最大的优势在于：  开源，任何人都可以检查代码，看看是否有猫腻，而hamachi是闭源的，LogMeIn是否会截获密钥不得而">
+<meta name="twitter:description" content="N2N 是什么？N2N 是指通过 UDP 方式，建立虚拟局域网的一种轻量级 VPN，是全端口开放的 VPN。所以，如果某个网络禁用了 UDP，那么该网络下的设备就不适合使用本软件来加入这个虚拟局域网（用”blue’s port scanner”，选择UDP来扫描，扫出来的就是未被封的，正常情况下应该超级多）。 N2N 目前有几个版本？目前有三个版本，他们互不相容，必须分开独立使用。每一个版本都有两">
 <meta name="twitter:image" content="https://i.imgur.com/81CudtZ.png">
 
 
@@ -413,7 +413,14 @@
       
 
       
-        <h2 id="n2n与openvpn对比"><a href="#n2n与openvpn对比" class="headerlink" title="n2n与openvpn对比"></a>n2n与openvpn对比</h2><ul>
+        <h2 id="N2N-是什么？"><a href="#N2N-是什么？" class="headerlink" title="N2N 是什么？"></a>N2N 是什么？</h2><p>N2N 是指通过 UDP 方式，建立虚拟局域网的一种轻量级 VPN，是全端口开放的 VPN。所以，如果某个网络禁用了 UDP，那么该网络下的设备就不适合使用本软件来加入这个虚拟局域网（用”blue’s port scanner”，选择UDP来扫描，扫出来的就是未被封的，正常情况下应该超级多）。</p>
+<h2 id="N2N-目前有几个版本？"><a href="#N2N-目前有几个版本？" class="headerlink" title="N2N 目前有几个版本？"></a>N2N 目前有几个版本？</h2><p>目前有三个版本，他们互不相容，必须分开独立使用。每一个版本都有两个主程序，一个是 edge （客户端），一个是 supernode（服务器端）。edge 和 supernode 必须成对使用，不能用 v1 的 edge 连接 v2 的 supernode。</p>
+<p>推荐你使用官方新版 V2（2019-6-10 以后的）：速度最快、直连率高，最重要的是，官方正在更新，你也可以参与进来，帮助完善</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">V1 ： https://github.com/meyerd/n2n/tree/master/n2n_v1 （版本号是 v.1.x.x）（使用 edge -h 可见，下同）</span><br><span class="line">V2 ： https://github.com/ntop/n2n ---------------------------------（版本号是 v.2.x.x）</span><br><span class="line">V2s： https://github.com/meyerd/n2n/tree/master/n2n_v2 （版本号是 v.2.1.0；V2s 是我们为便于区分，给它取的别名，它其实是一个德国网友写的 n2n v2 分支，非官方版本。曾经在三个版本中，它的直连率和稳定性是最高的）</span><br></pre></td></tr></table></figure>
+<h2 id="最新N2N-最新版的安装方式"><a href="#最新N2N-最新版的安装方式" class="headerlink" title="最新N2N 最新版的安装方式"></a>最新N2N 最新版的安装方式</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install subversion build-essential libssl-dev autoconf</span><br><span class="line">git clone https://github.com/ntop/n2n.git</span><br><span class="line">cd n2n</span><br><span class="line">./autogen</span><br><span class="line">make</span><br><span class="line">sudo make install</span><br></pre></td></tr></table></figure>
+<h2 id="建立-N2N-网络的前提条件？"><a href="#建立-N2N-网络的前提条件？" class="headerlink" title="建立 N2N 网络的前提条件？"></a>建立 N2N 网络的前提条件？</h2><p>需要在所有的设备上运行一个 n2n 的客户端 edge（点对网、网对网的除外），并需要一个服务端 supernode（即中心节点）的帮助。</p>
+<p>这个服务端 supernode 既可以是公用的（一个 supernode 可以同时支持很多 edge，同时支持多个虚拟局域网），也可以是自建的，但它必须要有一个外网 IP 以及对外开放的固定端口（别人通过这个 IP 和端口可以访问到它提供的服务）。而且所在的网络环境没有封 UDP 通讯（这个基本都没有封）。</p>
+<h2 id="n2n与openvpn对比"><a href="#n2n与openvpn对比" class="headerlink" title="n2n与openvpn对比"></a>n2n与openvpn对比</h2><ul>
 <li>N2N可以用公众服务器， 所以可以不用外网IP  不用端口映射,</li>
 <li>OpenVPN服务器必需要一个外网端口</li>
 </ul>
@@ -502,13 +509,13 @@
 <hr>
 <h2 id="第一部分：服务端即supernode端："><a href="#第一部分：服务端即supernode端：" class="headerlink" title="第一部分：服务端即supernode端："></a>第一部分：服务端即supernode端：</h2><p>准备工作：安装supernode与edge应用</p>
 <p>源码直接从SVN上获取，里面包含了V1和V2两个版本，我编译的是V2版本</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#svn cohttps://svn.ntop.org/svn/ntop/trunk/n2n</span><br><span class="line">#cd # cd n2n/n2n_v1</span><br><span class="line">#make</span><br><span class="line">#make install</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#svn co https://svn.ntop.org/svn/ntop/trunk/n2n</span><br><span class="line">#cd # cd n2n/n2n_v1</span><br><span class="line">#make</span><br><span class="line">#make install</span><br></pre></td></tr></table></figure>
 <p>编译安装后，多了两个应用：supernode和edge</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">inet addr:112.74.108.206 </span><br><span class="line">supernode -l  1000</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">inet addr:112.74.108.206</span><br><span class="line">supernode -l  1000</span><br></pre></td></tr></table></figure>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">supernode -l 2051 -v &gt;/dev/null &amp;</span><br></pre></td></tr></table></figure>
 <p>参数-l是监听的端口，进程缺省是运行在后台的。</p>
 <p>-v 参数输出详情的</p>
-<p>服务器端命令是比较简单的, 但如果想要获得服务运行的信息, v1和v2是不同的, v2 中只有加入-f选项才能获得运行信息. </p>
+<p>服务器端命令是比较简单的, 但如果想要获得服务运行的信息, v1和v2是不同的, v2 中只有加入-f选项才能获得运行信息.</p>
 <p>以下是v2版本, 创建一个可执行sh文件来背景运行supernode.</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">#! /bin/bash</span><br><span class="line"></span><br><span class="line">/usr/bin/nohup /home/user/n2n/n2n_v2/build/supernode -l 1000 -v -f &gt; /home/user/supernode.log 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
 <p><img src="https://i.imgur.com/UsC45fb.png" alt="image"></p>
@@ -517,7 +524,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptables -A INPUT -p tcp -m tcp --dport 1050 -j ACCEPT</span><br></pre></td></tr></table></figure>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-A INPUT -p tcp -m tcp --dport 1000 -j ACCEPT</span><br><span class="line">-A INPUT -p tcp -m tcp --dport 1050 -j ACCEPT</span><br></pre></td></tr></table></figure>
 <p>经过这两步操作就完成了supernode的操作</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">-l   Set UDP main listen port to </span><br><span class="line">-f          Run in foreground.</span><br><span class="line">-v          Increase verbosity. Can be used multiple times.</span><br><span class="line">-h          This help message.</span><br><span class="line"></span><br><span class="line">root@iZ94r15fuj4Z:~/n2n# supernode -l 1000</span><br><span class="line"></span><br><span class="line">09/Nov/2016 15:23:49 [supernode.c: 477] </span><br><span class="line">Supernode ready: listening on port 30037 [TCP/UDP]</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">-l   Set UDP main listen port to</span><br><span class="line">-f          Run in foreground.</span><br><span class="line">-v          Increase verbosity. Can be used multiple times.</span><br><span class="line">-h          This help message.</span><br><span class="line"></span><br><span class="line">root@iZ94r15fuj4Z:~/n2n# supernode -l 1000</span><br><span class="line"></span><br><span class="line">09/Nov/2016 15:23:49 [supernode.c: 477]</span><br><span class="line">Supernode ready: listening on port 30037 [TCP/UDP]</span><br></pre></td></tr></table></figure>
 <p>运行 supernode 的时候可以带上-v 参数，来查看报错情况。</p>
 <p>公司目前的客户端路由器为 NETGEAR-JNR3210(不技持openwrt)</p>
 <h2 id="3-配置Android的N2N客户端"><a href="#3-配置Android的N2N客户端" class="headerlink" title="3.配置Android的N2N客户端"></a>3.配置Android的N2N客户端</h2><p><img src="https://i.imgur.com/FTl5FJO.png" alt="image"></p>
@@ -533,7 +540,7 @@
 <p>ps:更改 community与key之后，客户端也要做相应的修改！同时路由器端的静态路由也要重新保存并应用刷新。否则的话通过局域网的ip无法访问。</p>
 <p>重启（或关机重新开机）本地路由器后，与远程的局域网就断开了，解决办法，</p>
 <ul>
-<li>进入管理页面的“网络-接口”，将n2n网络重新连接!如果没有这一步的话，也不能通过局域网的ip直连！ </li>
+<li>进入管理页面的“网络-接口”，将n2n网络重新连接!如果没有这一步的话，也不能通过局域网的ip直连！</li>
 </ul>
 <ol>
 <li>n2n设置</li>
@@ -554,7 +561,7 @@
 <p>公司openwrt路由器N2N设置 注意 以太网适配器 “edge0”</p>
 </blockquote>
 <ol>
-<li>防火墙设置 </li>
+<li>防火墙设置</li>
 </ol>
 <p>如果没有防火墙这一步的设置的话，会出现一个问题。能远程访问路由，就是通过自己设置的n2n ip 10.30.168.1网关访问路由，但是不能访问10.68.0.0 网段的ip，但是ping不通，网关也ping不通？</p>
 <p>原因及解决方法：虚拟IP与真实IP是独立的，互相不能访问的，需要设置iptables.</p>
@@ -625,6 +632,8 @@
 </ul>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">killall -9 edge &amp;</span><br><span class="line">sleep 2</span><br><span class="line">edge -d n2n -a 10.10.10.2 -c test -k password -l 88.86.108.50:82 -M 1300 -r &amp;</span><br><span class="line">sleep 13</span><br><span class="line">route add -net 192.168.1.0/24 gw 10.10.10.1 &amp;</span><br><span class="line">iptables -t nat -A POSTROUTING -j MASQUERADE &amp;</span><br></pre></td></tr></table></figure>
 <hr>
+<h2 id="官方N2N更新至2-6稳定版"><a href="#官方N2N更新至2-6稳定版" class="headerlink" title="官方N2N更新至2.6稳定版~"></a>官方N2N更新至2.6稳定版~</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">增加了在supernode上指定允许社区（组）的白名单的功能</span><br><span class="line">通过多播实现本地对等点发现</span><br><span class="line">Windows编译修复和说明</span><br><span class="line">MacOS编译修复和说明</span><br><span class="line">支持多个edge节点的systemd服务管理</span><br><span class="line">通过AES加密以提高安全性和吞吐量</span><br><span class="line">添加基准测试工具以提高加密吞吐量</span><br><span class="line">提高连接稳定性并建立P2P连接的机会</span><br><span class="line">删除密钥计划支持以简化加密代码</span><br><span class="line">整合n2n的meyerd分支中所做的更改</span><br><span class="line">实现P2P与supernode通信的数据包统计信息</span><br><span class="line">用哈希表替换对等链接列表，以在大型网络中更快地查找</span><br><span class="line">自动向用户n2n投递</span><br><span class="line">n2n版本改进</span><br><span class="line">添加对ARM64构建的支持</span><br><span class="line">在OpenWRT上构建n2n的说明和makefile文件</span><br><span class="line">更多选项来控制MTU，P2P连接，TOS和日志详细程度</span><br><span class="line">为n2n协议实现wireshark解剖器</span><br><span class="line">在tuntap_linux中删除对system（）的调用，改用netlink</span><br><span class="line">实现n2n-decode实用程序以解码流量并将其转储到PCAP</span><br></pre></td></tr></table></figure>
+<hr>
 <p>参考原文在这里</p>
 <p>1.不要用同一个局域 网内的机器 试。同城 两个 局域网内机器 ping 4ms mtu 设置为1300 下载速度可以达到 80k/s ，基本跑满 1M带宽</p>
 <p><a href="http://itoedr.blog.163.com/blog/static/1202842972013101592438403/" target="_blank" rel="noopener">N2N(vpn)　Edge node（边界节点）与supernode（局端交换中心节点）配置手册</a></p>
@@ -638,6 +647,7 @@
 <p><a href="http://www.right.com.cn/forum/thread-148272-1-1.html" target="_blank" rel="noopener">在内网组建n2n vpn 远程管理openwrt ssh远程控制</a></p>
 <p><a href="www.lucktu.com/archives/749.html">超级supernode资源共享：N2N VPN 超级节点共享</a></p>
 <p><a href="http://os.51cto.com/art/201501/463248.htm" target="_blank" rel="noopener">用n2n在Linux上配置一个非常实用免费的VPN解决方案</a></p>
+<p><a href="http://www.lucktu.com/archives/783.html" target="_blank" rel="noopener">N2N 新手向导及最新信息（2019-12-05 更新)</a></p>
 <p>参考文档：<a href="http://www.cnblogs.com/mousean/p/6006597.html" target="_blank" rel="noopener">n2n搭建手记-1-V1</a><br>参考文档：<a href="http://www.cnblogs.com/mousean/p/6007036.html" target="_blank" rel="noopener">n2n搭建手记-2-V2</a></p>
 
       
@@ -843,7 +853,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#n2n与openvpn对比"><span class="nav-number">1.</span> <span class="nav-text"><a href="#n2n&#x4E0E;openvpn&#x5BF9;&#x6BD4;" class="headerlink" title="n2n&#x4E0E;openvpn&#x5BF9;&#x6BD4;"></a>n2n&#x4E0E;openvpn&#x5BF9;&#x6BD4;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#N2N的实现具有两个部分："><span class="nav-number">2.</span> <span class="nav-text"><a href="#N2N&#x7684;&#x5B9E;&#x73B0;&#x5177;&#x6709;&#x4E24;&#x4E2A;&#x90E8;&#x5206;&#xFF1A;" class="headerlink" title="N2N&#x7684;&#x5B9E;&#x73B0;&#x5177;&#x6709;&#x4E24;&#x4E2A;&#x90E8;&#x5206;&#xFF1A;"></a>N2N&#x7684;&#x5B9E;&#x73B0;&#x5177;&#x6709;&#x4E24;&#x4E2A;&#x90E8;&#x5206;&#xFF1A;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第一部分：服务端即supernode端："><span class="nav-number">3.</span> <span class="nav-text"><a href="#&#x7B2C;&#x4E00;&#x90E8;&#x5206;&#xFF1A;&#x670D;&#x52A1;&#x7AEF;&#x5373;supernode&#x7AEF;&#xFF1A;" class="headerlink" title="&#x7B2C;&#x4E00;&#x90E8;&#x5206;&#xFF1A;&#x670D;&#x52A1;&#x7AEF;&#x5373;supernode&#x7AEF;&#xFF1A;"></a>&#x7B2C;&#x4E00;&#x90E8;&#x5206;&#xFF1A;&#x670D;&#x52A1;&#x7AEF;&#x5373;supernode&#x7AEF;&#xFF1A;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-配置Android的N2N客户端"><span class="nav-number">4.</span> <span class="nav-text"><a href="#3-&#x914D;&#x7F6E;Android&#x7684;N2N&#x5BA2;&#x6237;&#x7AEF;" class="headerlink" title="3.&#x914D;&#x7F6E;Android&#x7684;N2N&#x5BA2;&#x6237;&#x7AEF;"></a>3.&#x914D;&#x7F6E;Android&#x7684;N2N&#x5BA2;&#x6237;&#x7AEF;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二部分：Edge段"><span class="nav-number">5.</span> <span class="nav-text"><a href="#&#x7B2C;&#x4E8C;&#x90E8;&#x5206;&#xFF1A;Edge&#x6BB5;" class="headerlink" title="&#x7B2C;&#x4E8C;&#x90E8;&#x5206;&#xFF1A;Edge&#x6BB5;"></a>&#x7B2C;&#x4E8C;&#x90E8;&#x5206;&#xFF1A;Edge&#x6BB5;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三部分"><span class="nav-number">6.</span> <span class="nav-text"><a href="#&#x7B2C;&#x4E09;&#x90E8;&#x5206;" class="headerlink" title="&#x7B2C;&#x4E09;&#x90E8;&#x5206;"></a>&#x7B2C;&#x4E09;&#x90E8;&#x5206;</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#N2N-是什么？"><span class="nav-number">1.</span> <span class="nav-text"><a href="#N2N-&#x662F;&#x4EC0;&#x4E48;&#xFF1F;" class="headerlink" title="N2N &#x662F;&#x4EC0;&#x4E48;&#xFF1F;"></a>N2N &#x662F;&#x4EC0;&#x4E48;&#xFF1F;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#N2N-目前有几个版本？"><span class="nav-number">2.</span> <span class="nav-text"><a href="#N2N-&#x76EE;&#x524D;&#x6709;&#x51E0;&#x4E2A;&#x7248;&#x672C;&#xFF1F;" class="headerlink" title="N2N &#x76EE;&#x524D;&#x6709;&#x51E0;&#x4E2A;&#x7248;&#x672C;&#xFF1F;"></a>N2N &#x76EE;&#x524D;&#x6709;&#x51E0;&#x4E2A;&#x7248;&#x672C;&#xFF1F;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#最新N2N-最新版的安装方式"><span class="nav-number">3.</span> <span class="nav-text"><a href="#&#x6700;&#x65B0;N2N-&#x6700;&#x65B0;&#x7248;&#x7684;&#x5B89;&#x88C5;&#x65B9;&#x5F0F;" class="headerlink" title="&#x6700;&#x65B0;N2N &#x6700;&#x65B0;&#x7248;&#x7684;&#x5B89;&#x88C5;&#x65B9;&#x5F0F;"></a>&#x6700;&#x65B0;N2N &#x6700;&#x65B0;&#x7248;&#x7684;&#x5B89;&#x88C5;&#x65B9;&#x5F0F;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#建立-N2N-网络的前提条件？"><span class="nav-number">4.</span> <span class="nav-text"><a href="#&#x5EFA;&#x7ACB;-N2N-&#x7F51;&#x7EDC;&#x7684;&#x524D;&#x63D0;&#x6761;&#x4EF6;&#xFF1F;" class="headerlink" title="&#x5EFA;&#x7ACB; N2N &#x7F51;&#x7EDC;&#x7684;&#x524D;&#x63D0;&#x6761;&#x4EF6;&#xFF1F;"></a>&#x5EFA;&#x7ACB; N2N &#x7F51;&#x7EDC;&#x7684;&#x524D;&#x63D0;&#x6761;&#x4EF6;&#xFF1F;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#n2n与openvpn对比"><span class="nav-number">5.</span> <span class="nav-text"><a href="#n2n&#x4E0E;openvpn&#x5BF9;&#x6BD4;" class="headerlink" title="n2n&#x4E0E;openvpn&#x5BF9;&#x6BD4;"></a>n2n&#x4E0E;openvpn&#x5BF9;&#x6BD4;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#N2N的实现具有两个部分："><span class="nav-number">6.</span> <span class="nav-text"><a href="#N2N&#x7684;&#x5B9E;&#x73B0;&#x5177;&#x6709;&#x4E24;&#x4E2A;&#x90E8;&#x5206;&#xFF1A;" class="headerlink" title="N2N&#x7684;&#x5B9E;&#x73B0;&#x5177;&#x6709;&#x4E24;&#x4E2A;&#x90E8;&#x5206;&#xFF1A;"></a>N2N&#x7684;&#x5B9E;&#x73B0;&#x5177;&#x6709;&#x4E24;&#x4E2A;&#x90E8;&#x5206;&#xFF1A;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第一部分：服务端即supernode端："><span class="nav-number">7.</span> <span class="nav-text"><a href="#&#x7B2C;&#x4E00;&#x90E8;&#x5206;&#xFF1A;&#x670D;&#x52A1;&#x7AEF;&#x5373;supernode&#x7AEF;&#xFF1A;" class="headerlink" title="&#x7B2C;&#x4E00;&#x90E8;&#x5206;&#xFF1A;&#x670D;&#x52A1;&#x7AEF;&#x5373;supernode&#x7AEF;&#xFF1A;"></a>&#x7B2C;&#x4E00;&#x90E8;&#x5206;&#xFF1A;&#x670D;&#x52A1;&#x7AEF;&#x5373;supernode&#x7AEF;&#xFF1A;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-配置Android的N2N客户端"><span class="nav-number">8.</span> <span class="nav-text"><a href="#3-&#x914D;&#x7F6E;Android&#x7684;N2N&#x5BA2;&#x6237;&#x7AEF;" class="headerlink" title="3.&#x914D;&#x7F6E;Android&#x7684;N2N&#x5BA2;&#x6237;&#x7AEF;"></a>3.&#x914D;&#x7F6E;Android&#x7684;N2N&#x5BA2;&#x6237;&#x7AEF;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二部分：Edge段"><span class="nav-number">9.</span> <span class="nav-text"><a href="#&#x7B2C;&#x4E8C;&#x90E8;&#x5206;&#xFF1A;Edge&#x6BB5;" class="headerlink" title="&#x7B2C;&#x4E8C;&#x90E8;&#x5206;&#xFF1A;Edge&#x6BB5;"></a>&#x7B2C;&#x4E8C;&#x90E8;&#x5206;&#xFF1A;Edge&#x6BB5;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三部分"><span class="nav-number">10.</span> <span class="nav-text"><a href="#&#x7B2C;&#x4E09;&#x90E8;&#x5206;" class="headerlink" title="&#x7B2C;&#x4E09;&#x90E8;&#x5206;"></a>&#x7B2C;&#x4E09;&#x90E8;&#x5206;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#官方N2N更新至2-6稳定版"><span class="nav-number">11.</span> <span class="nav-text"><a href="#&#x5B98;&#x65B9;N2N&#x66F4;&#x65B0;&#x81F3;2-6&#x7A33;&#x5B9A;&#x7248;" class="headerlink" title="&#x5B98;&#x65B9;N2N&#x66F4;&#x65B0;&#x81F3;2.6&#x7A33;&#x5B9A;&#x7248;~"></a>&#x5B98;&#x65B9;N2N&#x66F4;&#x65B0;&#x81F3;2.6&#x7A33;&#x5B9A;&#x7248;~</span></a></li></ol></div>
             
 
           </div>
@@ -863,7 +873,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
