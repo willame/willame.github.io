@@ -286,6 +286,165 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://code.meirenji.info/2021/12/07/搭建Tinc实现异地构建局域网/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ben wong">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="奶爸的天空">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2021/12/07/搭建Tinc实现异地构建局域网/" itemprop="url">搭建Tinc实现异地构建局域网</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-12-07T18:06:55+09:00">
+                2021-12-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/科学上网/" itemprop="url" rel="index">
+                    <span itemprop="name">科学上网</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2021/12/07/搭建Tinc实现异地构建局域网/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2021/12/07/搭建Tinc实现异地构建局域网/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="现实需求："><a href="#现实需求：" class="headerlink" title="现实需求："></a>现实需求：</h2><p>单位电脑和家里电脑可以互连和访问，手机可以随时随地连接单位和家里电脑，众多设备之间最好可以 Peer-to-Peer</p>
+<h2 id="Tinc的优点"><a href="#Tinc的优点" class="headerlink" title="Tinc的优点"></a>Tinc的优点</h2><p>linux采用的是kernel 2.1.60 中就有的ethertap device，所以在任何的Linux系统上几乎都可以直接用Tinc有一个最大的优点，就是P2P自动全网状路由，无论您如何设置Tinc守护进程以相互连接，流量始终（如果可能）直接发送到目标，而不通过中间跃点。</p>
+<p>Tinc对于国内来说还有一个特别的优势，它同时支持UDP，TCP。由于国内和跨境UDP容易被QoS，然而TCP做这种大流量传输容易出现问题，所以既支持TCP也支持UDP的协议就很有用了。Tinc 居然是先去尝试UDP连接，如果UDP不通后再尝试TCP，完美解决这个困难。</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2021/12/07/搭建Tinc实现异地构建局域网/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://code.meirenji.info/2019/03/26/kubernetes集群搭建流程及出坑记录/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1774,199 +1933,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://code.meirenji.info/2018/09/03/puppet自动化布署配置入门/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="ben wong">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="奶爸的天空">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/03/puppet自动化布署配置入门/" itemprop="url">puppet自动化布署配置入门</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-04T00:01:51+09:00">
-                2018-09-04
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/安全运维/" itemprop="url" rel="index">
-                    <span itemprop="name">安全运维</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2018/09/03/puppet自动化布署配置入门/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="2018/09/03/puppet自动化布署配置入门/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <ul>
-<li>本实例用到系统及软件版本<blockquote>
-<p>Centos6.8<br>puppet3.8.7<br>mysql5.1.73 </p>
-</blockquote>
-</li>
-</ul>
-<h2 id="1-自动化运维都有哪些开源软件"><a href="#1-自动化运维都有哪些开源软件" class="headerlink" title="1. 自动化运维都有哪些开源软件"></a>1. 自动化运维都有哪些开源软件</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">初始化：Kickstart、Cobbler、 Rpmbuild/Xen、Kvm、Lxc、Docker/Openstack、Cloudstack、Opennebula、Eucalyplus</span><br><span class="line">  </span><br><span class="line">配置类工具：Chef、Puppet、Func、Cfengine</span><br><span class="line">  </span><br><span class="line">命令和控制类工具: Fabric、Salstack、Ansible、Capistrano、Pssh、Dsh、Expect</span><br><span class="line">  </span><br><span class="line">监控类工具：Cacti、Nagios、Zabbix、Ganglia</span><br></pre></td></tr></table></figure>
-<ol>
-<li><p>什么是Puppet?</p>
-<blockquote>
-<p> puppet是一种Linux、Unix平台的==集中配置管理系统==，使用ruby语言，可管理配置文件、用户、cron任务、软件包、系统服务等。puppet把这些系统实体称之为资源，<strong>puppet的设计目标是简化对这些资源的管理以及妥善处理资源间的依赖关系</strong></p>
-</blockquote>
-</li>
-<li><p>Puppet都有哪些特性?</p>
-</li>
-</ol>
-<ul>
-<li>能管理多达40多种资源，如：file、user 、group、host、packeage、service、cron、exec、yumrepo等，适合整个软件生命周期的管理</li>
-<li>可自动化重复任务、快速部署关键性应用及本地或者云端完成主动管理变更和快速扩展架构规模等</li>
-</ul>
-<ol>
-<li>puppet的整个生命周期</li>
-</ol>
-<blockquote>
-<p>供应（provisioning:包安装）—&gt;配置（configuration）—&gt;联动(orchestration)—&gt;报告(reporting)</p>
-</blockquote>
-<p>Puppet通常可以用来管理一台主机的整个生命周期：从初始化到安装、升级、维护以及最后将服务迁移并下架。</p>
-<ol>
-<li>Puppet适用于哪些场合</li>
-</ol>
-<ul>
-<li>初始化配置、修复、升级、审计</li>
-<li>统一安装、配置管理软件</li>
-<li>统一配置系统优化参数</li>
-<li>定期检测服务是否运行</li>
-<li>快速替换集群时设备的角色</li>
-</ul>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/09/03/puppet自动化布署配置入门/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2021,7 +1987,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">35</span>
+                  <span class="site-state-item-count">36</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2043,7 +2009,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-count">22</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -2096,7 +2062,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
